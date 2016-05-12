@@ -6,19 +6,23 @@ class AdminController < ApplicationController
   #Add option to send generic push notifications.
 
   def index
-    @users_count = User.count
-    @fotos_count = Photo.count
-    @homepage_fotos_count = Photo.for_homepage.count
-    @stat = Stat.current
+    @admin_presenter = AdminPresenter.new
   end
 
   def users
     @page, @lmt = [(params[:page] || 1).to_i, 10]
     offst       = (@page - 1) * @lmt
-    unless params[:search].to_s.strip.blank?
+    if params[:search].to_s.strip.present?
       @users = User.search(params[:search], sort_column, sort_direction)
     else
-      @users = User.order_by(sort_column => sort_direction).non_admins.skip(offst).limit(@lmt)
+      @users = User.non_admins
+      @users = if ["photos_count", "follows_count"].include?(sort_column)
+                 users = @users.sort_by(&"#{sort_column}".to_sym)
+                 users = users.reverse if sort_direction == 'desc'
+                 users.drop(offst).first(@lmt)
+               else
+                 @users.order_by(sort_column => sort_direction).skip(offst).limit(@lmt)
+               end
       @users_cnt = User.non_admins.count
       @max_page  = (@users_cnt / @lmt.to_f).ceil
     end

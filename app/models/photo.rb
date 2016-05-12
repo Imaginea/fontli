@@ -73,6 +73,7 @@ class Photo
   scope :recent, lambda { |cnt| desc(:created_at).limit(cnt) }
   scope :unpublished, where(:caption => DEFAULT_TITLE)
   scope :sos_requested, where(:font_help => true, :sos_approved => false).desc(:sos_requested_at)
+  scope :sos_approved, where(:font_help => true, :sos_approved => true)
   # Instead mark the photo as inactive when sos requested(to filter it across), and activate during approval
   # But even the user who uploaded it won't be able to see it. Need confirmation on this.
   scope :non_sos_requested, where(:sos_approved => true)
@@ -231,7 +232,7 @@ class Photo
     def sos(pge = 1, lmt = 20)
       #return [] if pge.to_i > 2
       offst = (pge.to_i - 1) * lmt
-      self.where(:font_help => true, :sos_approved => true).desc(:created_at).skip(offst).limit(lmt).to_a
+      sos_approved.desc(:created_at).skip(offst).limit(lmt).to_a
     end
 
     def check_mentions_in(val)

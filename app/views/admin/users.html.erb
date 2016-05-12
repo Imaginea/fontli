@@ -65,10 +65,10 @@
 <% if params[:search].to_s.blank? %>
 <ul class='pager'>
   <li class='previous <%= 'disabled' if @page == 1 %>'>
-    <a href='/admin/<%= params[:action] %>?page=<%= @page - 1 %>'>&larr; Previous</a>
+    <%= link_to "&larr; Previous".html_safe, url_for(params.merge(page: @page - 1)) %>
   </li>
   <li class='next <%= 'disabled' if @page >= @max_page %>'>
-    <a href='/admin/<%= params[:action] %>?page=<%= @page + 1 %>'>Next &rarr;</a>
+    <%= link_to "Next &rarr;".html_safe, url_for(params.merge(page: @page + 1)) %>
   </li>
 </ul>
 <% end %>

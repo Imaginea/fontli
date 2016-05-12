@@ -30,20 +30,29 @@
 
 <h3>App Stats</h3>
 <ul>
-  <li>Total Users: <%= link_to @users_count, '/admin/users' %></li>
-  <% new_users_count = User.where(:created_at.gte => Time.now.beginning_of_month).count %>
-  <li>New users since <%= Time.now.beginning_of_month %>: <%= new_users_count %></li>
-  <% users_in_past_30_days = User.where(:created_at.gte => 30.days.ago).count %>
-  <li>New users in past 30 days: <%= users_in_past_30_days %></li>
-  <% users_with_photos = Photo.distinct(:user_id).count %>
-  <li>Users with atleast one photo: <%= users_with_photos %></li>
-  <li>Total Photos: <%= link_to @fotos_count, '/admin/photos' %></li>
-  <li>Homepage Photos: <%= link_to @homepage_fotos_count, '/admin/photos?home=true' %></li>
+  <li>Total Users: <%= link_to @admin_presenter.users_count, '/admin/users' %></li>
+  <li>New users since <%= Time.now.beginning_of_month %>: <%= @admin_presenter.new_users_count %></li>
+  <li>New users in past 30 days: <%= @admin_presenter.users_in_past_30_days %></li>
+  <li>Users with atleast one photo: <%= @admin_presenter.users_with_photos %></li>
+  <li>Users with just one post: <%= @admin_presenter.users_with_one_photo %></li>
+  <li>Number of users currently active: <%= @admin_presenter.online_users_count %></li> 
+  <li>Users having at least 3 followers: <%= @admin_presenter.users_with_least_followers_count %></li> 
+  <li>Users following at least 6 interests/people: <%= @admin_presenter.users_with_least_follows_count %></li>
+  <li>Users sharing to other platforms: <%= @admin_presenter.users_sharing_to_other_platforms %></li>
+
+  <li>Total Photos: <%= link_to @admin_presenter.photos_count, '/admin/photos' %></li>
+  <li>Homepage Photos: <%= link_to @admin_presenter.homepage_photos_count, '/admin/photos?home=true' %></li>
+  <li>Total number of SOS: <%= @admin_presenter.sos_count %></li>
+  <li>SOS with responses: <%= @admin_presenter.sos_with_responses_count %></li>
+  <li>Number of posts shared to other platforms: <%= @admin_presenter.shared_post_count %></li>
+
+  <li>Most photographed location: <%= @admin_presenter.most_photographed_location %></li>
+  <li>Login medium: <%= @admin_presenter.login_medium %></li>
   <li>
-    App Version: <span id="app_version"><%= @stat.app_version %></span>&nbsp;&nbsp;
+    App Version: <span id="app_version"><%= @admin_presenter.current_stat.app_version %></span>&nbsp;&nbsp;
     <%= link_to 'Change', 'javascript:void(0);', :id => 'update_stat_link' %>
     <%= form_tag '/admin/update_stat', :id => "update_stat_form", :method => "post", :class => "form-inline", :style => "display:none; margin-top:10px;" do %>
-      <input class="span1" name="version" type="text" size="10" value='<%= @stat.app_version %>' />
+      <input class="span1" name="version" type="text" size="10" value='<%= @admin_presenter.current_stat.app_version %>' />
       <input type="submit" class="submit btn btn-primary" value="Update" />
       <%= link_to 'Cancel', 'javascript:void(0);', :id => 'update_stat_cancel' %>
     <% end %>
@@ -53,7 +62,7 @@
 
 <h3>Backend Stats</h3>
 <ul>
-  <% @stat.misc_attrs.each do |k, v| %>
+  <% @admin_presenter.current_stat.misc_attrs.each do |k, v| %>
     <li><%= k.humanize %>: <%= link_to v, 'javascript:;' %></li>
   <% end %>
 </ul><br/>
