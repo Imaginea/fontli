@@ -260,8 +260,9 @@ private
   end
 
   def users_data(platform)
+    platform = nil if platform == 'email'
     users = User.order_by(:created_at => :asc).collection.
-                  aggregate({ '$match' => {admin: false, platform: "#{platform}"} }, 
+                  aggregate({ '$match' => { admin: false, platform: platform } }, 
                             {'$group'  => {_id: { 'month' => { '$month' => '$created_at' }, 
                                   'year' => {'$year' => '$created_at'}}, 'count' => { '$sum' => 1 }}})
     {}.tap do |h|
@@ -277,6 +278,10 @@ private
         val['data'].sort! do |a, b|
           months_list.index(a.first) <=>  months_list.index(b.first)
         end
+      end
+      active_years = User.collection.aggregate({'$group' => {_id: {year: {'$year' => '$created_at'}}}}).collect{|u| u['_id']['year']}
+      (active_years - h.keys).each do |year|
+        h[year] = {}
       end
     end
   end
