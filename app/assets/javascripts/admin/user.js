@@ -3,6 +3,7 @@ $(document).ready(function() {
   if($('#users_statistics').length) {
     var facebookData = [];
     var twitterData = [];
+    var emailData = []
 
     Highcharts.setOptions({ lang: { thousandsSep: ',' }});
 
@@ -21,7 +22,24 @@ $(document).ready(function() {
         options.drilldown.series.push(twitter_drilldown_user);
       });
     });
-	
+      
+    $.getJSON('/admin/user_stats?platform=email', function( data ) { 
+      $.each( data, function( key, val ) {
+        var email_user = {};
+        email_user['name'] = key;
+        email_user.y = val.total_count;
+	email_user.color = '#dd4b39'
+        email_user.drilldown = 'email_' + key;
+        emailData.push(email_user);
+	      
+        var email_drilldown_user = {};
+        email_drilldown_user.id = 'email_' + key;
+        email_drilldown_user.name = key
+        email_drilldown_user.data = val.data;
+        options.drilldown.series.push(email_drilldown_user);
+      });
+    });
+
     $.getJSON('/admin/user_stats?platform=facebook', function( data ) { 
       $.each( data, function( key, val ) {
 	var fb_user = {};
@@ -73,7 +91,8 @@ $(document).ready(function() {
 	}
       },
       series: [ { name: 'Twitter', data: twitterData },
-		{ name: 'Facebook', color: '#365899', data: facebookData } ],
+		{ name: 'Facebook', color: '#365899', data: facebookData },
+		{ name: 'Email', color: '#dd4b39', data: emailData } ],
       drilldown: {
 	activeDataLabelStyle: {
           color: 'white',
