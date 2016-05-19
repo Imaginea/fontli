@@ -295,7 +295,7 @@ private
       csv << ['Username', 'Full Name', 'Email', 'Photos', 'Platform', 'Flag Count', 'Avatar', 'Created At']
       
       @top_contributors.each do |user|
-        full_name = user.full_name.to_s.encode('utf-8', 'binary', invalid: :replace, undef: :replace)
+        full_name = view_context.valid_string(user.full_name)
         csv << [user.username, full_name, user.email, user.photos_count, user.platform, user.user_flags_count, user.url_thumb, user.created_dt]
       end
     end
