@@ -31,7 +31,7 @@
       <td><%= (@page - 1) * @lmt + i + 1 %></td>
       <td><img src='<%= u.url_thumb %>' /></td>
       <td><%= u.username %></td>
-      <td><%= u.full_name %></td>
+      <td><%= u.full_name.to_s.encode('utf-8', 'binary', invalid: :replace, undef: :replace) %></td>
       <td><%= u.email %></td>
       <% if fotos_cnt > 0 %>
         <td><%= link_to fotos_cnt, '/admin/photos?user_id='+u.id.to_s %></td>
