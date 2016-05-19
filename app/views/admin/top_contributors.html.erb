@@ -1,4 +1,7 @@
-<h3><%= @title || 'Users' %> <span class="badge badge-info"><%= @users_cnt || @users.length %></span> </h3>
+<h3>Top Contributors
+  <span class="badge badge-info"><%= @top_contributors.total_count %></span>
+  <%= link_to "Export as CSV", url_for(params.merge(format: :csv)), class: 'btn pull-right' %>
+</h3>
 
 <form class="well form-search">
   <input type="text" name='search' value='<%= params[:search]%>' class="input-medium search-query">
@@ -19,16 +22,15 @@
       <th><%=sortable("follows_count","Follows")%></th>
       <th><%=sortable("platform","Platform")%></th>
       <th><%=sortable("user_flags_count", "Flag Count")%></th>
-      <th><%=sortable("points")%></th>
       <th><%=sortable("created_at","Created")%></th>
-      <th>Actions</th>
     </tr>
   </thead>
   <tbody>
-    <% @users.each_with_index do |u, i| %>
+    <% count = ((params[:page] || 1).to_i - 1) * 25 %>
+    <% @top_contributors.each_with_index do |u, i| %>
     <% fotos_cnt = u.photos_count %>
     <tr id='usr_<%= u.id.to_s %>'>
-      <td><%= (@page - 1) * @lmt + i + 1 %></td>
+      <td><%= count += 1 %></td>
       <td><img src='<%= u.url_thumb %>' /></td>
       <td><%= u.username %></td>
       <td><%= valid_string(u.full_name) %></td>
@@ -41,34 +43,9 @@
       <td><%= u.follows_count %></td>
       <td><%= u.platform %></td>
       <td><%= u.user_flags_count %></td>
-      <td><%= u.points %></td>
       <td><%= u.created_dt %></td>
-      <td>
-        <% if @suspend_user %>
-          <%= link_to('Suspend', '/admin/suspend_user?id='+u.id.to_s) %>
-        <% end %>
-        <% if @unflag_user %>
-          <%= link_to('UnFlag', '/admin/unflag_user?id='+u.id.to_s) %>
-        <% end %>
-        <% if @activate_user %>
-          <%= link_to('Activate', '/admin/activate_user?id='+u.id.to_s) %>
-        <% end %>
-        <% if @delete_user %>
-          <%= link_to('Delete', '/admin/delete_user?id='+u.id.to_s) %>
-        <% end %>
-      </td>
     </tr>
     <% end %>
   </tbody>
 </table>
-
-<% if params[:search].to_s.blank? %>
-<ul class='pager'>
-  <li class='previous <%= 'disabled' if @page == 1 %>'>
-    <%= link_to "&larr; Previous".html_safe, url_for(params.merge(page: @page - 1)) %>
-  </li>
-  <li class='next <%= 'disabled' if @page >= @max_page %>'>
-    <%= link_to "Next &rarr;".html_safe, url_for(params.merge(page: @page + 1)) %>
-  </li>
-</ul>
-<% end %>
+<%= paginate @top_contributors %>

@@ -32,7 +32,8 @@ class User
   field :user_flags_count, :type => Integer, :default => 0
   field :show_in_header, :type => Boolean, :default => false
   field :followed_collection_ids, :type => Array, :default => []
-
+  field :photos_count, :type => Integer, :default => 0
+  
   index({:username => 1}, {:unique => true})
   index({:email => 1}, {:unique => true})
 
@@ -125,7 +126,7 @@ class User
       res = self.where(:username => /^#{uname}.*/i).to_a
       res << self.where(:full_name => /^#{uname}.*/i).to_a
       res = res.flatten.uniq(&:id)
-      res = res.sort{|a,b| a.send(sort) <=> b.send(sort)} if sort
+      res = res.sort{|a,b| b.send(sort) <=> a.send(sort)} if sort
       res = res.reverse if dir == "asc"
       res
     end
@@ -468,11 +469,6 @@ class User
       end
     end
     mlist.flatten.uniq(&:username)
-  end
-
-  # return realtime photos(only published) count.
-  def photos_count
-    @fotos_cnt ||= self.photos.count
   end
 
   def my_photos(page = 1, lmt = 20)

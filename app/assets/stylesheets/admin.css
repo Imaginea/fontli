@@ -1,0 +1,14 @@
+body {
+  padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+}
+
+.pagination {
+  float: right;
+  margin: 0;
+}
+
+.pagination a {
+  float: none;
+  border-width: 1px;
+  padding: 5px 10px;
+}

@@ -17,6 +17,8 @@ gem 'newrelic_rpm', '3.9.0.229'
 gem 'fog', '1.23.0'
 gem 'hpricot', '0.8.6'
 gem 'jquery-rails'
+gem 'kaminari'
+gem 'ruby-progressbar'
 
 group :assets do
   gem 'sass-rails',   '~> 3.2.6'

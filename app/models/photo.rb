@@ -82,11 +82,13 @@ class Photo
   scope :for_homepage, where(:show_in_homepage => true).desc(:created_at)
 
   #before_save :crop_file # we receive only the cropped images from client.
-  before_save :set_sos_approved_at
-  after_create :populate_mentions
-  after_save :save_data_to_file, :save_thumbnail, :save_data_to_aws
+  before_save   :set_sos_approved_at
+  after_create  :populate_mentions
+  after_save    :save_data_to_file, :save_thumbnail, :save_data_to_aws
   after_destroy :delete_file
-
+  after_save    :update_user_photos_count, :if => lambda { |photo| photo.caption_changed? || photo.flags_count? }
+  after_destroy :update_user_photos_count
+  
   class << self
     def [](foto_id)
       self.where(:_id => foto_id.to_s).first
@@ -568,5 +570,9 @@ private
 
   def photo_ids
    [self.id]
+  end
+
+  def update_user_photos_count
+    user.update_attribute(:photos_count, user.photos.count) if user
   end
 end

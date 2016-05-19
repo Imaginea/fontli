@@ -36,8 +36,6 @@
   <li>Users with atleast one photo: <%= @admin_presenter.users_with_photos %></li>
   <li>Users with just one post: <%= @admin_presenter.users_with_one_photo %></li>
   <li>Number of users currently active: <%= @admin_presenter.online_users_count %></li> 
-  <li>Users having at least 3 followers: <%= @admin_presenter.users_with_least_followers_count %></li> 
-  <li>Users following at least 6 interests/people: <%= @admin_presenter.users_with_least_follows_count %></li>
   <li>Users sharing to other platforms: <%= @admin_presenter.users_sharing_to_other_platforms %></li>
 
   <li>Total Photos: <%= link_to @admin_presenter.photos_count, '/admin/photos' %></li>

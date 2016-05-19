@@ -10,7 +10,7 @@ development:
 
 staging:
   <<: *defaults
-  bucket: "new_fontli_dev"
+  bucket: "test.fontli.com"
 
 production:
   <<: *defaults

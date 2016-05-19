@@ -70,6 +70,8 @@ class AdminPresenter
   end
 
   def most_photographed_location
-    Photo.collection.aggregate([{"$group" => { "_id" => { address: "$address"}, "photos_count" => { "$sum" => 1 }}},{ "$sort" => { "photos_count" => -1 }}, { '$limit' => 1 }]).first['_id']['address']
+    Photo.collection.aggregate([{ '$match' => { address: { '$exists' => true, '$ne' => ""}}}, 
+                                {"$group" => { "_id" => { address: "$address"}, "photos_count" => { "$sum" => 1 }}},
+                                { "$sort" => { "photos_count" => -1 }}, { '$limit' => 1 }]).first['_id']['address']
   end
 end

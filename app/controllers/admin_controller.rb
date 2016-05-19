@@ -1,7 +1,7 @@
 class AdminController < ApplicationController
 
   skip_before_filter :login_required # skip the regular login check
-  before_filter :admin_required # use http basic auth
+  before_filter :admin_required, :except => [:facebook_users, :twitter_users] # use http basic auth
   helper_method :sort_column, :sort_direction
   #Add option to send generic push notifications.
 
@@ -15,14 +15,7 @@ class AdminController < ApplicationController
     if params[:search].to_s.strip.present?
       @users = User.search(params[:search], sort_column, sort_direction)
     else
-      @users = User.non_admins
-      @users = if ["photos_count", "follows_count"].include?(sort_column)
-                 users = @users.sort_by(&"#{sort_column}".to_sym)
-                 users = users.reverse if sort_direction == 'desc'
-                 users.drop(offst).first(@lmt)
-               else
-                 @users.order_by(sort_column => sort_direction).skip(offst).limit(@lmt)
-               end
+      @users = User.non_admins.order_by(sort_column => sort_direction).skip(offst).limit(@lmt)
       @users_cnt = User.non_admins.count
       @max_page  = (@users_cnt / @lmt.to_f).ceil
     end
@@ -235,6 +228,28 @@ class AdminController < ApplicationController
     redirect_to '/admin', :notice => "Notified #{users.length} users."
   end
 
+  def users_statistics
+  end
+
+  def user_stats
+    result = params[:platform].present? ? Hash[users_data(params[:platform]).sort] : {} 
+    render :json => result
+  end
+
+  def top_contributors
+    sort_by   = params[:sort] || 'photos_count'
+    direction = params[:direction] || 'desc'
+    
+    @top_contributors = User.non_admins.where(:photos_count.gt => 0).order_by(sort_by => direction).limit(100)
+    @top_contributors = @top_contributors.search(params[:search]) if params[:search].present?
+    
+    if request.format.csv?
+      send_data top_contributors_csv, type: 'text/csv', filename: "top_contributors.csv"
+    else
+      @top_contributors = Kaminari.paginate_array(@top_contributors.to_a).page(params[:page]).per(25)
+    end
+  end
+  
 private
   def sort_column
     params[:sort].blank? ? "created_at" : params[:sort]
@@ -242,5 +257,47 @@ private
 
   def sort_direction
     params[:direction].blank? ? "desc" : params[:direction]
+  end
+
+  def users_data(platform)
+    platform = nil if platform == 'email'
+    users = User.order_by(:created_at => :asc).collection.
+                  aggregate({ '$match' => { admin: false, platform: platform } }, 
+                            {'$group'  => {_id: { 'month' => { '$month' => '$created_at' }, 
+                                  'year' => {'$year' => '$created_at'}}, 'count' => { '$sum' => 1 }}})
+    {}.tap do |h|
+      users.each do |user|
+        year = user['_id']['year']
+        h[year] ||= {}
+        h[year]['data'] ||= []
+        h[year]['total_count'] ||= 0
+        h[year]['data'] << [months_list[user['_id']['month'] - 1], user['count']]
+        h[year]['total_count'] += user['count']
+      end
+      h.each do |key, val|
+        val['data'].sort! do |a, b|
+          months_list.index(a.first) <=>  months_list.index(b.first)
+        end
+      end
+      active_years = User.collection.aggregate({'$group' => {_id: {year: {'$year' => '$created_at'}}}}).collect{|u| u['_id']['year']}
+      (active_years - h.keys).each do |year|
+        h[year] = {}
+      end
+    end
+  end
+
+  def months_list
+    ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+  end
+
+  def top_contributors_csv
+    CSV.generate(headers: true) do |csv|
+      csv << ['Username', 'Full Name', 'Email', 'Photos', 'Platform', 'Flag Count', 'Avatar', 'Created At']
+      
+      @top_contributors.each do |user|
+        full_name = view_context.valid_string(user.full_name)
+        csv << [user.username, full_name, user.email, user.photos_count, user.platform, user.user_flags_count, user.url_thumb, user.created_dt]
+      end
+    end
   end
 end
