@@ -1,7 +1,11 @@
-<h3><%= @title || 'Photos' %> <span class="badge badge-info"><%= @fotos_cnt || @fotos.length %></span> </h3>
+<h3><%= @title || 'Photos' %> <span class="badge badge-info"><%= @fotos.total_count %></span> </h3>
 
 <form class="well form-search">
-  <input type="hidden" name='req' value='<%= params[:req] %>' />
+  <% ['req', 'home', 'user_id'].each do |p| %>
+    <% if params[p.to_sym].present? %>
+      <input type="hidden" name='<%= p %>' value='<%= params[p.to_sym] %>' /> 
+    <% end %>
+  <% end %>
   <input type="text" name='search' value='<%= params[:search]%>' class="input-medium search-query">
   <button type="submit" class="btn">Search</button>
 </form>
@@ -24,9 +28,10 @@
     </tr>
   </thead>
   <tbody>
+    <% count = ((params[:page] || 1).to_i - 1) * 10 %>
     <% @fotos.each_with_index do |f, i| %>
     <tr id='foto_<%= f.id.to_s %>'>
-      <td><%= (@page - 1) * @lmt + i + 1 %></td>
+      <td><%= count += 1 %></td>
       <td>
         <a href='/<%= f.perma %>' target='_new'>
           <img src='<%= f.url_medium %>' />
@@ -61,14 +66,4 @@
   </tbody>
 </table>
 
-<% if params[:search].to_s.blank? %>
-<% extra_params = params[:req].blank? ? '' : "&req=#{params[:req]}" %>
-<ul class='pager'>
-  <li class='previous <%= 'disabled' if @page == 1 %>'>
-    <a href='/admin/<%= params[:action] %>?page=<%= @page - 1 %><%= extra_params %>'>&larr; Previous</a>
-  </li>
-  <li class='next <%= 'disabled' if @page >= @max_page %>'>
-    <a href='/admin/<%= params[:action] %>?page=<%= @page + 1 %><%= extra_params%>'>Next &rarr;</a>
-  </li>
-</ul>
-<% end %>
+<%= paginate @fotos %>

@@ -1,4 +1,4 @@
-<h3><%= @title || 'Users' %> <span class="badge badge-info"><%= @users_cnt || @users.length %></span> </h3>
+<h3><%= @title || 'Users' %> <span class="badge badge-info"><%= @users.total_count %></span> </h3>
 
 <form class="well form-search">
   <input type="text" name='search' value='<%= params[:search]%>' class="input-medium search-query">
@@ -25,10 +25,11 @@
     </tr>
   </thead>
   <tbody>
+    <% count = ((params[:page] || 1).to_i - 1) * 10 %>
     <% @users.each_with_index do |u, i| %>
     <% fotos_cnt = u.photos_count %>
     <tr id='usr_<%= u.id.to_s %>'>
-      <td><%= (@page - 1) * @lmt + i + 1 %></td>
+      <td><%= count += 1 %></td>
       <td><img src='<%= u.url_thumb %>' /></td>
       <td><%= u.username %></td>
       <td><%= valid_string(u.full_name) %></td>
@@ -62,13 +63,4 @@
   </tbody>
 </table>
 
-<% if params[:search].to_s.blank? %>
-<ul class='pager'>
-  <li class='previous <%= 'disabled' if @page == 1 %>'>
-    <%= link_to "&larr; Previous".html_safe, url_for(params.merge(page: @page - 1)) %>
-  </li>
-  <li class='next <%= 'disabled' if @page >= @max_page %>'>
-    <%= link_to "Next &rarr;".html_safe, url_for(params.merge(page: @page + 1)) %>
-  </li>
-</ul>
-<% end %>
+<%= paginate @users %>
