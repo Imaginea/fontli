@@ -168,4 +168,15 @@ namespace :photos do
     puts "Fixed #{size_issue_fixed} size issues and #{missing_fixed} missing issues"
     puts "Failed to fix #{size_issue_failed} size issues and #{missing_failed} missing issues"
   end
+
+  desc "Reset likes_count of all photos"
+  task :reset_likes_count => :environment do
+    progressbar = ProgressBar.create format: "%a %e %P% Processed: %c from %C"
+    progressbar.total = Photo.count
+    Photo.all.each do |p|
+      next if p.likes_count == p.likes.count
+      Photo.reset_counters(p.id, :likes)
+      progressbar.increment    
+    end
+  end
 end
