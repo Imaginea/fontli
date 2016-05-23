@@ -77,7 +77,7 @@ private
     APN.notify_async(to_usr.iphone_token, opts)
     true
   rescue Exception => e
-    Rails.logger.info e.message
+    Rails.logger.error { "#{e.message} #{e.backtrace.join("\n")}" }
   end
   
   # TODO: Background this.
