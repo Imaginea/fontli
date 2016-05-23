@@ -14,7 +14,7 @@ class AdminController < ApplicationController
     @users = @users.search(params[:search], sort_column, sort_direction) if params[:search].present?
     @suspend_user = true
     @delete_user = true
-    @users = Kaminari.paginate_array(@users.to_a).page(params[:page]).per(10)
+    @users = Kaminari.paginate_array(@users.to_a).page(params[:page])
   end
 
   def suspend_user
@@ -34,7 +34,7 @@ class AdminController < ApplicationController
     @title, params[:search] = ['Suspended Users', 'Not Implemented']
     @activate_user = true
     @delete_user = true
-    @users = Kaminari.paginate_array(@users.to_a).page(params[:page]).per(10)
+    @users = Kaminari.paginate_array(@users.to_a).page(params[:page])
     render :users
   end
   
@@ -59,7 +59,7 @@ class AdminController < ApplicationController
     else
       @select_photo = true
     end
-    @fotos = Kaminari.paginate_array(@fotos.to_a).page(params[:page]).per(10)
+    @fotos = Kaminari.paginate_array(@fotos.to_a).page(params[:page])
     @delete_photo = true
   end
 
@@ -102,7 +102,7 @@ class AdminController < ApplicationController
     @title, params[:search] = ['Flagged Users', 'Not Implemented']
     @unflag_user = true
     @delete_user = true
-    @users = Kaminari.paginate_array(@users.to_a).page(params[:page]).per(10)
+    @users = Kaminari.paginate_array(@users.to_a).page(params[:page])
     render :users
   end
 
@@ -120,7 +120,7 @@ class AdminController < ApplicationController
     @title, params[:search] = ['Flagged Photos', 'Not Implemented']
     @unflag_photo = true
     @delete_photo = true
-    @fotos = Kaminari.paginate_array(@fotos.to_a).page(params[:page]).per(10)
+    @fotos = Kaminari.paginate_array(@fotos.to_a).page(params[:page])
     render :photos
   end
 
@@ -142,7 +142,7 @@ class AdminController < ApplicationController
     
     conds = conds.merge(:caption => /^#{params[:search]}.*/i) if params[:search].present?
     @fotos = Photo.where(conds).order_by(sort_column => sort_direction)
-    @fotos = Kaminari.paginate_array(@fotos.to_a).page(params[:page]).per(10)
+    @fotos = Kaminari.paginate_array(@fotos.to_a).page(params[:page])
     @delete_photo = true
     render :photos
   end
