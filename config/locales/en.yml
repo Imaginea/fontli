@@ -5,6 +5,5 @@ en:
   hello: "Hello world"
   views:
     pagination:
-      previous: "&larr; Previous"
-      next: "Next &rarr;"
+      previous: "&lsaquo; Previous"
       truncate: ""
