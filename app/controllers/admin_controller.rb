@@ -10,17 +10,11 @@ class AdminController < ApplicationController
   end
 
   def users
-    @page, @lmt = [(params[:page] || 1).to_i, 10]
-    offst       = (@page - 1) * @lmt
-    if params[:search].to_s.strip.present?
-      @users = User.search(params[:search], sort_column, sort_direction)
-    else
-      @users = User.non_admins.order_by(sort_column => sort_direction).skip(offst).limit(@lmt)
-      @users_cnt = User.non_admins.count
-      @max_page  = (@users_cnt / @lmt.to_f).ceil
-    end
+    @users = User.non_admins.order_by(sort_column => sort_direction)
+    @users = @users.search(params[:search], sort_column, sort_direction) if params[:search].present?
     @suspend_user = true
     @delete_user = true
+    @users = Kaminari.paginate_array(@users.to_a).page(params[:page]).per(10)
   end
 
   def suspend_user
@@ -36,40 +30,36 @@ class AdminController < ApplicationController
   end
 
   def suspended_users
-    @page, @lmt = [1, 10]
-    @users = User.unscoped.where(:active => false).order_by(sort_column => sort_direction).to_a
+    @users = User.unscoped.where(:active => false).order_by(sort_column => sort_direction)
     @title, params[:search] = ['Suspended Users', 'Not Implemented']
     @activate_user = true
     @delete_user = true
+    @users = Kaminari.paginate_array(@users.to_a).page(params[:page]).per(10)
     render :users
   end
-
+  
   def activate_user
     @res = User.unscoped.where(:_id => params[:id]).first.update_attribute(:active, true)
     opts = @res ? {:notice => 'User account activated.'} : {:alert => 'Couldn\'t activate. Please try again!'}
     redirect_to '/admin/users', opts
   end
-
+  
   def photos
-    @page, @lmt = [(params[:page] || 1).to_i, 10]
-    offst = (@page - 1) * @lmt
-    if !params[:search].to_s.strip.blank?
-      @fotos = Photo.where(:caption => /^#{params[:search]}.*/i).order_by(sort_column => sort_direction).to_a
-    elsif !params[:user_id].to_s.strip.blank?
-      @fotos = Photo.where(:user_id => params[:user_id]).order_by(sort_column => sort_direction).to_a
+    @fotos = Photo.all
+    @fotos = @fotos.for_homepage if params[:home].to_s == 'true'
+    @fotos = @fotos.where(:user_id => params[:user_id]) if params[:user_id].present?
+    @fotos = @fotos.order_by(sort_column => sort_direction)
+    @fotos = @fotos.search(params[:search], sort_column, sort_direction) if params[:search].present?
+    
+    if !params[:user_id].to_s.strip.blank?
       @select_photo = true
-      params[:search] = 'Not Implemented'
     elsif params[:home].to_s == 'true'
       @title = 'Homepage Photos'
-      @fotos = Photo.for_homepage.to_a
       @unselect_photo = true
-      params[:search] = 'Not Implemented'
     else
-      @fotos = Photo.all.order_by(sort_column => sort_direction).skip(offst).limit(@lmt)
-      @fotos_cnt = Photo.count
-      @max_page  = (@fotos_cnt / @lmt.to_f).ceil
       @select_photo = true
     end
+    @fotos = Kaminari.paginate_array(@fotos.to_a).page(params[:page]).per(10)
     @delete_photo = true
   end
 
@@ -107,12 +97,12 @@ class AdminController < ApplicationController
   end
 
   def flagged_users
-    @page, @lmt = [1, 10]
     params[:sort] ||= 'user_flags_count'
-    @users = User.unscoped.where(:user_flags_count.gte => User::ALLOWED_FLAGS_COUNT).order_by(sort_column => sort_direction).to_a
+    @users = User.unscoped.where(:user_flags_count.gte => User::ALLOWED_FLAGS_COUNT).order_by(sort_column => sort_direction)
     @title, params[:search] = ['Flagged Users', 'Not Implemented']
     @unflag_user = true
     @delete_user = true
+    @users = Kaminari.paginate_array(@users.to_a).page(params[:page]).per(10)
     render :users
   end
 
@@ -125,23 +115,22 @@ class AdminController < ApplicationController
   end
 
   def flagged_photos
-    @page, @lmt = [1, 10]
     params[:sort] ||='flags_count'
-    @fotos = Photo.unscoped.where(:flags_count.gte => Photo::ALLOWED_FLAGS_COUNT).order_by(sort_column => sort_direction).desc(:flags_count).to_a
+    @fotos = Photo.unscoped.where(:flags_count.gte => Photo::ALLOWED_FLAGS_COUNT).order_by(sort_column => sort_direction)
     @title, params[:search] = ['Flagged Photos', 'Not Implemented']
     @unflag_photo = true
     @delete_photo = true
+    @fotos = Kaminari.paginate_array(@fotos.to_a).page(params[:page]).per(10)
     render :photos
   end
 
   def unflag_photo
     @res = Photo.unscoped.where(:_id => params[:id]).first.flags.destroy_all
   end
-
+  
   def sos
-    @page, @lmt = [(params[:page] || 1).to_i, 10]
-    offst = (@page - 1) * @lmt
     @title, conds = ['SoS photos', {:font_help => true, :sos_approved => true}]
+
     if params[:req] == 'true'
       @title = 'SoS photos waiting for approval'
       conds = conds.merge(:sos_approved => false)
@@ -150,19 +139,14 @@ class AdminController < ApplicationController
     else
       params[:sort] ||= 'sos_approved_at'
     end
-
-    unless params[:search].to_s.strip.blank?
-      conds = conds.merge(:caption => /^#{params[:search]}.*/i)
-      @fotos = Photo.where(conds).order_by(sort_column => sort_direction).to_a
-    else
-      @fotos = Photo.where(conds).order_by(sort_column => sort_direction).skip(offst).limit(@lmt)
-      @fotos_cnt = Photo.where(conds).count
-      @max_page  = (@fotos_cnt / @lmt.to_f).ceil
-    end
+    
+    conds = conds.merge(:caption => /^#{params[:search]}.*/i) if params[:search].present?
+    @fotos = Photo.where(conds).order_by(sort_column => sort_direction)
+    @fotos = Kaminari.paginate_array(@fotos.to_a).page(params[:page]).per(10)
     @delete_photo = true
     render :photos
   end
-
+  
   def approve_sos
     @res = Photo[params[:photo_id]].update_attribute(:sos_approved, true) rescue false
   end
