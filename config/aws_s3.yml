@@ -11,6 +11,7 @@ development:
 staging:
   <<: *defaults
   bucket: "test.fontli.com"
+  use_s3: true
 
 production:
   <<: *defaults
