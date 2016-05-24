@@ -173,10 +173,13 @@ namespace :photos do
   task :reset_likes_count => :environment do
     progressbar = ProgressBar.create format: "%a %e %P% Processed: %c from %C"
     progressbar.total = Photo.count
-    Photo.all.each do |p|
-      next if p.likes_count == p.likes.count
-      Photo.reset_counters(p.id, :likes)
-      progressbar.increment    
+
+    Photo.in_batches(100) do |photos|
+      photos.each do |p|
+        next if p.likes_count == p.likes.count
+        Photo.reset_counters(p.id, :likes)
+        progressbar.increment
+      end    
     end
   end
 end
