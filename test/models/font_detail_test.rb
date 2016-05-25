@@ -33,8 +33,7 @@ describe FontDetail do
         owner: Faker::Name.name,
         styles: [{ id:   SecureRandom.random_number(100_000),
                    name: Faker::Name.name,
-                   url:  Faker::Internet.url
-                 }]
+                   url:  Faker::Internet.url }]
       }
     end
 

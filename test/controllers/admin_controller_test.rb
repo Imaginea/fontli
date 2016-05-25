@@ -3,7 +3,10 @@ require 'test_helper'
 describe AdminController do
   let(:user)          { create(:user) }
   let(:user1)         { create(:user, :with_fullname) }
-  let(:photo)         { create(:photo, show_in_homepage: true, created_at: Time.now.utc) }
+  let(:photo)         do
+    create(:photo, show_in_homepage: true, created_at: Time.now.utc,
+                   address: Faker::Address.city)
+  end
   let(:stat)          { create(:stat) }
   let(:inactive_user) { create(:user, active: false) }
   let(:collection)    { create(:collection) }
@@ -24,20 +27,12 @@ describe AdminController do
       get :index
     end
 
-    it 'should assign users' do
-      assigns(:users_count).must_equal User.count
+    it 'should assign admin presenter' do
+      assigns(:admin_presenter).must_be_instance_of AdminPresenter
     end
 
-    it 'should assign photos count' do
-      assigns(:fotos_count).must_equal Photo.count
-    end
-
-    it 'should assign homepage photo' do
-      assigns(:homepage_fotos_count).must_equal 1
-    end
-
-    it 'should assign stat' do
-      assigns(:stat).must_equal stat
+    it 'should render template index' do
+      assert_template :index
     end
   end
 
@@ -158,10 +153,6 @@ describe AdminController do
       it 'should return all photos' do
         assigns(:fotos).must_include other_photo
         assigns(:fotos).must_include photo
-      end
-
-      it 'should return photos count' do
-        assigns(:fotos_cnt).must_equal 2
       end
     end
   end
@@ -517,6 +508,73 @@ describe AdminController do
     it 'should redirect to admin page' do
       post :send_push_notifications, message: 'Push Notification'
       assert_redirected_to '/admin'
+    end
+  end
+
+  describe '#user_stats' do
+    let(:email_user)   { create(:user, platform: nil, created_at: Date.parse('12-09-2014')) }
+    let(:email_user1)  { create(:user, platform: nil, created_at: Date.parse('12-10-2014')) }
+    let(:fb_user)      { create(:user, :with_platform, platform: 'facebook') }
+    let(:twitter_user) { create(:user, :with_platform, platform: 'twitter') }
+
+    before do
+      email_user
+      email_user1
+      fb_user
+      twitter_user
+    end
+
+    it 'should return facebook users statistics' do
+      get :user_stats, platform: 'facebook'
+      parsed_result = JSON.parse(response.body)
+      parsed_result[fb_user.created_at.strftime('%Y')]['data'].wont_be_empty
+    end
+
+    it 'should return twitter users statistics' do
+      get :user_stats, platform: 'twitter'
+      parsed_result = JSON.parse(response.body)
+      parsed_result[twitter_user.created_at.strftime('%Y')]['data'].wont_be_empty
+    end
+
+    it 'should return email users statistics' do
+      get :user_stats, platform: 'email'
+      parsed_result = JSON.parse(response.body)
+      parsed_result.values.first['data'].wont_be_empty
+      parsed_result.values.first['total_count'].wont_be_nil
+    end
+  end
+
+  describe '#top_contributors' do
+    before do
+      user
+      user1
+      photo
+      create(:photo, user: user1)
+    end
+
+    it 'should assign users with the user having photos' do
+      get :top_contributors
+      assigns(:top_contributors).wont_include user
+      assigns(:top_contributors).must_include photo.user
+    end
+
+    context 'with search params' do
+      it 'should assigns users with the one having the provided username and photos' do
+        get :top_contributors, search: user1.username
+        assigns(:top_contributors).must_include user1
+      end
+
+      it 'should assigns users with the one having the provided full_name and photos' do
+        get :top_contributors, search: user1.full_name
+        assigns(:top_contributors).must_include user1
+      end
+    end
+
+    context 'with csv format' do
+      it 'should return a csv data' do
+        get :top_contributors, format: :csv
+        response.body.wont_be_empty
+      end
     end
   end
 end

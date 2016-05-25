@@ -1,5 +1,4 @@
 class FeedsController < ApplicationController
-  #skip_before_filter :login_required, :only => [:show, :fonts, :permalink]
   skip_before_filter :login_required, :only => [:show, :fonts, :permalink, :profile, :popular, :search, :recent_fonts, :search_autocomplete, :show_font]
 
   def index
@@ -54,7 +53,7 @@ class FeedsController < ApplicationController
     end
     @meta_title = 'Font Detail'
   end
-
+  
   def profile
     params[:username] = nil if params[:username] == 'You'
     @user = if !params[:user_id].blank?

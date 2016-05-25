@@ -3,7 +3,7 @@
   <div class="tertiary">
     <a href="<%= feeds_path %>" id="logo">Fontli</a>
     <div class="grey-box profile">
-      <a href='<%= profile_path %>' class='img-mask'>
+      <a href='<%= profile_path(current_user) %>' class='img-mask'>
         <img width="100%" height="100%" title="profile" src='<%= current_user.url_thumb %>'>
         <div class="overlap"></div>
       </a>
