@@ -39,6 +39,7 @@ GEM
     arel (3.0.3)
     ast (2.2.0)
     attr_required (1.0.0)
+    brakeman (3.3.0)
     bson (1.10.2)
     bson_ext (1.10.2)
       bson (~> 1.10.2)
@@ -71,7 +72,7 @@ GEM
     database_cleaner (1.5.3)
     docile (1.1.5)
     erubis (2.7.0)
-    excon (0.38.0)
+    excon (0.49.0)
     execjs (2.2.1)
     factory_girl (4.7.0)
       activesupport (>= 3.0.0)
@@ -92,20 +93,18 @@ GEM
       fog-softlayer
       ipaddress (~> 0.5)
       nokogiri (~> 1.5, >= 1.5.11)
-    fog-brightbox (0.1.1)
+    fog-brightbox (0.10.1)
       fog-core (~> 1.22)
       fog-json
-      inflecto
-    fog-core (1.23.0)
+      inflecto (~> 0.0.2)
+    fog-core (1.40.0)
       builder
-      excon (~> 0.38)
+      excon (~> 0.49)
       formatador (~> 0.2)
-      mime-types
-      net-scp (~> 1.1)
-      net-ssh (>= 2.1.3)
-    fog-json (1.0.0)
-      multi_json (~> 1.0)
-    fog-softlayer (0.3.11)
+    fog-json (1.0.2)
+      fog-core (~> 1.0)
+      multi_json (~> 1.10)
+    fog-softlayer (1.1.1)
       fog-core
       fog-json
     formatador (0.2.5)
@@ -120,7 +119,7 @@ GEM
     httpclient (2.4.0)
     i18n (0.6.11)
     inflecto (0.0.2)
-    ipaddress (0.8.0)
+    ipaddress (0.8.3)
     journey (1.0.4)
     jquery-rails (3.1.1)
       railties (>= 3.0, < 5.0)
@@ -142,7 +141,7 @@ GEM
     metaclass (0.0.4)
     method_source (0.8.2)
     mime-types (1.25.1)
-    mini_portile (0.6.0)
+    mini_portile2 (2.0.0)
     minitest (4.7.5)
     minitest-activemodel (1.0.0)
       activemodel (>= 3.2)
@@ -170,8 +169,8 @@ GEM
       net-ssh (>= 2.6.5)
     net-ssh (2.9.1)
     newrelic_rpm (3.9.0.229)
-    nokogiri (1.6.3.1)
-      mini_portile (= 0.6.0)
+    nokogiri (1.6.7.2)
+      mini_portile2 (~> 2.0.0.rc2)
     oauth (0.4.7)
     origin (1.1.0)
     parser (2.3.1.0)
@@ -325,6 +324,7 @@ PLATFORMS
 DEPENDENCIES
   airbrake (= 4.0.0)
   apn_sender (= 2.0.1)
+  brakeman
   bson_ext
   capistrano (= 3.2.1)
   capistrano-bundler
