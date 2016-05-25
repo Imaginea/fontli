@@ -1,0 +1,16 @@
+Metrics/LineLength:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  EnforcedStyle: compact
+
+AllCops:
+  Exclude:
+    - 'db/**/*'
+    - 'config/**/*'
+    - 'config.*'
+    - 'script/**/*'
+    - 'app/**/*'
+    - 'lib/**/*'
+    - 'Gemfile'
+    - 'spec/**/*'

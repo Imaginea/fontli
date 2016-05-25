@@ -22,6 +22,8 @@ class Workbook
   attr_accessor :foto_ids, :removed_foto_ids, :hashes, :ordered_foto_ids
   after_save :associate_new_photos, :unlink_removed_photos, :populate_hash_tags
 
+  scope :recent, lambda { |cnt| desc(:created_at).limit(cnt) }
+  
   class << self
     def [](wbid)
       self.where(:_id => wbid).first

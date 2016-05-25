@@ -37,7 +37,7 @@ class User
   index({:username => 1}, {:unique => true})
   index({:email => 1}, {:unique => true})
 
-  FOTO_DIR = File.join(Rails.root, 'public/avatars')
+  FOTO_DIR = APP_CONFIG['user_avatar_dir']
   FOTO_PATH = File.join(FOTO_DIR, ':id/:filename_:style.:extension')
   DEFAULT_AVATAR_PATH = File.join(Rails.root, 'public/avatar_missing_:style.png')
   ALLOWED_TYPES = ['image/jpg', 'image/jpeg', 'image/png']
@@ -308,7 +308,7 @@ class User
     puts ex.message
     Rails.logger.info "Error while parsing avatar: #{ex.message}"
   ensure
-    io.close
+    io.close if io
     @avatar_url = img_url
   end
 

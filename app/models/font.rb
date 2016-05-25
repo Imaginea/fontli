@@ -249,7 +249,7 @@ class Font
     details.try(:url)
   end
 
-private
+  private
 
   def populate_details
     fnt_details = MyFontsApiClient.details_for(self.family_id, self.subfont_id)

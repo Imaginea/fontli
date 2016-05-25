@@ -223,7 +223,7 @@ module ApiHelper
                            :returns => [:id, :title] },
     :update_workbook  => { :accepts => [:workbook_id, [:title, :description, :hashes, :foto_ids,
                                                        :removed_foto_ids, :cover_photo_id, :ordered_foto_ids]],
-                           :returns => [:id, :title] },
+                           :returns => true },
     :list_workbooks   => { :accepts => [[:user_id]],
                            :returns => [:id, :title, :description] },
     :workbook_photos  => { :accepts => [:workbook_id],

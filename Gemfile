@@ -28,19 +28,25 @@ group :assets do
   gem 'turbo-sprockets-rails3'
 end
 
-group :test do
-  gem 'turn', :require => false # Pretty printed test output
-end
-
-group :development, :test do
-  gem 'mongoid-rspec', '1.11.0'
-  gem 'simplecov', '>= 0.4.0'
-end
-
 group :development do
   gem 'capistrano', '3.2.1'
   gem 'capistrano-rvm'
   gem 'capistrano-bundler'
   gem 'capistrano-rails'
   gem 'unicorn'
+end
+
+group :development, :test do
+  gem 'pry'
+  gem 'simplecov', '>= 0.4.0'
+end
+
+group :test do
+  gem 'turn', :require => false # Pretty printed test output
+  gem 'mongoid-minitest'
+  gem 'factory_girl_rails'	
+  gem 'faker'
+  gem 'rubocop', require: false
+  gem 'database_cleaner'
+  gem 'mocha'
 end

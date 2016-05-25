@@ -20,7 +20,7 @@ class Photo
   field :created_at, :type => Time
   field :position, :type => Integer
   field :sos_requested_at, :type => Time
-  field :sos_requested_by, :type => Integer
+  field :sos_requested_by, :type => String
   field :sos_approved_at, :type => Time
   field :show_in_homepage, :type => Boolean, :default => false
   field :show_in_header, :type => Boolean, :default => false
@@ -36,7 +36,7 @@ class Photo
   has_many :hash_tags, :as => :hashable, :autosave => true, :dependent => :destroy
   has_and_belongs_to_many :collections, :autosave => true
 
-  FOTO_DIR = File.join(Rails.root, 'public/photos')
+  FOTO_DIR = APP_CONFIG['photo_dir']
   FOTO_PATH = File.join(FOTO_DIR, ':id/:style.:extension')
   ALLOWED_TYPES = ['image/jpg', 'image/jpeg', 'image/png']
   DEFAULT_TITLE = 'Yet to publish'
@@ -190,15 +190,7 @@ class Photo
       foto.comments.build(opts)
       foto.save ? foto.reload : [nil, foto.errors.full_messages]
     end
-
-    def duplicate_like?
-      !self.likes.where(:user_id => current_user.id).first.nil?
-    end
-
-    def duplicate_flag?
-      !self.flags.where(:user_id => current_user.id).first.nil?
-    end
-
+    
     def feeds_for(usr = nil, page = 1, lmt = 15)
       usr ||= current_user
       frn_ids = usr.friend_ids + [usr.id]
