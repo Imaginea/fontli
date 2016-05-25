@@ -76,8 +76,10 @@ private
     opts = { :badge => notif_cnt, :alert => self.message, :sound => true }
     APN.notify_async(to_usr.iphone_token, opts)
     true
+  rescue Exception => e
+    Rails.logger.error { "#{e.message} #{e.backtrace.join("\n")}" }
   end
-
+  
   # TODO: Background this.
   def send_wp_toast_notif
     wp_url = self.to_user.wp_toast_url
