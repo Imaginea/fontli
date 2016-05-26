@@ -47,7 +47,7 @@ Fontli::Application.routes.draw do
   mount Resque::Server.new, :at => "/resque"
 
   # Utils
-  constraints :host => /(localhost|staging\.fontli\.com)/i do
+  constraints :host => /(localhost|test\.fontli\.com)/i do
     match 'doc' => 'welcome#api_doc'
   end
 

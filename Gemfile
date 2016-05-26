@@ -14,7 +14,7 @@ gem 'resque_mailer', '2.2.6'
 gem 'apn_sender', '2.0.1', :require => ['apn', 'apn/jobs/resque_notification_job']
 gem 'gcm', '~> 0.1.0'
 gem 'newrelic_rpm', '3.9.0.229'
-gem 'fog', '1.23.0'
+gem 'fog', '~> 1.38'
 gem 'hpricot', '0.8.6'
 gem 'jquery-rails'
 gem 'kaminari'
