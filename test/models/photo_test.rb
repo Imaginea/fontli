@@ -159,9 +159,18 @@ describe Photo do
     end
 
     describe 'after_create' do
+      before do
+        ActionMailer::Base.deliveries = []
+      end
+      
       it 'should populate mentions if its caption contain username' do
         photo = create(:photo, caption: "mention @#{user.username}")
         photo.mentions.wont_be_empty
+      end
+
+      it 'should send a email for sos requested' do
+        create(:photo, font_help: true)
+        ActionMailer::Base.deliveries.count.must_equal 1
       end
     end
 
