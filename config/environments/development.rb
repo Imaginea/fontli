@@ -30,4 +30,4 @@ Fontli::Application.configure do
   config.assets.debug = true
 end
 
-APP_HOST_URL = 'http://localhost:3000'
+APP_HOST_URL = 'localhost:3000'

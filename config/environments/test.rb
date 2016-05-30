@@ -39,4 +39,4 @@ Fontli::Application.configure do
   config.cache_store = :null_store
 end
 
-APP_HOST_URL = 'http://localhost:3000'
+APP_HOST_URL = 'localhost:3000'

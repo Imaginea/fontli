@@ -59,4 +59,4 @@ Fontli::Application.configure do
   config.active_support.deprecation = :notify
 end
 
-APP_HOST_URL = 'http://test.fontli.com'
+APP_HOST_URL = 'test.fontli.com'
