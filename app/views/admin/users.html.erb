@@ -55,7 +55,7 @@
           <%= link_to('Activate', '/admin/activate_user?id='+u.id.to_s) %>
         <% end %>
         <% if @delete_user %>
-          <%= link_to('Delete', '/admin/delete_user?id='+u.id.to_s) %>
+          <%= link_to('Delete', '/admin/delete_user?id='+u.id.to_s, confirm: "Are you sure you want to delete #{u.username}? This cannot be undone!") %>
         <% end %>
       </td>
     </tr>
