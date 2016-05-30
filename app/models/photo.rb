@@ -84,6 +84,7 @@ class Photo
   #before_save :crop_file # we receive only the cropped images from client.
   before_save   :set_sos_approved_at
   after_create  :populate_mentions
+  after_create  :send_sos_requested_mail
   after_save    :save_data_to_file, :save_thumbnail, :save_data_to_aws
   after_destroy :delete_file
   after_save    :update_user_photos_count, :if => lambda { |photo| photo.caption_changed? || photo.flags_count? }
@@ -574,5 +575,9 @@ private
 
   def update_user_photos_count
     user.update_attribute(:photos_count, user.photos.count) if user
+  end
+
+  def send_sos_requested_mail
+    AppMailer.sos_requested_mail(id).deliver if font_help?
   end
 end
