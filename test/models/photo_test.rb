@@ -159,31 +159,32 @@ describe Photo do
     end
 
     describe 'after_create' do
-      before do
-        ActionMailer::Base.deliveries = []
-      end
-      
       it 'should populate mentions if its caption contain username' do
         photo = create(:photo, caption: "mention @#{user.username}")
         photo.mentions.wont_be_empty
       end
-
-      it 'should send a email for sos requested' do
-        create(:photo, font_help: true)
-        ActionMailer::Base.deliveries.count.must_equal 1
-      end
     end
-
+    
     describe 'after_save' do
+      before do
+        ActionMailer::Base.deliveries = []
+      end
+      
       let(:new_photo) { build(:photo, data: photo_data) }
-
+      
       it 'should save data to a file' do
         File.directory?(Photo::FOTO_DIR + "/#{new_photo.id}").must_equal false
         new_photo.save
         File.directory?(Photo::FOTO_DIR + "/#{new_photo.id}").must_equal true
       end
+      
+      it 'should send a email for sos requested' do
+        ActionMailer::Base.deliveries.count.must_equal 0
+        photo.update_attributes(font_help: true)
+        ActionMailer::Base.deliveries.count.must_equal 1
+      end
     end
-
+    
     describe 'after_destroy' do
       before do
         photo
