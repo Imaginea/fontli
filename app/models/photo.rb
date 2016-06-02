@@ -476,7 +476,7 @@ private
   end
 
   def save_data_to_file
-    return true if self.data.nil?
+    return true if self.data.nil? || !APP_CONFIG["filesystem_storage"]
     ensure_dir(FOTO_DIR)
     ensure_dir(File.join(FOTO_DIR, self.id.to_s))
     # skip storing original locally, when aws_storage is enabled
@@ -501,12 +501,14 @@ private
         aws_dir.files.create(:key => aws_path(style), :body => fp, :public => true, :content_type => @file_obj.content_type)
       end
       # cleanup the assets on local storage
-      delete_file 
-
-      # store only the original file
-      ensure_dir(FOTO_DIR)
-      ensure_dir(File.join(FOTO_DIR, self.id.to_s))
-      FileUtils.cp(self.data, self.path)
+      if APP_CONFIG["filesystem_storage"]
+        delete_file 
+        
+        # store only the original file
+        ensure_dir(FOTO_DIR)
+        ensure_dir(File.join(FOTO_DIR, self.id.to_s))
+        FileUtils.cp(self.data, self.path)
+      end
     end
     true
   end
@@ -543,7 +545,7 @@ private
   end
 
   def save_thumbnail
-    return true if self.data.nil?
+    return true if self.data.nil? || !APP_CONFIG["filesystem_storage"]
     THUMBNAILS.each do |style, size|
       Rails.logger.info "Saving #{style.to_s}.."
       frame_w, frame_h = size.split('x')

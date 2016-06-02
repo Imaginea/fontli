@@ -1,6 +1,7 @@
 defaults: &defaults
   user_avatar_dir: '<%= Rails.root %>/public/avatars'
   photo_dir: '<%= Rails.root %>/public/photos'
+  filesystem_storage: true
 
 development:
   <<: *defaults
@@ -12,6 +13,7 @@ test:
 
 staging:
   <<: *defaults
+  filesystem_storage: false
 
 production:
   <<: *defaults
