@@ -17,14 +17,14 @@ class ApiBaseController < ActionController::Base
     end
   end
 
-protected
+  protected
   def current_session
     return nil if @auth_token.nil?
     token_str = URI.unescape(@auth_token) # CGI.unescape won't work if auth_token is unescaped already
     token, devic_id = token_str.split('||')
-    @current_session ||= ApiSession[token, devic_id]
+    @current_session ||=  devic_id ? ApiSession[token, devic_id] : ApiSession.where(:auth_token => token).first
   end
-
+  
   def reset_current_user_and_session
     @current_user = nil
     @current_session = nil

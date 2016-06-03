@@ -20,7 +20,7 @@ class ApiSession
   end
   
   def activate
-    self.auth_token = generate_rand(16)
+    self.auth_token = Digest::MD5.hexdigest(SecureRandom.urlsafe_base64 + user_id)
     self.expires_at = current_time + SESSION_EXPIRY_TIME
     self.save ? CGI.escape(token_str) : [nil, :unable_to_save]
   end
@@ -43,6 +43,6 @@ class ApiSession
   private
   
   def token_str
-    self.auth_token + '||' + self.device_id
+    auth_token + '||'
   end
 end
