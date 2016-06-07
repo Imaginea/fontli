@@ -1,0 +1,2 @@
+Hello,<br />
+<p>An sos has been requested by <%= @user.try(:username) || 'a user' %>. Please <%= link_to 'click on this link', :controller => 'admin', :action => 'sos', :only_path => false, :req => 'true' %> to approve/discard the sos.</p>
