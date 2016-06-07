@@ -237,12 +237,6 @@ describe AdminController do
     end
   end
 
-  describe '#photos_list_for_collection' do
-    it 'should raise error' do
-      proc { get :photos_list_for_collection }.must_raise ActionView::MissingTemplate
-    end
-  end
-
   describe '#flagged_users' do
     before do
       create_list(:user_flag, 4, user: other_user)
