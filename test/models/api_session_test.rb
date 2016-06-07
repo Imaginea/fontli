@@ -36,6 +36,10 @@ describe ApiSession do
     it 'should set the expires_at' do
       api_session.expires_at.wont_be_nil
     end
+
+    it 'should set a 32-character auth_token' do
+      api_session.auth_token.length.must_equal 32
+    end
   end
 
   describe '#deactivate' do

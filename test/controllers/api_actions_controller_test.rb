@@ -1172,4 +1172,25 @@ describe ApiActionsController do
       proc { post :unfav_workbook, workbook_id: workbook.id }.must_raise NoMethodError
     end
   end
+  
+  context 'current_user' do
+    let(:api_user)     { create(:user) }
+    let(:api_session1) { create(:api_session, user: api_user, auth_token: Digest::MD5.hexdigest(SecureRandom.urlsafe_base64 + api_user.id), expires_at: Time.now + 2.weeks) }
+    let(:api_session2) { create(:api_session, user: api_user, auth_token: SecureRandom.base64(16), expires_at: Time.now + 2.weeks) }
+    
+    before do
+      @controller.unstub(:current_session)
+      @controller.instance_variable_set(:@current_session, nil)
+    end
+    
+    it 'should set the current session by providing current auth_token' do
+      get :my_feeds, auth_token: api_session1.auth_token + '||'
+      @controller.send(:current_session).must_equal api_session1
+    end
+    
+    it 'should set the current session by providing the old auth_token' do
+      get :my_feeds, auth_token: api_session2.auth_token + '||' + api_session2.device_id
+      @controller.send(:current_session).must_equal api_session2
+    end
+  end
 end
