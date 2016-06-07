@@ -13,7 +13,7 @@ describe User do
   let(:like)          { create(:like, user: user) }
   let(:font)          { create(:font) }
   let(:comment)       { create(:comment) }
-  let(:follow)        { create(:follow, user: admin_user, follower_id: user.id) }
+  let(:follow)        { create(:follow, user: admin_user, follower: user) }
 
   subject { User }
 
@@ -644,7 +644,7 @@ describe User do
     let(:user1)      { create(:user, extuid: SecureRandom.hex(6), platform: platform) }
     let(:user2)      { create(:user, extuid: SecureRandom.hex(6), platform: platform) }
     let(:admin1)     { create(:user, extuid: SecureRandom.hex(6), platform: platform, admin: true) }
-    let(:follow1)    { create(:follow, user: user, follower_id: user2.id) }
+    let(:follow1)    { create(:follow, user: user, follower: user2) }
     let(:frnds_hash) do
       [{ 'id' => invite.extuid },
        { 'id' => user1.extuid },

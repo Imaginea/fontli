@@ -2,7 +2,7 @@ require 'test_helper'
 
 describe Follow do
   let(:follower) { create(:user) }
-  let(:follow)   { create(:follow, follower_id: follower.id) }
+  let(:follow)   { create(:follow, follower: follower) }
 
   subject { Follow }
 

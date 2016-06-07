@@ -177,7 +177,7 @@ describe FeedsController do
 
     context 'with params type' do
       before do
-        create(:follow, user: user, follower_id: other_user.id)
+        create(:follow, user: user, follower: other_user)
         create(:fav_font, font: font, user: user)
         create(:like, photo: photo, user: other_user)
       end
@@ -364,7 +364,7 @@ describe FeedsController do
 
   describe '#unfollow_user' do
     before do
-      create(:follow, user: user, follower_id: other_user.id)
+      create(:follow, user: user, follower: other_user)
     end
 
     it 'should unfollow a user' do
