@@ -35,12 +35,11 @@ describe Workbook do
         workbook.reload.photos.must_include photo.reload
       end
 
-      # To be fixed once the code is updated
-      it 'should not associate new photos to workbook' do
+      it 'should associate new photos to workbook' do
         workbook.foto_ids = [new_photo.id]
         workbook.ordered_foto_ids = []
         workbook.save
-        workbook.reload.photos.count.must_equal 0
+        workbook.reload.photos.count.must_equal 1
       end
 
       it 'should unlink photos from workbook' do
