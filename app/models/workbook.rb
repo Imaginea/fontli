@@ -38,7 +38,7 @@ private
 
   def associate_new_photos
     return true if self.foto_ids.blank? and self.ordered_foto_ids.blank?
-    unless self.ordered_foto_ids.empty? #Making one update call if there is no order changes
+    if self.foto_ids.present? #Making one update call if there is no order changes
       Photo.where(:_id.in => self.foto_ids).update_all(:workbook_id => self.id)
     else
       self.ordered_foto_ids.each do |foto_id,position|

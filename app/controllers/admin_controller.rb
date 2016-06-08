@@ -87,15 +87,7 @@ class AdminController < ApplicationController
     end
     redirect_to '/admin/collections'
   end
-
-  def photos_list_for_collection
-    @collections = Collection.all.to_a
-    page = params[:page] || 1
-    offst = (page - 1) * 50
-    @photos = Photo.only(:id, :data_filename, :collection_ids).
-      desc(:created_at).skip(offst).limit(50)
-  end
-
+  
   def flagged_users
     params[:sort] ||= 'user_flags_count'
     @users = User.unscoped.where(:user_flags_count.gte => User::ALLOWED_FLAGS_COUNT).order_by(sort_column => sort_direction)
