@@ -544,7 +544,7 @@ describe ApiActionsController do
 
   describe '#mentions_list' do
     before do
-      create(:follow, user: api_session.user, follower_id: user.id)
+      create(:follow, user: api_session.user, follower: user)
     end
 
     it 'should return JSON data' do
@@ -772,8 +772,8 @@ describe ApiActionsController do
 
   describe '#user_friends' do
     before do
-      create(:follow, user: api_session.user, follower_id: user.id)
-      create(:follow, user: user, follower_id: other_user.id)
+      create(:follow, user: api_session.user, follower: user)
+      create(:follow, user: user, follower: other_user)
     end
 
     it 'should return JSON of current user friends' do
@@ -793,8 +793,8 @@ describe ApiActionsController do
 
   describe '#user_followers' do
     before do
-      create(:follow, user: user, follower_id: api_session.user.id)
-      create(:follow, user: user, follower_id: other_user.id)
+      create(:follow, user: user, follower: api_session.user)
+      create(:follow, user: user, follower: other_user)
     end
 
     it 'should return JSON of current user followers' do
@@ -935,7 +935,7 @@ describe ApiActionsController do
 
   describe '#unfollow_friend' do
     before do
-      create(:follow, user: api_session.user, follower_id: user.id)
+      create(:follow, user: api_session.user, follower: user)
     end
 
     it 'should return a success response' do
@@ -1010,7 +1010,7 @@ describe ApiActionsController do
   end
 
   describe '#network_updates' do
-    let(:follow)   { create(:follow, user: api_session.user, follower_id: user.id) }
+    let(:follow)   { create(:follow, user: api_session.user, follower: user) }
     let(:like)     { create(:like, user: user) }
     let(:font_tag) { create(:font_tag, user: user) }
     let(:fav_font) { create(:fav_font, user: user) }
