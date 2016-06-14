@@ -182,4 +182,9 @@ namespace :photos do
       end    
     end
   end
+
+  desc "Set font help of requested SoS"
+  task :fix_requested_sos => :environment do
+    Photo.where(:font_help => false, :sos_requested_at.ne => nil).update_all(:font_help => true)
+  end
 end
