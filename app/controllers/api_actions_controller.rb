@@ -168,7 +168,7 @@ class ApiActionsController < ApiBaseController
 
   def add_to_sos
     foto  = Photo[@photo_id]
-    attrs = {:sos_requested_at => Time.now.utc, :sos_requested_by => @current_user.id.to_s}
+    attrs = { :sos_requested_at => Time.now.utc, :sos_requested_by => @current_user.id.to_s, :font_help => true }
     render_response foto.update_attributes(attrs)
   end
 
