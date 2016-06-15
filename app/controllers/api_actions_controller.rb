@@ -39,7 +39,7 @@ class ApiActionsController < ApiBaseController
   end
 
   def signout
-    resp, error = @extuid_token.nil? ? @current_session.deactivate : true
+    resp, error = @extuid_token.nil? ? @current_session.deactivate : @current_user.update_attributes(api_access_token: nil)
     render_response(resp, !resp.nil?, error)
   end
 
@@ -55,6 +55,7 @@ class ApiActionsController < ApiBaseController
 
   def login_check
     resp, error = User.check_login_for(@extuid_token)
+    User.by_extid(@extuid_token).update_attribute(:api_access_token, Digest::MD5.hexdigest(@extuid_token)) if resp
     render_response(resp, !resp.nil?, error)
   end
 

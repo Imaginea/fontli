@@ -200,10 +200,19 @@ describe ApiActionsController do
   end
 
   describe '#signout' do
-    it 'should deactivate a session' do
+    let(:api_user) { create(:user, :with_platform) }
+
+    it 'should deactivate an email user session' do
       get :signout
       parsed_result = JSON.parse(response.body)
       parsed_result['response'].must_equal true
+    end
+
+    it 'should deactivate a fb/twitter user session' do
+      @controller.unstub(:current_session)
+      @controller.instance_variable_set(:@current_session, nil)
+      get :signout, auth_token: Encryptor.encrypt(api_user.extuid)
+      assigns(:current_user).api_access_token.must_be_nil
     end
   end
 

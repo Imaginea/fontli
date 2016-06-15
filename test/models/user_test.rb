@@ -414,6 +414,22 @@ describe User do
     it 'should throw error if user is not valid' do
       invalid_user.api_signup.must_equal [nil, ["Email can't be blank"]]
     end
+
+    it 'should create a new user with facebook platform' do
+      fb_user = build(:user, platform: 'facebook', extuid: SecureRandom.hex(10))
+      fb_user.api_signup
+      fb_user.persisted?.must_equal true
+      fb_user.api_access_token.wont_be_nil
+      ActionMailer::Base.deliveries.count.must_equal 1
+    end
+
+    it 'should create a new user with twitter platform' do
+      twitter_user = build(:user, platform: 'twitter', extuid: SecureRandom.hex(10))
+      twitter_user.api_signup
+      twitter_user.persisted?.must_equal true
+      twitter_user.api_access_token.wont_be_nil
+      ActionMailer::Base.deliveries.count.must_equal 1
+    end
   end
 
   describe '#check_duplicate_signup' do

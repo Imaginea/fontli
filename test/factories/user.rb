@@ -7,6 +7,7 @@ FactoryGirl.define do
     trait :with_platform do
       platform  %w(twitter facebook).sample
       extuid    { SecureRandom.hex(6) }
+      api_access_token { |u| Digest::MD5.hexdigest(u.extuid) }
     end
 
     trait :admin do

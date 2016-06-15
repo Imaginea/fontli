@@ -33,6 +33,7 @@ class User
   field :show_in_header, :type => Boolean, :default => false
   field :followed_collection_ids, :type => Array, :default => []
   field :photos_count, :type => Integer, :default => 0
+  field :api_access_token, :type => String
   
   index({:username => 1}, {:unique => true})
   index({:email => 1}, {:unique => true})
@@ -247,6 +248,7 @@ class User
     self.password ||= self.class.rand_s
     resp = my_save
     return resp if resp.is_a?(Array) # save failed
+    self.update_attribute(:api_access_token, Digest::MD5.hexdigest(extuid)) if extuid.present? && PLATFORMS.include?(platform)
     check_friendships && send_welcome_mail!
     resp
   end

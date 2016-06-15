@@ -9,12 +9,11 @@ class ApiBaseController < ActionController::Base
 
   def current_user
     @current_user ||= if @extuid_token
-      User.by_extid(@extuid_token)
-    else
-      sess = @current_session || current_session
-      return nil if sess.nil?
-      sess.user
-    end
+                        User.where(api_access_token: Digest::MD5.hexdigest(@extuid_token)).by_extid(@extuid_token)
+                      else
+                        sess = @current_session || current_session
+                        sess.try(:user)
+                      end
   end
 
   protected
