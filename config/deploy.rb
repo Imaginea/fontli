@@ -26,7 +26,7 @@ set :deploy_to, '/data/www/typestry'
 set :linked_files, %w{config/mongoid.yml}
 
 # Default value for linked_dirs is []
-set :linked_dirs, %w{log tmp/pids tmp/cache public/system public/photos public/avatars public/assets}
+set :linked_dirs, %w{log tmp/pids tmp/cache public/system public/photos public/avatars public/assets config/certs}
 
 # Default value for default_env is {}
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }

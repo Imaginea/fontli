@@ -1,5 +1,6 @@
 .bundle
 config/mongoid.yml
+config/certs
 db/*.sqlite3
 log/*.log
 log/*.txt
