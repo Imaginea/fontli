@@ -235,7 +235,7 @@ class Photo
     def sos(pge = 1, lmt = 20)
       #return [] if pge.to_i > 2
       offst = (pge.to_i - 1) * lmt
-      sos_approved.desc(:created_at).skip(offst).limit(lmt).to_a
+      sos_approved.desc(:sos_approved_at).skip(offst).limit(lmt).to_a
     end
 
     def check_mentions_in(val)

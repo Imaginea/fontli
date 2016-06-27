@@ -411,12 +411,19 @@ describe Photo do
   end
 
   describe '.sos' do
+    let(:sos_approved1) { create(:photo, font_help: true, sos_approved: true, created_at: Time.now + 1.day) }
+
     before do
       sos_approved
+      sos_approved1.update_attribute(:sos_approved_at, Time.now - 1.day)
     end
 
     it 'should return sos' do
       Photo.sos.must_include sos_approved
+    end
+    
+    it 'should return sos sorted by sos_approved_at' do
+      Photo.sos.must_equal [sos_approved, sos_approved1]
     end
   end
 
