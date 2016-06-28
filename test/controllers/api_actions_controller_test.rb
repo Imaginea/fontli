@@ -370,13 +370,23 @@ describe ApiActionsController do
     before do
       like
       comment
+      get :photo_detail, photo_id: photo.id
     end
 
     it 'should return JSON data' do
-      get :photo_detail, photo_id: photo.id
       parsed_result = JSON.parse(response.body)
       parsed_result['response'].wont_be_empty
       parsed_result['status'].must_equal 'Success'
+    end
+
+    it 'should return flagged? property' do
+      parsed_result = JSON.parse(response.body)
+      parsed_result["response"]['flagged?'].must_equal false
+    end
+    
+    it 'should return flags_count' do
+      parsed_result = JSON.parse(response.body)
+      parsed_result["response"]['flags_count'].must_equal 0
     end
   end
 
@@ -594,6 +604,18 @@ describe ApiActionsController do
       parsed_result['response'].wont_be_empty
       parsed_result['status'].must_equal 'Success'
     end
+
+    it 'should return flagged? property' do
+      get :hash_tag_feeds, name: hash_tag.name
+      parsed_result = JSON.parse(response.body)
+      parsed_result["response"][0]['flagged?'].must_equal false
+    end
+    
+    it 'should return flags_count' do
+      get :hash_tag_feeds, name: hash_tag.name
+      parsed_result = JSON.parse(response.body)
+      parsed_result["response"][0]['flags_count'].must_equal 0
+    end
   end
 
   describe '#leaderboard' do
@@ -625,13 +647,23 @@ describe ApiActionsController do
   describe '#sos_photos' do
     before do
       create(:photo, font_help: true, sos_approved: true, created_at: Time.now.utc)
+      get :sos_photos
     end
 
     it 'should return JSON of sos photos' do
-      get :sos_photos
       parsed_result = JSON.parse(response.body)
       parsed_result['response'].wont_be_empty
       parsed_result['status'].must_equal 'Success'
+    end
+    
+    it 'should return flagged? property' do
+      parsed_result = JSON.parse(response.body)
+      parsed_result["response"][0]['flagged?'].must_equal false
+    end
+      
+    it 'should return flags_count' do
+      parsed_result = JSON.parse(response.body)
+      parsed_result["response"][0]['flags_count'].must_equal 0
     end
   end
 
@@ -1057,23 +1089,42 @@ describe ApiActionsController do
       parsed_result = JSON.parse(response.body)
       parsed_result['status'].must_equal 'Success'
       parsed_result['response'].wont_be_empty
+      parsed_result['response'][0]['flags_count'].must_equal 0
+      parsed_result['response'][0]['flagged?'].must_equal false
     end
   end
 
   describe '#feed_detail' do
-    it 'should return JSON' do
-      get :feed_detail, feed_id: photo.id
-      parsed_result = JSON.parse(response.body)
-      parsed_result['status'].must_equal 'Success'
-      parsed_result['response'].wont_be_empty
+    context 'with valid feed_id' do
+      before do
+        get :feed_detail, feed_id: photo.id
+      end
+      
+      it 'should return JSON' do
+        parsed_result = JSON.parse(response.body)
+        parsed_result['status'].must_equal 'Success'
+        parsed_result['response'].wont_be_empty
+      end
+
+      it 'should return flagged? property' do
+        parsed_result = JSON.parse(response.body)
+        parsed_result["response"]['flagged?'].must_equal false
+      end
+      
+      it 'should return flags_count' do
+        parsed_result = JSON.parse(response.body)
+        parsed_result["response"]['flags_count'].must_equal 0
+      end
     end
 
-    it 'should fail' do
-      get :feed_detail, feed_id: SecureRandom.hex(2)
-      parsed_result = JSON.parse(response.body)
-      parsed_result['status'].must_equal 'Failure'
-      parsed_result['response'].must_be_empty
-      parsed_result['errors'].must_equal 'Photo not found!'
+    context 'with invalid feed_id' do
+      it 'should fail' do
+        get :feed_detail, feed_id: SecureRandom.hex(2)
+        parsed_result = JSON.parse(response.body)
+        parsed_result['status'].must_equal 'Failure'
+        parsed_result['response'].must_be_empty
+        parsed_result['errors'].must_equal 'Photo not found!'
+      end
     end
   end
 
