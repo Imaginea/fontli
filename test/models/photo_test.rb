@@ -720,4 +720,10 @@ describe Photo do
       photo.send(:photos_count).must_equal 1
     end
   end
+  
+  describe '#flagged?' do
+    it 'should return false' do
+      photo.flagged?.must_equal false
+    end
+  end
 end

@@ -446,6 +446,10 @@ class Photo
     end
   end
 
+  def flagged?
+    current_user.flags.pluck(:photo_id).include?(id)
+  end
+  
 private
 
   def self.add_interaction_for(photo_id, klass, opts = {} )
