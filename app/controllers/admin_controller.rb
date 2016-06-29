@@ -117,7 +117,11 @@ class AdminController < ApplicationController
   end
 
   def unflag_photo
-    @res = Photo.unscoped.where(:_id => params[:id]).first.flags.destroy_all
+    photo = Photo.unscoped.where(:_id => params[:id]).first
+    
+    if photo && photo.flags.destroy_all
+      @res = photo.update_attribute(:flags_count, 0)
+    end
   end
   
   def sos

@@ -298,10 +298,15 @@ describe AdminController do
     before do
       create_list(:flag, 4, photo: other_photo)
       xhr :get, :unflag_photo, id: other_photo.id
+      other_photo.reload
     end
 
     it 'should destroy the photo flags' do
       other_photo.flags.count.must_equal 0
+    end
+
+    it 'should reset the flags_count' do
+      other_photo.flags_count.must_equal 0
     end
   end
 

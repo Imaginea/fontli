@@ -187,4 +187,17 @@ namespace :photos do
   task :fix_requested_sos => :environment do
     Photo.where(:font_help => false, :sos_requested_at.ne => nil).update_all(:font_help => true)
   end
+
+  desc "Reset flags_count of photos"
+  task :reset_flags_count => :environment do
+    flagged_photos =  Photo.unscoped.where(:flags_count.gte => Photo::ALLOWED_FLAGS_COUNT)
+
+    progressbar = ProgressBar.create(format: "%a %e %P% Processed: %c from %C", total: flagged_photos.count)
+
+    flagged_photos.each do |photo|
+      next if photo.flags_count == photo.flags.count
+      Photo.unscoped.reset_counters(photo.id, :flags)
+      progressbar.increment
+    end
+  end
 end
