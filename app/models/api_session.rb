@@ -30,7 +30,7 @@ class ApiSession
     self.expires_at = current_time
     
     if self.save
-      user.update_attribute(:iphone_token, nil)
+      user.update_attributes(iphone_token: nil, android_registration_id: nil)
     else
       [nil, :unable_to_save]
     end
