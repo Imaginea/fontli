@@ -90,6 +90,7 @@ class User
   before_save :set_hashed_password
   after_save :save_avatar_to_file, :save_thumbnail
   after_destroy :delete_file
+  after_save :update_device_token, if: lambda { |user| user.iphone_token_changed? || user.android_registration_id_changed? }
 
   default_scope where(:active => true, :user_flags_count.lt => ALLOWED_FLAGS_COUNT)
   scope :non_admins, where(:admin => false)
@@ -730,5 +731,9 @@ private
   def recent_photos
     self.photos.limit(8).to_a
   end
-
+  
+  def update_device_token
+    User.where(:id.ne => id, :android_registration_id => android_registration_id).update_all(:android_registration_id => nil) if android_registration_id_changed?
+    User.where(:id.ne => id, :iphone_token => iphone_token).update_all(:iphone_token => nil) if iphone_token_changed?
+  end
 end
