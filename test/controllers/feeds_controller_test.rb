@@ -2,7 +2,7 @@ require 'test_helper'
 
 describe FeedsController do
   let(:user)              { create(:user) }
-  let(:photo)             { create(:photo, user: user, created_at: Time.now.utc, caption: Faker::Lorem.word) }
+  let(:photo)             { create(:photo, user: user, created_at: Time.now.utc, caption: Faker::Lorem.characters(10)) }
   let(:sos_approved)      { create(:photo, font_help: true, sos_approved: true, created_at: Time.now.utc) }
   let(:font)              { create(:font, photo: photo, family_name: Faker::Lorem.word) }
   let(:other_user)        { create(:user) }
@@ -345,6 +345,15 @@ describe FeedsController do
     context 'with remove as params modal' do
       it 'should delete the photo' do
         proc { xhr :post, :socialize_feed, id: photo.id, modal: 'remove' }.must_raise Mongoid::Errors::DocumentNotFound
+      end
+    end
+
+    context 'with unexpected feed as params modal' do
+      it 'should raise StandardError with a message' do
+       exception = proc {
+          xhr :post, :socialize_feed, id: photo.id, modal: 'unexpected_feed'
+        }.must_raise StandardError
+        exception.message.must_equal 'unexpected feed: unexpected_feed'
       end
     end
   end

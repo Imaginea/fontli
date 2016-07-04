@@ -21,7 +21,7 @@ class WelcomeController < ApplicationController
 
   def login
     return if request.get?
-    self.send(params[:platform] + "_login")
+    self.send format('%s_login', params[:platform])
   end
 
   def signup
@@ -35,7 +35,7 @@ class WelcomeController < ApplicationController
   end
 
   def auth_callback
-    self.send(params[:platform] + "_callback")
+    self.send format('%s_callback', params[:platform])
   end
 
   def logout

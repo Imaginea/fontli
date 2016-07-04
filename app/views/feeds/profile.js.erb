@@ -11,7 +11,7 @@
 <% end %>
 
 <% if @photos %>
-  photoIds = <%= @photos.collect(&:id).to_json.html_safe %>;
+  photoIds = <%= sanitize @photos.collect(&:id).to_json %>;
 <% end %>
 
 <% if params[:page] # pagination request %>
