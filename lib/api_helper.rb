@@ -235,12 +235,13 @@ module ApiHelper
     :recommended_users => { :accepts    => [] ,
                             :returns    => [:id, :username, :url_thumb, :created_dt, :recent_photos,
                                             :description, :full_name, :friendship_state],
-                            :recent_photos => [:id, :url_thumb] }
-
+                            :recent_photos => [:id, :url_thumb] },
+    :homepage_photos    => { :accepts => [],
+                             :returns => [:url_thumbs] }
  }
 
   GUEST_USER_ALLOWED_APIS = [:signin, :signup, :check_token, :popular_photos, :photo_detail, :comments_list, :likes_list]
-  AUTHLESS_APIS           = [:signin, :signup, :forgot_pass, :check_token, :login_check, :stats, :features, :log_crash]
+  AUTHLESS_APIS           = [:signin, :signup, :forgot_pass, :check_token, :login_check, :stats, :features, :log_crash, :homepage_photos]
 
   ERROR_MESSAGE_MAP =
   {

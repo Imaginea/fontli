@@ -487,4 +487,8 @@ class ApiActionsController < ApiBaseController
     render_response(users)
   end
 
+  def homepage_photos
+    photos = Photo.for_homepage.collect(&:url_thumb)
+    render json: { response: photos }
+  end
 end

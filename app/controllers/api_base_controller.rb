@@ -2,8 +2,8 @@ require 'api_helper'
 class ApiBaseController < ActionController::Base
 
   before_filter :set_current_controller
-  before_filter :verify_api_params
-  before_filter :load_api_params
+  before_filter :verify_api_params, :except => :homepage_photos
+  before_filter :load_api_params, :except => :homepage_photos
   before_filter :load_user_and_check_sess_expiry, :except => ApiHelper::AUTHLESS_APIS
   before_filter :restrict_guest_users, :except => ApiHelper::GUEST_USER_ALLOWED_APIS
 
