@@ -8,6 +8,7 @@ describe Notification do
   let(:mention_notification)  { create(:notification, :for_mention) }
   let(:font_tag_notification) { create(:notification, :for_font_tag) }
   let(:agree_notification)    { create(:notification, :for_agree) }
+  let(:sos_notification)      { create(:notification, :for_sos) }
 
   subject { Notification }
 
@@ -26,6 +27,21 @@ describe Notification do
   it { must validate_presence_of(:notifiable_id) }
   it { must validate_presence_of(:notifiable_type) }
 
+  describe 'validations' do
+    let(:follow_notification) { build(:notification, :for_follow, from_user_id: nil) }
+    let(:sos_notification)    { build(:notification, :for_sos, from_user_id: nil) }
+    
+    it 'should be invalid if from_user is nil' do
+      follow_notification.valid?.must_equal false
+      follow_notification.from_user_id = create(:user).id
+      follow_notification.valid?.must_equal true
+    end
+    
+    it "should be valid if it's an sos notification and from_user is nil" do
+      sos_notification.valid?.must_equal true
+    end
+  end
+  
   describe 'scope' do
     before do
       notification
@@ -78,6 +94,10 @@ describe Notification do
       notification.message.must_equal "#{notification.from_user.username} started following your feed."
     end
 
+    it 'should return message for sos notification' do
+      sos_notification.message.must_equal 'Your SoS has been approved.'
+    end
+
     it 'should return message for unknown notifiable type' do
       unknown_notification.message.must_equal 'You have an unread notification!'
     end
@@ -106,6 +126,10 @@ describe Notification do
 
     it 'should return target for follow' do
       notification.target.must_equal notification.notifiable.user
+    end
+
+    it 'should return target for sos' do
+      sos_notification.target.must_equal sos_notification.notifiable
     end
   end
 
