@@ -45,7 +45,7 @@ describe ApiSession do
   describe '#deactivate' do
     let(:android_user_session) { create(:api_session, user: create(:user, android_registration_id: SecureRandom.hex(6))) }
     let(:iphone_user_session)  { create(:api_session, user: create(:user, iphone_token: SecureRandom.hex(6))) }
-    
+
     it 'should set the auth_token to nil' do
       active_session.deactivate
       active_session.reload.auth_token.must_be_nil
@@ -57,18 +57,18 @@ describe ApiSession do
       active_session.deactivate
       active_session.reload.auth_token.wont_be_nil
     end
-    
+
     it 'should set the iphone_token to nil' do
       iphone_user_session.deactivate
       iphone_user_session.user.reload.iphone_token.must_be_nil
     end
-    
+
     it 'should set the android_registration_id to nil' do
       android_user_session.deactivate
       android_user_session.user.reload.android_registration_id.must_be_nil
     end
   end
-  
+
   describe '#active?' do
     it 'should return true' do
       active_session.active?.must_equal true

@@ -6,14 +6,14 @@ describe 'AppMailer' do
     let(:mail) { AppMailer.sos_requested_mail(sos.id) }
 
     it 'should have the provide subject' do
-      mail.subject.must_equal "Fontli: New SoS requested"
+      mail.subject.must_equal 'Fontli: New SoS requested'
     end
 
     it 'should send email with from address' do
-      mail.from.must_equal ["noreply@fontli.com"]
+      mail.from.must_equal %w(noreply@fontli.com)
     end
 
-    it "should send email to provided email address" do
+    it 'should send email to provided email address' do
       mail.to.must_equal SECURE_TREE['sos_notification_receivers']
     end
   end

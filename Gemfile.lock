@@ -2,12 +2,12 @@ GEM
   remote: http://rubygems.org/
   specs:
     CFPropertyList (2.3.2)
-    actionmailer (3.2.19)
-      actionpack (= 3.2.19)
+    actionmailer (3.2.22.2)
+      actionpack (= 3.2.22.2)
       mail (~> 2.5.4)
-    actionpack (3.2.19)
-      activemodel (= 3.2.19)
-      activesupport (= 3.2.19)
+    actionpack (3.2.22.2)
+      activemodel (= 3.2.22.2)
+      activesupport (= 3.2.22.2)
       builder (~> 3.0.0)
       erubis (~> 2.7.0)
       journey (~> 1.0.4)
@@ -15,18 +15,18 @@ GEM
       rack-cache (~> 1.2)
       rack-test (~> 0.6.1)
       sprockets (~> 2.2.1)
-    activemodel (3.2.19)
-      activesupport (= 3.2.19)
+    activemodel (3.2.22.2)
+      activesupport (= 3.2.22.2)
       builder (~> 3.0.0)
-    activerecord (3.2.19)
-      activemodel (= 3.2.19)
-      activesupport (= 3.2.19)
+    activerecord (3.2.22.2)
+      activemodel (= 3.2.22.2)
+      activesupport (= 3.2.22.2)
       arel (~> 3.0.2)
       tzinfo (~> 0.3.29)
-    activeresource (3.2.19)
-      activemodel (= 3.2.19)
-      activesupport (= 3.2.19)
-    activesupport (3.2.19)
+    activeresource (3.2.22.2)
+      activemodel (= 3.2.22.2)
+      activesupport (= 3.2.22.2)
+    activesupport (3.2.22.2)
       i18n (~> 0.6, >= 0.6.4)
       multi_json (~> 1.0)
     airbrake (4.0.0)
@@ -45,6 +45,9 @@ GEM
     bson_ext (1.10.2)
       bson (~> 1.10.2)
     builder (3.0.4)
+    bundler-audit (0.5.0)
+      bundler (~> 1.2)
+      thor (~> 0.18)
     capistrano (3.2.1)
       i18n
       rake (>= 10.0.0)
@@ -225,14 +228,14 @@ GEM
       json (~> 1.8)
       multi_xml (>= 0.5.2)
     httpclient (2.4.0)
-    i18n (0.6.11)
+    i18n (0.7.0)
     inflecto (0.0.2)
     ipaddress (0.8.3)
     journey (1.0.4)
-    jquery-rails (3.1.1)
+    jquery-rails (3.1.4)
       railties (>= 3.0, < 5.0)
       thor (>= 0.14, < 2.0)
-    json (1.8.1)
+    json (1.8.3)
     kaminari (0.16.3)
       actionpack (>= 3.0.0)
       activesupport (>= 3.0.0)
@@ -271,7 +274,7 @@ GEM
       mongoid (>= 3)
     mono_logger (1.1.0)
     moped (1.5.2)
-    multi_json (1.10.1)
+    multi_json (1.12.1)
     multi_xml (0.5.5)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
@@ -289,8 +292,8 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
       slop (~> 3.4)
-    rack (1.4.5)
-    rack-cache (1.2)
+    rack (1.4.7)
+    rack-cache (1.6.1)
       rack (>= 0.4)
     rack-oauth2 (1.0.8)
       activesupport (>= 2.3)
@@ -302,19 +305,19 @@ GEM
       rack
     rack-ssl (1.3.4)
       rack
-    rack-test (0.6.2)
+    rack-test (0.6.3)
       rack (>= 1.0)
-    rails (3.2.19)
-      actionmailer (= 3.2.19)
-      actionpack (= 3.2.19)
-      activerecord (= 3.2.19)
-      activeresource (= 3.2.19)
-      activesupport (= 3.2.19)
+    rails (3.2.22.2)
+      actionmailer (= 3.2.22.2)
+      actionpack (= 3.2.22.2)
+      activerecord (= 3.2.22.2)
+      activeresource (= 3.2.22.2)
+      activesupport (= 3.2.22.2)
       bundler (~> 1.0)
-      railties (= 3.2.19)
-    railties (3.2.19)
-      actionpack (= 3.2.19)
-      activesupport (= 3.2.19)
+      railties (= 3.2.22.2)
+    railties (3.2.22.2)
+      actionpack (= 3.2.22.2)
+      activesupport (= 3.2.22.2)
       rack-ssl (~> 1.3.2)
       rake (>= 0.8.7)
       rdoc (~> 3.4)
@@ -361,7 +364,7 @@ GEM
       rack-protection (~> 1.4)
       tilt (~> 1.3, >= 1.3.4)
     slop (3.6.0)
-    sprockets (2.2.2)
+    sprockets (2.2.3)
       hike (~> 1.2)
       multi_json (~> 1.0)
       rack (~> 1.0)
@@ -376,37 +379,6 @@ GEM
     tilt (1.4.1)
     treetop (1.4.15)
       polyglot
-      polyglot
-      polyglot
-      polyglot
-      polyglot
-      polyglot
-      polyglot
-      polyglot
-      polyglot
-      polyglot
-      polyglot
-      polyglot
-      polyglot
-      polyglot
-      polyglot
-      polyglot
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
-      polyglot (>= 0.3.1)
       polyglot (>= 0.3.1)
     trollop (2.1.2)
     turbo-sprockets-rails3 (0.3.13)
@@ -419,10 +391,9 @@ GEM
       json (>= 1.1.9)
       mime-types (>= 1.16)
       oauth (>= 0.4.1)
-    tzinfo (0.3.40)
-    uglifier (2.5.3)
-      execjs (>= 0.3.0)
-      json (>= 1.8.0)
+    tzinfo (0.3.51)
+    uglifier (3.0.0)
+      execjs (>= 0.3.0, < 3)
     unicode-display_width (1.0.5)
     unicorn (4.8.3)
       kgio (~> 2.6)
@@ -440,6 +411,7 @@ DEPENDENCIES
   apn_sender (= 2.0.1)
   brakeman
   bson_ext
+  bundler-audit
   capistrano (= 3.2.1)
   capistrano-bundler
   capistrano-rails
@@ -452,7 +424,7 @@ DEPENDENCIES
   fog (~> 1.38)
   gcm (~> 0.1.0)
   hpricot (= 0.8.6)
-  jquery-rails
+  jquery-rails (~> 3.1.3)
   kaminari
   less-rails
   mocha
@@ -460,7 +432,7 @@ DEPENDENCIES
   mongoid-minitest
   newrelic_rpm (= 3.9.0.229)
   pry
-  rails (= 3.2.19)
+  rails (= 3.2.22.2)
   rake (= 10.0.3)
   redis (= 3.1.0)
   resque (= 1.25.2)
@@ -473,5 +445,5 @@ DEPENDENCIES
   turbo-sprockets-rails3
   turn
   twitter_oauth (= 0.4.3)
-  uglifier (>= 1.0.3)
+  uglifier (>= 2.7.2)
   unicorn

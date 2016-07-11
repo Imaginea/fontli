@@ -104,7 +104,7 @@ describe User do
     describe 'after_save' do
       let(:android_user) { create(:user, android_registration_id: SecureRandom.hex(6)) }
       let(:iphone_user)  { create(:user, iphone_token: SecureRandom.hex(6)) }
-      
+
       it 'should set avatar' do
         new_user.avatar = photo_data
         new_user.save
@@ -112,13 +112,13 @@ describe User do
       end
 
       it 'should remove the iphone_token of previous user if the token is used by other user' do
-        new_user.iphone_token = iphone_user.iphone_token 
+        new_user.iphone_token = iphone_user.iphone_token
         new_user.save
         iphone_user.reload.iphone_token.must_be_nil
       end
 
       it 'should remove the android_registration_id of previous user if the device_id is used by other user' do
-        new_user.android_registration_id = android_user.android_registration_id 
+        new_user.android_registration_id = android_user.android_registration_id
         new_user.save
         android_user.reload.android_registration_id.must_be_nil
       end
