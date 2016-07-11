@@ -36,6 +36,7 @@ describe Photo do
   it { must have_many(:mentions) }
   it { must have_many(:hash_tags) }
   it { must have_and_belong_to_many(:collections) }
+  it { must have_many(:notifications) }
 
   it { must validate_length_of(:caption).within(2..500) }
   it { must validate_presence_of(:data_filename) }
@@ -182,6 +183,12 @@ describe Photo do
         ActionMailer::Base.deliveries.count.must_equal 0
         photo.update_attributes(font_help: true)
         ActionMailer::Base.deliveries.count.must_equal 1
+      end
+      
+      it 'should create an sos notification if sos is approved' do
+        sos_requested.notifications.count.must_equal 0
+        sos_requested.update_attribute(:sos_approved, true)
+        sos_requested.notifications.count.must_equal 1
       end
     end
     

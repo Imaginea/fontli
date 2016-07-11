@@ -13,7 +13,9 @@ class Notification
   belongs_to :to_user, :class_name => 'User', :index => true, :inverse_of => :notifications
   belongs_to :notifiable, :polymorphic => true, :index => true
 
-  validates :from_user_id, :to_user_id, :presence => true
+  validates :from_user_id, :presence => true, unless: lambda { |n| n.notifiable_type == 'Photo' }
+  validates :to_user_id, :presence => true
+  
   validates :notifiable_id, :notifiable_type, :presence => true
 
   default_scope desc(:updated_at, :unread)
@@ -45,6 +47,8 @@ class Notification
       "#{frm_usr.username} agreed your spotting."
     when /Follow/
       "#{frm_usr.username} started following your feed."
+    when /Photo/
+      "Your SoS has been approved."
     else
       "You have an unread notification!"
     end
@@ -62,6 +66,8 @@ class Notification
       mentnble.is_a?(Comment) ? mentnble.photo : mentnble
     when /Follow/
       notifble.user
+    when /Photo/
+      notifble
     end
   end
 

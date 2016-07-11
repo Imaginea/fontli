@@ -35,6 +35,7 @@ class Photo
   has_many :mentions, :as => :mentionable, :autosave => true, :dependent => :destroy
   has_many :hash_tags, :as => :hashable, :autosave => true, :dependent => :destroy
   has_and_belongs_to_many :collections, :autosave => true
+  has_many :notifications, :as => :notifiable, :dependent => :destroy
 
   FOTO_DIR = APP_CONFIG['photo_dir']
   FOTO_PATH = File.join(FOTO_DIR, ':id/:style.:extension')
@@ -86,8 +87,9 @@ class Photo
   after_create  :populate_mentions
   after_save    :send_sos_requested_mail, if: lambda { |photo| photo.font_help_changed? && photo.font_help? }
   after_save    :save_data_to_file, :save_thumbnail, :save_data_to_aws
-  after_destroy :delete_file
   after_save    :update_user_photos_count, :if => lambda { |photo| photo.caption_changed? || photo.flags_count? }
+  after_save    :create_sos_approved_notification, if: lambda { |photo| photo.sos_approved_changed? && photo.sos_approved? }
+  after_destroy :delete_file
   after_destroy :update_user_photos_count
   
   class << self
@@ -585,5 +587,9 @@ private
 
   def send_sos_requested_mail
     AppMailer.sos_requested_mail(id).deliver
+  end
+
+  def create_sos_approved_notification
+    Notification.create(:to_user_id => user_id, :notifiable => self)
   end
 end

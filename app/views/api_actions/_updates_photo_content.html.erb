@@ -1,0 +1,10 @@
+<% foto = n.notifiable %>
+<li class="sos">
+  <a href="http://openphoto/<%= foto.id.to_s %>">
+    <img class="ref-img" src='<%= foto.url(:thumb) %>' />
+  </a>
+  <div class="text">
+    <%= n.message %>
+  </div>
+  <div class="timestamp"><%= timestamp(foto.sos_approved_at) %></div>
+</li>
