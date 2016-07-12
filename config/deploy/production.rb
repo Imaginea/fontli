@@ -8,6 +8,9 @@ role :app, "107.22.226.231"
 role :web, "107.22.226.231"
 role :db,  "107.22.226.231", :primary => true
 
+# Default value for :linked_files is []
+set :linked_files, %w{config/mongoid.yml .env.production}
+
 # Extended Server Syntax
 # ======================
 # This can be used to drop a more detailed server definition into the

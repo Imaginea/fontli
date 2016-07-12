@@ -19,6 +19,7 @@ gem 'hpricot', '0.8.6'
 gem 'jquery-rails'
 gem 'kaminari'
 gem 'ruby-progressbar'
+gem 'dotenv-rails'
 
 group :assets do
   gem 'sass-rails',   '~> 3.2.6'
@@ -40,7 +41,6 @@ end
 group :development, :test do
   gem 'pry'
   gem 'simplecov', '>= 0.4.0'
-  gem 'dotenv-rails'
 end
 
 group :test do
