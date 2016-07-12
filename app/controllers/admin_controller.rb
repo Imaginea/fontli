@@ -37,20 +37,20 @@ class AdminController < ApplicationController
     @users = Kaminari.paginate_array(@users.to_a).page(params[:page])
     render :users
   end
-  
+
   def activate_user
     @res = User.unscoped.where(:_id => params[:id]).first.update_attribute(:active, true)
     opts = @res ? {:notice => 'User account activated.'} : {:alert => 'Couldn\'t activate. Please try again!'}
     redirect_to '/admin/users', opts
   end
-  
+
   def photos
     @fotos = Photo.all
     @fotos = @fotos.for_homepage if params[:home].to_s == 'true'
     @fotos = @fotos.where(:user_id => params[:user_id]) if params[:user_id].present?
     @fotos = @fotos.order_by(sort_column => sort_direction)
     @fotos = @fotos.search(params[:search], sort_column, sort_direction) if params[:search].present?
-    
+
     if !params[:user_id].to_s.strip.blank?
       @select_photo = true
     elsif params[:home].to_s == 'true'
@@ -87,7 +87,7 @@ class AdminController < ApplicationController
     end
     redirect_to '/admin/collections'
   end
-  
+
   def flagged_users
     params[:sort] ||= 'user_flags_count'
     @users = User.unscoped.where(:user_flags_count.gte => User::ALLOWED_FLAGS_COUNT).order_by(sort_column => sort_direction)
@@ -118,12 +118,12 @@ class AdminController < ApplicationController
 
   def unflag_photo
     photo = Photo.unscoped.where(:_id => params[:id]).first
-    
+
     if photo && photo.flags.destroy_all
       @res = photo.update_attribute(:flags_count, 0)
     end
   end
-  
+
   def sos
     @title, conds = ['SoS photos', {:font_help => true, :sos_approved => true}]
 
@@ -135,14 +135,15 @@ class AdminController < ApplicationController
     else
       params[:sort] ||= 'sos_approved_at'
     end
-    
-    conds = conds.merge(:caption => /^#{params[:search]}.*/i) if params[:search].present?
+
+    search_term = format('%s', params[:search])
+    conds = conds.merge(:caption => /^#{search_term}.*/i) if search_term.present?
     @fotos = Photo.where(conds).order_by(sort_column => sort_direction)
     @fotos = Kaminari.paginate_array(@fotos.to_a).page(params[:page])
     @delete_photo = true
     render :photos
   end
-  
+
   def approve_sos
     @res = Photo[params[:photo_id]].update_attribute(:sos_approved, true) rescue false
   end
@@ -174,7 +175,7 @@ class AdminController < ApplicationController
   end
 
   def select_for_header
-    klass = Kernel.const_get(params[:modal])
+    klass = whitelisted_class.constantize
     obj = klass.find(params[:id])
     obj.show_in_header = params[:status] == 'true'
     obj.save! && render(:nothing => true)
@@ -204,7 +205,7 @@ class AdminController < ApplicationController
                :sound => true }
       APN.notify_async(user.iphone_token, opts)
     end
-    
+
     redirect_to '/admin', :notice => "Notified #{users.length} users."
   end
 
@@ -212,24 +213,24 @@ class AdminController < ApplicationController
   end
 
   def user_stats
-    result = params[:platform].present? ? Hash[users_data(params[:platform]).sort] : {} 
+    result = params[:platform].present? ? Hash[users_data(params[:platform]).sort] : {}
     render :json => result
   end
 
   def top_contributors
     sort_by   = params[:sort] || 'photos_count'
     direction = params[:direction] || 'desc'
-    
+
     @top_contributors = User.non_admins.where(:photos_count.gt => 0).order_by(sort_by => direction).limit(100)
     @top_contributors = @top_contributors.search(params[:search]) if params[:search].present?
-    
+
     if request.format.csv?
       send_data top_contributors_csv, type: 'text/csv', filename: "top_contributors.csv"
     else
       @top_contributors = Kaminari.paginate_array(@top_contributors.to_a).page(params[:page]).per(25)
     end
   end
-  
+
 private
   def sort_column
     params[:sort].blank? ? "created_at" : params[:sort]
@@ -242,8 +243,8 @@ private
   def users_data(platform)
     platform = nil if platform == 'email'
     users = User.order_by(:created_at => :asc).collection.
-                  aggregate({ '$match' => { admin: false, platform: platform } }, 
-                            {'$group'  => {_id: { 'month' => { '$month' => '$created_at' }, 
+                  aggregate({ '$match' => { admin: false, platform: platform } },
+                            {'$group'  => {_id: { 'month' => { '$month' => '$created_at' },
                                   'year' => {'$year' => '$created_at'}}, 'count' => { '$sum' => 1 }}})
     {}.tap do |h|
       users.each do |user|
@@ -273,11 +274,17 @@ private
   def top_contributors_csv
     CSV.generate(headers: true) do |csv|
       csv << ['Username', 'Full Name', 'Email', 'Photos', 'Platform', 'Flag Count', 'Avatar', 'Created At']
-      
+
       @top_contributors.each do |user|
         full_name = view_context.valid_string(user.full_name)
         csv << [user.username, full_name, user.email, user.photos_count, user.platform, user.user_flags_count, user.url_thumb, user.created_dt]
       end
     end
+  end
+
+  def whitelisted_class
+    return params[:modal] if ['User', 'Photo'].include? params[:modal]
+
+    raise StandardError, 'unexpected request!'
   end
 end

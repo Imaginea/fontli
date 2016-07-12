@@ -440,6 +440,15 @@ describe AdminController do
       photo.reload.show_in_header.must_equal true
       response.body.must_equal ' '
     end
+
+    context 'with non-existing class name as params modal' do
+      it 'should raise StandardError with a message' do
+       exception = proc {
+          get :select_for_header, modal: 'NonExistingClass', id: photo.id, status: 'true'
+        }.must_raise StandardError
+        exception.message.must_equal 'unexpected request!'
+      end
+    end
   end
 
   describe '#expire_popular_cache' do

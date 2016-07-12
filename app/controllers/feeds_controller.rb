@@ -53,7 +53,7 @@ class FeedsController < ApplicationController
     end
     @meta_title = 'Font Detail'
   end
-  
+
   def profile
     params[:username] = nil if params[:username] == 'You'
     @user = if !params[:user_id].blank?
@@ -117,7 +117,7 @@ class FeedsController < ApplicationController
     redirect_to feeds_url, :notice => "Posted to feed, successfully."
     end
   end
-  
+
   def remove_unpublished_feed
     @photo = current_user.photos.unpublished.find(params[:photo_id])
     @photo.destroy
@@ -125,7 +125,7 @@ class FeedsController < ApplicationController
 
   def socialize_feed
     @photo = Photo.find(params[:id])
-    meth_name = "#{params[:modal]}_feed".to_sym
+    meth_name = "#{whitelisted_feed}_feed".to_sym
     self.method(meth_name).call
     @photo.reload # to read the new likes_count/comments_count
     render meth_name
@@ -145,7 +145,7 @@ class FeedsController < ApplicationController
   def detail_view
     @foto = Photo.find(params[:id])
   end
-  
+
   def get_mentions_list
     @foto = Photo.find(params[:id])
     @mentions_list = current_user.mentions_list(@foto.id)
@@ -214,7 +214,7 @@ class FeedsController < ApplicationController
     lkd_usr_ids = @likes.collect(&:user_id)
     @comments = foto.comments.desc(:created_at).to_a
     cmt_usr_ids = @comments.collect(&:user_id)
-    
+
     unless (lkd_usr_ids + cmt_usr_ids).empty?
       usrs = User.where(:_id.in => (lkd_usr_ids + cmt_usr_ids)).only(:id, :username, :avatar_filename).to_a
       @users_map = usrs.group_by(&:id)
@@ -233,5 +233,11 @@ class FeedsController < ApplicationController
       end
       @my_cmts = user.comments.where(:photo_id.in => f_ids).desc(:created_at).group_by(&:photo_id)
     end
+  end
+
+  def whitelisted_feed
+    return params[:modal] if %w(like unlike comment share flag unflag remove).include? params[:modal]
+
+    raise StandardError, "unexpected feed: #{params[:modal]}"
   end
 end

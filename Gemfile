@@ -19,6 +19,7 @@ gem 'hpricot', '0.8.6'
 gem 'jquery-rails'
 gem 'kaminari'
 gem 'ruby-progressbar'
+gem 'dotenv-rails'
 
 group :assets do
   gem 'sass-rails',   '~> 3.2.6'
@@ -45,7 +46,7 @@ end
 group :test do
   gem 'turn', :require => false # Pretty printed test output
   gem 'mongoid-minitest'
-  gem 'factory_girl_rails'	
+  gem 'factory_girl_rails'
   gem 'faker'
   gem 'rubocop', require: false
   gem 'database_cleaner'

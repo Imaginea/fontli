@@ -13,4 +13,6 @@ public/fonts/
 public/assets
 public/test_*/
 .project
+.env.local
+.env.test
 *~

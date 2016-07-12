@@ -10,6 +10,8 @@ require 'mongoid-minitest'
 require 'action_controller/test_case'
 require 'active_support/testing/assertions'
 require 'mocha/mini_test'
+require 'dotenv'
+Dotenv.overload '.env.test'
 
 Dir[Rails.root.join('test/support/**/*.rb')].each { |f| require f }
 DatabaseCleaner[:mongoid].strategy = :truncation
