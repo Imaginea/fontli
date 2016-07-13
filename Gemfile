@@ -1,7 +1,9 @@
 source 'http://rubygems.org'
 
+ruby '1.9.3'
+
 gem 'rake', '10.0.3'
-gem 'rails', '3.2.19'
+gem 'rails', '3.2.22.2'
 gem 'therubyracer', '0.9.9'
 gem 'mongoid', '3.1.6'
 gem 'bson_ext' #Version should be same as 'mongo' gem
@@ -16,7 +18,7 @@ gem 'gcm', '~> 0.1.0'
 gem 'newrelic_rpm', '3.9.0.229'
 gem 'fog', '~> 1.38'
 gem 'hpricot', '0.8.6'
-gem 'jquery-rails'
+gem 'jquery-rails', '~> 3.1.3'
 gem 'kaminari'
 gem 'ruby-progressbar'
 gem 'dotenv-rails'
@@ -24,7 +26,7 @@ gem 'dotenv-rails'
 group :assets do
   gem 'sass-rails',   '~> 3.2.6'
   gem 'coffee-rails', '~> 3.2.2'
-  gem 'uglifier', '>= 1.0.3'
+  gem 'uglifier', '>= 2.7.2'
   gem 'less-rails'
   gem 'turbo-sprockets-rails3'
 end
@@ -36,6 +38,7 @@ group :development do
   gem 'capistrano-rails'
   gem 'unicorn'
   gem 'brakeman', :require => false
+  gem 'bundler-audit'
 end
 
 group :development, :test do

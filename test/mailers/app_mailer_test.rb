@@ -10,7 +10,7 @@ describe 'AppMailer' do
     end
 
     it 'should send email with from address' do
-      mail.from.must_equal ['noreply@fontli.com']
+      mail.from.must_equal %w(noreply@fontli.com)
     end
 
     it 'should send email to provided email address' do
