@@ -2,7 +2,7 @@ FactoryGirl.define do
   factory User do
     username { Faker::Name.name[0..14].gsub!(/\W/, '') }
     email    { Faker::Internet.email }
-    password 'fontli111'
+    password { Faker::Internet.password(6) }
 
     trait :with_platform do
       platform  %w(twitter facebook).sample

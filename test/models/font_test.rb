@@ -312,9 +312,8 @@ describe Font do
       font_detail
     end
 
-    # Update the return value once the font_detail family_id type is fixed
     it 'should return url of its details' do
-      font.myfonts_url.must_equal nil
+      font.myfonts_url.wont_be_nil
     end
   end
 end

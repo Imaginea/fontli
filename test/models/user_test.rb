@@ -84,7 +84,7 @@ describe User do
 
   it 'should be invalid if password confirmation is not same as password' do
     new_user = build(:user)
-    new_user.password = 'password'
+    new_user.password = Faker::Internet.password(6)
     new_user.password_confirmation = ''
     new_user.must_be :invalid?
     new_user.errors.must_include(:password)
@@ -444,12 +444,14 @@ describe User do
   end
 
   describe '#api_reset_pass' do
+    let(:new_password) { Faker::Internet.password(6) }
+
     it 'should return new password blank message' do
-      app_user.api_reset_pass(app_user.password, '', 'new_password').must_equal [nil, :cur_pass_blank]
+      app_user.api_reset_pass(app_user.password, '', new_password).must_equal [nil, :cur_pass_blank]
     end
 
     it 'should return password not match message' do
-      app_user.api_reset_pass('old_password', 'new_password', 'new_password').must_equal [nil, :cur_pass_not_match]
+      app_user.api_reset_pass('old_password', new_password, new_password).must_equal [nil, :cur_pass_not_match]
     end
 
     it 'should return password same as new message' do
@@ -457,12 +459,12 @@ describe User do
     end
 
     it 'should return password mismatch message' do
-      app_user.api_reset_pass(app_user.password, 'new_pass', 'new_password').must_equal [nil, :pass_confirmation_mismatch]
+      app_user.api_reset_pass(app_user.password, Faker::Internet.password(8), new_password).must_equal [nil, :pass_confirmation_mismatch]
     end
 
     it 'should update the password' do
-      app_user.api_reset_pass(app_user.password, 'new_password', 'new_password')
-      app_user.pass_match?('new_password').must_equal true
+      app_user.api_reset_pass(app_user.password, new_password, new_password)
+      app_user.pass_match?(new_password).must_equal true
     end
   end
 
@@ -490,7 +492,7 @@ describe User do
     end
 
     it 'should return false' do
-      user.pass_match?('wrong_password').must_equal false
+      user.pass_match?(Faker::Internet.password(8)).must_equal false
     end
   end
 

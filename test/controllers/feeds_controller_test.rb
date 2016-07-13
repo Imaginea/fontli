@@ -2,7 +2,7 @@ require 'test_helper'
 
 describe FeedsController do
   let(:user)              { create(:user) }
-  let(:photo)             { create(:photo, user: user, created_at: Time.now.utc, caption: Faker::Lorem.characters(10)) }
+  let(:photo)             { create(:photo, :with_caption, user: user, created_at: Time.now.utc) }
   let(:sos_approved)      { create(:photo, font_help: true, sos_approved: true, created_at: Time.now.utc) }
   let(:font)              { create(:font, photo: photo, family_name: Faker::Lorem.word) }
   let(:other_user)        { create(:user) }
@@ -265,7 +265,7 @@ describe FeedsController do
   describe '#publish_feed' do
     before do
       post :publish_feed, id: unpublished_photo.id,
-                          caption: Faker::Lorem.word,
+                          caption: Faker::Lorem.characters(5),
                           crop: { crop_x: '1', crop_y: '2', crop_w: '3', crop_h: '4' }
     end
 
