@@ -488,7 +488,8 @@ class ApiActionsController < ApiBaseController
   end
 
   def homepage_photos
-    photos = Photo.for_homepage.collect(&:url_thumb)
-    render json: { response: photos }
+    urls = Photo.for_homepage.collect(&:url_thumb)
+    urls = urls.shuffle.first(@limit.to_i) if @limit.present?
+    render json: { response: { photo_urls: urls } }
   end
 end

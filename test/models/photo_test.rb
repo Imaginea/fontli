@@ -165,33 +165,33 @@ describe Photo do
         photo.mentions.wont_be_empty
       end
     end
-    
+
     describe 'after_save' do
       before do
         ActionMailer::Base.deliveries = []
       end
-      
+
       let(:new_photo) { build(:photo, data: photo_data) }
-      
+
       it 'should save data to a file' do
         File.directory?(Photo::FOTO_DIR + "/#{new_photo.id}").must_equal false
         new_photo.save
         File.directory?(Photo::FOTO_DIR + "/#{new_photo.id}").must_equal true
       end
-      
+
       it 'should send a email for sos requested' do
         ActionMailer::Base.deliveries.count.must_equal 0
         photo.update_attributes(font_help: true)
         ActionMailer::Base.deliveries.count.must_equal 1
       end
-      
+
       it 'should create an sos notification if sos is approved' do
         sos_requested.notifications.count.must_equal 0
         sos_requested.update_attribute(:sos_approved, true)
         sos_requested.notifications.count.must_equal 1
       end
     end
-    
+
     describe 'after_destroy' do
       before do
         photo
@@ -428,7 +428,7 @@ describe Photo do
     it 'should return sos' do
       Photo.sos.must_include sos_approved
     end
-    
+
     it 'should return sos sorted by sos_approved_at' do
       Photo.sos.must_equal [sos_approved, sos_approved1]
     end
@@ -734,7 +734,7 @@ describe Photo do
       photo.send(:photos_count).must_equal 1
     end
   end
-  
+
   describe '#flagged?' do
     it 'should return false' do
       photo.flagged?.must_equal false

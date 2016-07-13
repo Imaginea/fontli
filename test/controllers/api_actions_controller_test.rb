@@ -16,13 +16,13 @@ describe ApiActionsController do
   before do
     create(:user, username: 'fontli')
   end
-  
+
   context 'with current_user' do
     before do
       @controller.stubs(:current_session).returns(api_session)
       @controller.instance_variable_set(:@current_session, api_session)
     end
-    
+
     describe '#signout' do
       it 'should deactivate a session' do
         get :signout
@@ -30,7 +30,7 @@ describe ApiActionsController do
         parsed_result['response'].must_equal true
       end
     end
-    
+
     describe '#reset_pass' do
       context 'with valid params' do
         it 'should reset the password' do
@@ -65,7 +65,7 @@ describe ApiActionsController do
         parsed_result['response'].must_equal true
       end
     end
-    
+
     describe '#collections' do
       before do
         collection
@@ -100,7 +100,7 @@ describe ApiActionsController do
         parsed_result['status'].must_equal 'Success'
       end
     end
-    
+
     describe '#unfollow_collection' do
       before do
         user.followed_collection_ids << collection.id
@@ -128,7 +128,7 @@ describe ApiActionsController do
         parsed_result['status'].must_equal 'Success'
       end
     end
-    
+
     describe '#add_photo_to_collections' do
       it 'should return a success response' do
         post :add_photo_to_collections, photo_id: photo.id, collection_names: [collection.name]
@@ -159,13 +159,13 @@ describe ApiActionsController do
     describe '#photo_detail' do
       let(:like)    { create(:like, photo: photo) }
       let(:comment) { create(:comment, photo: photo) }
-      
+
       before do
         like
         comment
         get :photo_detail, photo_id: photo.id
       end
-      
+
       it 'should return JSON data' do
         parsed_result = JSON.parse(response.body)
         parsed_result['response'].wont_be_empty
@@ -174,12 +174,12 @@ describe ApiActionsController do
 
       it 'should return flagged? property' do
         parsed_result = JSON.parse(response.body)
-        parsed_result["response"]['flagged?'].must_equal false
+        parsed_result['response']['flagged?'].must_equal false
       end
-    
+
       it 'should return flags_count' do
         parsed_result = JSON.parse(response.body)
-        parsed_result["response"]['flags_count'].must_equal 0
+        parsed_result['response']['flags_count'].must_equal 0
       end
     end
 
@@ -190,7 +190,7 @@ describe ApiActionsController do
         proc { post :update_photo, opts }.must_raise NoMethodError
       end
     end
-    
+
     describe '#delete_photo' do
       it 'should delete a photo' do
         assert_difference 'Photo.count', 1 do
@@ -206,12 +206,12 @@ describe ApiActionsController do
         end
       end
     end
-    
+
     describe '#unlike_photo' do
       before do
         create(:like, photo: photo, user: api_session.user)
       end
-      
+
       it 'should delete a like and return a success response' do
         post :unlike_photo, photo_id: photo.id
         parsed_result = JSON.parse(response.body)
@@ -226,7 +226,7 @@ describe ApiActionsController do
         end
       end
     end
-    
+
     describe '#flag_user' do
       it 'should create a user_flag' do
         assert_difference 'UserFlag.count', 1 do
@@ -253,7 +253,7 @@ describe ApiActionsController do
 
     describe '#comments_list' do
       let(:font_tag) { create(:font_tag, user: api_session.user) }
-      
+
       before do
         create(:comment, photo_id: photo.id, font_tag_ids: [font_tag.id])
         create(:comment, photo_id: photo.id)
@@ -270,7 +270,7 @@ describe ApiActionsController do
     # need to add font_tag_ids to avoid error
     describe '#delete_comment' do
       let(:comment) { create(:comment, font_tag_ids: [create(:font_tag).id]) }
-      
+
       it 'should return success response' do
         post :delete_comment, comment_id: comment.id
         parsed_result = JSON.parse(response.body)
@@ -298,7 +298,7 @@ describe ApiActionsController do
         photo.reload.font_help.must_equal true
       end
     end
-    
+
     describe '#agree_font' do
       it 'should add a agree for the font' do
         assert_difference 'Agree.count', 1 do
@@ -356,7 +356,7 @@ describe ApiActionsController do
       before do
         create(:follow, user: api_session.user, follower: user)
       end
-      
+
       it 'should return JSON data' do
         get :mentions_list, photo_id: photo.id
         parsed_result = JSON.parse(response.body)
@@ -401,13 +401,13 @@ describe ApiActionsController do
       it 'should return flagged? property' do
         get :hash_tag_feeds, name: hash_tag.name
         parsed_result = JSON.parse(response.body)
-        parsed_result["response"][0]['flagged?'].must_equal false
+        parsed_result['response'][0]['flagged?'].must_equal false
       end
-    
+
       it 'should return flags_count' do
         get :hash_tag_feeds, name: hash_tag.name
         parsed_result = JSON.parse(response.body)
-        parsed_result["response"][0]['flags_count'].must_equal 0
+        parsed_result['response'][0]['flags_count'].must_equal 0
       end
     end
 
@@ -448,15 +448,15 @@ describe ApiActionsController do
         parsed_result['response'].wont_be_empty
         parsed_result['status'].must_equal 'Success'
       end
-    
+
       it 'should return flagged? property' do
         parsed_result = JSON.parse(response.body)
-        parsed_result["response"][0]['flagged?'].must_equal false
+        parsed_result['response'][0]['flagged?'].must_equal false
       end
-      
+
       it 'should return flags_count' do
         parsed_result = JSON.parse(response.body)
-        parsed_result["response"][0]['flags_count'].must_equal 0
+        parsed_result['response'][0]['flags_count'].must_equal 0
       end
     end
 
@@ -601,7 +601,7 @@ describe ApiActionsController do
         parsed_result['status'].must_equal 'Success'
       end
     end
-    
+
     describe '#user_friends' do
       before do
         create(:follow, user: api_session.user, follower: user)
@@ -892,7 +892,7 @@ describe ApiActionsController do
         before do
           get :feed_detail, feed_id: photo.id
         end
-        
+
         it 'should return JSON' do
           parsed_result = JSON.parse(response.body)
           parsed_result['status'].must_equal 'Success'
@@ -901,12 +901,12 @@ describe ApiActionsController do
 
         it 'should return flagged? property' do
           parsed_result = JSON.parse(response.body)
-          parsed_result["response"]['flagged?'].must_equal false
+          parsed_result['response']['flagged?'].must_equal false
         end
-        
+
         it 'should return flags_count' do
           parsed_result = JSON.parse(response.body)
-          parsed_result["response"]['flags_count'].must_equal 0
+          parsed_result['response']['flags_count'].must_equal 0
         end
       end
 
@@ -1024,7 +1024,7 @@ describe ApiActionsController do
       end
     end
   end
-  
+
   context 'without current_user' do
     let(:api_user)     { create(:user) }
     let(:api_session1) { create(:api_session, user: api_user, auth_token: Digest::MD5.hexdigest(SecureRandom.urlsafe_base64 + api_user.id), expires_at: Time.now + 2.weeks) }
@@ -1042,7 +1042,7 @@ describe ApiActionsController do
 
     describe '#signin' do
       let(:device_id) { SecureRandom.hex(6) }
-      
+
       context 'with valid credentials' do
         before do
           post :signin, username: user.username, password: user.password, device_id: device_id
@@ -1053,12 +1053,12 @@ describe ApiActionsController do
           parsed_result['response'].wont_be_empty
           parsed_result['status'].must_equal 'Success'
         end
-        
+
         it 'should return status 200' do
           response.code.must_equal '200'
         end
       end
-      
+
       context 'with invalid credentials' do
         it 'should require valid username and password' do
           post :signin, username: user.username, password: SecureRandom.hex(4), device_id: device_id
@@ -1068,7 +1068,7 @@ describe ApiActionsController do
           parsed_result['errors'].must_equal 'Invalid Username or Password!'
         end
       end
-      
+
       context 'without params' do
         it 'should fail' do
           post :signin
@@ -1079,7 +1079,7 @@ describe ApiActionsController do
         end
       end
     end
-    
+
     describe '#signup' do
       context 'with valid params' do
         it 'should create a new user' do
@@ -1110,7 +1110,7 @@ describe ApiActionsController do
           parsed_result['status'].must_equal 'Failure'
           parsed_result['errors'].must_equal 'Email is invalid'
         end
-        
+
         it 'should fail if email already exists' do
           post :signup, username: username, email: user.email
           parsed_result = JSON.parse(response.body)
@@ -1126,7 +1126,7 @@ describe ApiActionsController do
           parsed_result['status'].must_equal 'Failure'
           parsed_result['errors'].must_equal 'Required params missing - email'
         end
-        
+
         it 'should fail if username not provided' do
           post :signup, email: Faker::Internet.email
           parsed_result = JSON.parse(response.body)
@@ -1134,7 +1134,7 @@ describe ApiActionsController do
           parsed_result['errors'].must_equal 'Required params missing - username'
         end
       end
-      
+
       context 'with platform' do
         it 'should fail if extuid not present' do
           post :signup, username: username, email: Faker::Internet.email, platform: 'facebook'
@@ -1142,7 +1142,7 @@ describe ApiActionsController do
           parsed_result['status'].must_equal 'Failure'
           parsed_result['errors'].must_equal "Sorry, we couldn't sign you up using Facebook. Please try using Twitter."
         end
-        
+
         it 'should create a user' do
           assert_difference 'User.count', 1 do
             post :signup, username: username, email: Faker::Internet.email, platform: 'facebook', extuid: SecureRandom.hex(6)
@@ -1159,10 +1159,10 @@ describe ApiActionsController do
         parsed_result['status'].must_equal 'Success'
       end
     end
-    
+
     describe '#login_check' do
       let(:other_user) { create(:user, extuid: SecureRandom.hex(6)) }
-      
+
       before do
         other_user
       end
@@ -1184,18 +1184,18 @@ describe ApiActionsController do
 
     describe '#stats' do
       let(:stat) { create(:stat) }
-      
+
       before do
         stat
         get :stats
       end
-      
+
       it 'should return the current app version' do
         parsed_result = JSON.parse(response.body)
         parsed_result['response']['app_version'].must_equal stat.app_version
         parsed_result['status'].must_equal 'Success'
       end
-      
+
       it 'should return status 200' do
         response.code.must_equal '200'
       end
@@ -1203,7 +1203,7 @@ describe ApiActionsController do
 
     describe '#features' do
       let(:feature) { create(:feature) }
-      
+
       before do
         feature
         get :features
@@ -1214,34 +1214,34 @@ describe ApiActionsController do
         parsed_result['response'].first['name'].must_equal feature.name
         parsed_result['status'].must_equal 'Success'
       end
-      
+
       it 'should return status 200' do
         response.code.must_equal '200'
       end
     end
-    
+
     describe '#log_crash' do
       context 'with params' do
         before do
           get :log_crash, content: 'Test Error'
         end
-        
+
         it 'should return JSON' do
           parsed_result = JSON.parse(response.body)
           parsed_result['response'].must_equal true
           parsed_result['status'].must_equal 'Success'
         end
-        
+
         it 'should return status 200' do
           response.code.must_equal '200'
         end
       end
-      
+
       context 'without params' do
         before do
           get :log_crash
         end
-        
+
         it 'should require content' do
           parsed_result = JSON.parse(response.body)
           parsed_result['response'].must_equal ''
@@ -1250,25 +1250,39 @@ describe ApiActionsController do
         end
       end
     end
-    
+
     describe '#homepage_photos' do
       let(:homepage_photo) { create(:photo, show_in_homepage: true) }
 
       before do
         photo
         homepage_photo
-        get :homepage_photos
+        create_list(:photo, 10, show_in_homepage: true)
       end
-      
-      it 'should return array of url_thumb of homepage photos' do
-        parsed_result = JSON.parse(response.body)
-        parsed_result['response'].wont_be_empty
-        parsed_result['response'].must_include homepage_photo.url_thumb
+
+      context 'without limit' do
+        before do
+          get :homepage_photos
+        end
+
+        it 'should return array of url_thumbs of all the homepage photos' do
+          parsed_result = JSON.parse(response.body)
+          parsed_result['response']['photo_urls'].length.must_equal Photo.for_homepage.count
+          parsed_result['response']['photo_urls'].must_include homepage_photo.url_thumb
+        end
+
+        it 'should not return url_thumb of non-homepage photos' do
+          parsed_result = JSON.parse(response.body)
+          parsed_result['response']['photo_urls'].wont_include photo.url_thumb
+        end
       end
-      
-      it 'should not return url_thumb of non-homepage photos' do
-        parsed_result = JSON.parse(response.body)
-        parsed_result['response'].wont_include photo.url_thumb
+
+      context 'with limit' do
+        it 'should return array of url_thumbs containing 5 homepage photos' do
+          get :homepage_photos, limit: 5
+          parsed_result = JSON.parse(response.body)
+          parsed_result['response']['photo_urls'].length.must_equal 5
+        end
       end
     end
   end

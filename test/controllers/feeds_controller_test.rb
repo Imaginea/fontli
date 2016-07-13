@@ -350,9 +350,9 @@ describe FeedsController do
 
     context 'with unexpected feed as params modal' do
       it 'should raise StandardError with a message' do
-       exception = proc {
+        exception = proc do
           xhr :post, :socialize_feed, id: photo.id, modal: 'unexpected_feed'
-        }.must_raise StandardError
+        end.must_raise StandardError
         exception.message.must_equal 'unexpected feed: unexpected_feed'
       end
     end
