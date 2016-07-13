@@ -226,7 +226,7 @@ describe Photo do
 
       Photo.in_batches(10, caption: Photo::DEFAULT_TITLE) do |photos|
         photos.each do |photo|
-          photo.update_attribute(:caption, Faker::Lorem.word)
+          photo.update_attribute(:caption, Faker::Lorem.characters(5))
         end
       end
       Photo.unpublished.count.must_equal 0
@@ -257,14 +257,14 @@ describe Photo do
 
   describe '.publish' do
     it 'should publish a unpublished photo' do
-      opts = { photo_id: unpublished_photo.id, caption: Faker::Lorem.word }
+      opts = { photo_id: unpublished_photo.id, caption: Faker::Lorem.characters(5) }
       Photo.publish(opts)
       unpublished_photo.reload.caption.must_equal opts[:caption]
     end
 
     it 'should set it as sos' do
       opts = { photo_id: unpublished_photo.id,
-               caption: Faker::Lorem.word,
+               caption: Faker::Lorem.characters(5),
                font_help: true }
       Photo.publish(opts)
       unpublished_photo.reload.font_help.must_equal true
@@ -445,7 +445,7 @@ describe Photo do
   end
 
   describe '.search' do
-    let(:other_photo) { create(:photo, caption: Faker::Lorem.word) }
+    let(:other_photo) { create(:photo, :with_caption) }
 
     it 'should return blank' do
       Photo.search([]).must_be_empty
@@ -457,7 +457,7 @@ describe Photo do
   end
 
   describe '.search_autocomplete' do
-    let(:other_photo) { create(:photo, caption: Faker::Lorem.word) }
+    let(:other_photo) { create(:photo, :with_caption) }
 
     it 'should return empty array if photos are not found whose caption is same as the provided caption' do
       Photo.search_autocomplete(Faker::Lorem.word).must_be_empty

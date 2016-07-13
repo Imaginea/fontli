@@ -34,7 +34,7 @@ describe ApiActionsController do
     describe '#reset_pass' do
       context 'with valid params' do
         it 'should reset the password' do
-          post :reset_pass, password: user.password, new_password: 'new_pass', confirm_password: 'new_pass'
+          post :reset_pass, password: api_session.user.password, new_password: 'new_pass', confirm_password: 'new_pass'
           parsed_result = JSON.parse(response.body)
           parsed_result['response'].must_equal true
           parsed_result['status'].must_equal 'Success'
@@ -149,7 +149,7 @@ describe ApiActionsController do
 
     describe '#publish_photo' do
       it 'should publish a photo and return success response' do
-        post :publish_photo, photo_id: unpublished_photo.id, caption: Faker::Lorem.word
+        post :publish_photo, photo_id: unpublished_photo.id, caption: Faker::Lorem.characters(5)
         parsed_result = JSON.parse(response.body)
         parsed_result['response']['caption'].wont_equal Photo::DEFAULT_TITLE
         parsed_result['status'].must_equal 'Success'
@@ -186,7 +186,7 @@ describe ApiActionsController do
     # Should be updated once the bug is fixed
     describe '#update_photo' do
       it 'should update photo and return JSON data' do
-        opts = { caption: Faker::Lorem.word, photo_id: photo.id }
+        opts = { caption: Faker::Lorem.characters(5), photo_id: photo.id }
         proc { post :update_photo, opts }.must_raise NoMethodError
       end
     end
@@ -1061,7 +1061,7 @@ describe ApiActionsController do
 
       context 'with invalid credentials' do
         it 'should require valid username and password' do
-          post :signin, username: user.username, password: SecureRandom.hex(4), device_id: device_id
+          post :signin, username: user.username, password: Faker::Internet.password(6), device_id: device_id
           parsed_result = JSON.parse(response.body)
           parsed_result['response'].must_equal ''
           parsed_result['status'].must_equal 'Failure'

@@ -11,7 +11,7 @@ describe AdminController do
   let(:inactive_user) { create(:user, active: false) }
   let(:collection)    { create(:collection) }
   let(:other_user)    { create(:user) }
-  let(:other_photo)   { create(:photo, caption: Faker::Name.name, user: photo.user, created_at: Time.now.utc) }
+  let(:other_photo)   { create(:photo, :with_caption, user: photo.user, created_at: Time.now.utc) }
   let(:sos_requested) { create(:photo, font_help: true, created_at: Time.now.utc) }
   let(:sos_approved)  { create(:photo, font_help: true, sos_approved: true, created_at: Time.now.utc) }
 
@@ -317,8 +317,8 @@ describe AdminController do
     end
 
     context 'with params' do
-      let(:sos_requested1) { create(:photo, font_help: true, created_at: Time.now.utc, caption: Faker::Name.name) }
-      let(:sos_approved1)  { create(:photo, font_help: true, sos_approved: true, created_at: Time.now.utc, caption: Faker::Name.name) }
+      let(:sos_requested1) { create(:photo, :with_caption, font_help: true, created_at: Time.now.utc) }
+      let(:sos_approved1)  { create(:photo, :with_caption, font_help: true, sos_approved: true, created_at: Time.now.utc) }
 
       it 'should include requested sos' do
         get :sos, req: 'true'

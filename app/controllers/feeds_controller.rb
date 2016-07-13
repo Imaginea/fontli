@@ -20,7 +20,7 @@ class FeedsController < ApplicationController
     @meta_title = 'Photo Detail'
     render 'show', :layout => 'plain'
   rescue
-    render :file => 'public/404.html', :status => '404', :layout => false
+    render :file => 'public/404', :status => '404', :layout => false, :format => 'html'
   end
 
   def sos
