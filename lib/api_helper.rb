@@ -236,8 +236,8 @@ module ApiHelper
                             :returns    => [:id, :username, :url_thumb, :created_dt, :recent_photos,
                                             :description, :full_name, :friendship_state],
                             :recent_photos => [:id, :url_thumb] },
-    :homepage_photos    => { :accepts => [],
-                             :returns => [:url_thumbs] }
+    :homepage_photos    => { :accepts => [[:limit]],
+                             :returns => [:photo_urls] }
  }
 
   GUEST_USER_ALLOWED_APIS = [:signin, :signup, :check_token, :popular_photos, :photo_detail, :comments_list, :likes_list]

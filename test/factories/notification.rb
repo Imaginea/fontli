@@ -26,7 +26,7 @@ FactoryGirl.define do
     trait :for_follow do
       association :notifiable, factory: :follow
     end
-    
+
     trait :for_sos do
       association :notifiable, factory: :photo
       from_user_id nil

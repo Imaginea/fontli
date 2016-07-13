@@ -30,18 +30,18 @@ describe Notification do
   describe 'validations' do
     let(:follow_notification) { build(:notification, :for_follow, from_user_id: nil) }
     let(:sos_notification)    { build(:notification, :for_sos, from_user_id: nil) }
-    
+
     it 'should be invalid if from_user is nil' do
       follow_notification.valid?.must_equal false
       follow_notification.from_user_id = create(:user).id
       follow_notification.valid?.must_equal true
     end
-    
+
     it "should be valid if it's an sos notification and from_user is nil" do
       sos_notification.valid?.must_equal true
     end
   end
-  
+
   describe 'scope' do
     before do
       notification
