@@ -13,7 +13,7 @@
   </div>
 <% end %>
 <% content_for :custom_js do %>
-  photoIds = <%= @popular.collect(&:id).to_json.html_safe %>;
+  photoIds = <%= sanitize @popular.collect(&:id).to_json %>;
 <% end %>
 
 <section id="secondaryHeader">

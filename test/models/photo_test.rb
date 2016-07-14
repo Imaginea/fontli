@@ -717,18 +717,6 @@ describe Photo do
     end
   end
 
-  describe '#crop_file' do
-    it 'should return true' do
-      photo.send(:crop_file).must_equal true
-    end
-
-    it 'should set its data_dimenstion' do
-      photo.crop_x = photo.crop_y = photo.crop_w = photo.crop_h = 1
-      photo.send(:crop_file)
-      photo.data_dimension.must_equal '1x1'
-    end
-  end
-
   describe '#photos_count' do
     it 'should return 1' do
       photo.send(:photos_count).must_equal 1

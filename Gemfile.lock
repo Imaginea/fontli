@@ -1,5 +1,5 @@
 GEM
-  remote: http://rubygems.org/
+  remote: https://rubygems.org/
   specs:
     CFPropertyList (2.3.2)
     actionmailer (3.2.22.2)
@@ -41,9 +41,9 @@ GEM
     ast (2.2.0)
     attr_required (1.0.0)
     brakeman (3.3.0)
-    bson (1.10.2)
-    bson_ext (1.10.2)
-      bson (~> 1.10.2)
+    bson (1.12.5)
+    bson_ext (1.12.5)
+      bson (~> 1.12.5)
     builder (3.0.4)
     bundler-audit (0.5.0)
       bundler (~> 1.2)
@@ -276,7 +276,7 @@ GEM
       minitest-matchers (~> 1.2)
       mongoid (>= 3)
     mono_logger (1.1.0)
-    moped (1.5.2)
+    moped (1.5.3)
     multi_json (1.12.1)
     multi_xml (0.5.5)
     net-scp (1.2.1)

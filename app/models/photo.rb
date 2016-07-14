@@ -3,107 +3,102 @@ class Photo
   include MongoExtensions
   include Scorable
 
-  field :caption, :type => String
-  field :data_filename, :type => String
-  field :data_content_type, :type => String
-  field :data_size, :type => Integer
-  field :data_dimension, :type => String
-  field :latitude, :type => Float
-  field :longitude, :type => Float
-  field :address, :type => String
-  field :sos_approved, :type => Boolean, :default => false
-  field :font_help, :type => Boolean, :default => false
-  field :likes_count, :type => Integer, :default => 0
-  field :comments_count, :type => Integer, :default => 0
-  field :flags_count, :type => Integer, :default => 0
-  field :fonts_count, :type => Integer, :default => 0
-  field :created_at, :type => Time
-  field :position, :type => Integer
-  field :sos_requested_at, :type => Time
-  field :sos_requested_by, :type => String
-  field :sos_approved_at, :type => Time
-  field :show_in_homepage, :type => Boolean, :default => false
-  field :show_in_header, :type => Boolean, :default => false
+  field :caption, type: String
+  field :data_filename, type: String
+  field :data_content_type, type: String
+  field :data_size, type: Integer
+  field :data_dimension, type: String
+  field :latitude, type: Float
+  field :longitude, type: Float
+  field :address, type: String
+  field :sos_approved, type: Boolean, default: false
+  field :font_help, type: Boolean, default: false
+  field :likes_count, type: Integer, default: 0
+  field :comments_count, type: Integer, default: 0
+  field :flags_count, type: Integer, default: 0
+  field :fonts_count, type: Integer, default: 0
+  field :created_at, type: Time
+  field :position, type: Integer
+  field :sos_requested_at, type: Time
+  field :sos_requested_by, type: String
+  field :sos_approved_at, type: Time
+  field :show_in_homepage, type: Boolean, default: false
+  field :show_in_header, type: Boolean, default: false
 
-  belongs_to :user, :index => true
-  belongs_to :workbook, :index => true, :counter_cache => true
-  has_many :fonts, :autosave => true, :dependent => :destroy
-  has_many :likes, :dependent => :destroy
-  has_many :flags, :dependent => :destroy
-  has_many :shares, :dependent => :destroy
-  has_many :comments, :autosave => true, :dependent => :destroy
-  has_many :mentions, :as => :mentionable, :autosave => true, :dependent => :destroy
-  has_many :hash_tags, :as => :hashable, :autosave => true, :dependent => :destroy
-  has_and_belongs_to_many :collections, :autosave => true
-  has_many :notifications, :as => :notifiable, :dependent => :destroy
+  belongs_to :user, index: true
+  belongs_to :workbook, index: true, counter_cache: true
+
+  has_many :fonts, autosave: true, dependent: :destroy
+  has_many :likes, dependent: :destroy
+  has_many :flags, dependent: :destroy
+  has_many :shares, dependent: :destroy
+  has_many :comments, autosave: true, dependent: :destroy
+  has_many :mentions, as: :mentionable, autosave: true, dependent: :destroy
+  has_many :hash_tags, as: :hashable, autosave: true, dependent: :destroy
+  has_many :notifications, as: :notifiable, dependent: :destroy
+
+  has_and_belongs_to_many :collections, autosave: true
 
   FOTO_DIR = APP_CONFIG['photo_dir']
   FOTO_PATH = File.join(FOTO_DIR, ':id/:style.:extension')
-  ALLOWED_TYPES = ['image/jpg', 'image/jpeg', 'image/png']
-  DEFAULT_TITLE = 'Yet to publish'
+  ALLOWED_TYPES = ['image/jpg', 'image/jpeg', 'image/png'].freeze
+  DEFAULT_TITLE = 'Yet to publish'.freeze
   # :medium version is used only on the web pages.
-  THUMBNAILS = { :large => '640x640', :medium => '320x320', :thumb => '150x150' }
-  # NOTE: WE still 320x version for web pages.
-  # We can delay generating versions that are not immediately required?
-  # TODO:: Check with mob team on why three versions?
-  # We may have to rename all current url_medium refs to url_web
-  # CHECK: Do we need new iOS build to support new versions?
-  NEW_THUMBNAILS = { :large => '1080x1080', :medium => '750x750', :thumb => '640x640', :web => '320x320' }
+  THUMBNAILS = { large: '640x640', medium: '320x320', thumb: '150x150' }.freeze
   POPULAR_LIMIT = 20
   ALLOWED_FLAGS_COUNT = 5
 
   AWS_API_CONFIG = Fontli.load_erb_config('aws_s3.yml')[Rails.env].symbolize_keys
   AWS_STORAGE = AWS_API_CONFIG.delete(:use_s3) || Rails.env.to_s == 'production'
   AWS_BUCKET = AWS_API_CONFIG.delete(:bucket)
-  AWS_PATH = ":id_:style.:extension"
-  AWS_STORAGE_CONNECTIVITY =  Fog::Storage.new(AWS_API_CONFIG)
-  AWS_SERVER_PATH = "http://s3.amazonaws.com/#{AWS_BUCKET}/"
+  AWS_PATH = ':id_:style.:extension'.freeze
+  AWS_STORAGE_CONNECTIVITY = Fog::Storage.new(AWS_API_CONFIG)
+  AWS_SERVER_PATH = "http://s3.amazonaws.com/#{AWS_BUCKET}/".freeze
 
-  validates :caption, :length => 2..500, :allow_blank => true
-  validates :data_filename, :presence => true
+  validates :caption, length: 2..500, allow_blank: true
+  validates :data_filename, presence: true
   validates :data_size,
-    :inclusion => { :in => 0..(5.megabytes), :message => "should be less than 5MB" },
-    :allow_blank => true
+            inclusion: { in: 0..(5.megabytes), message: 'should be less than 5MB' },
+            allow_blank: true
   validates :data_content_type,
-    :inclusion => { :in => ALLOWED_TYPES, :message => 'should be jpg/png' },
-    :allow_blank => true
+            inclusion: { in: ALLOWED_TYPES, message: 'should be jpg/png' },
+            allow_blank: true
 
   attr_accessor :data, :crop_x, :crop_y, :crop_w, :crop_h, :from_api, :liked_user, :commented_user, :cover
 
   default_scope where(:caption.ne => DEFAULT_TITLE, :flags_count.lt => ALLOWED_FLAGS_COUNT) # default filters
-  scope :recent, lambda { |cnt| desc(:created_at).limit(cnt) }
-  scope :unpublished, where(:caption => DEFAULT_TITLE)
-  scope :sos_requested, where(:font_help => true, :sos_approved => false).desc(:sos_requested_at)
-  scope :sos_approved, where(:font_help => true, :sos_approved => true)
+  scope :recent, ->(cnt) { desc(:created_at).limit(cnt) }
+  scope :unpublished, where(caption: DEFAULT_TITLE)
+  scope :sos_requested, where(font_help: true, sos_approved: false).desc(:sos_requested_at)
+  scope :sos_approved, where(font_help: true, sos_approved: true)
   # Instead mark the photo as inactive when sos requested(to filter it across), and activate during approval
   # But even the user who uploaded it won't be able to see it. Need confirmation on this.
-  scope :non_sos_requested, where(:sos_approved => true)
+  scope :non_sos_requested, where(sos_approved: true)
   scope :geo_tagged, where(:latitude.ne => 0, :longitude.ne => 0)
-  scope :all_popular, Proc.new { where(:likes_count.gt => 1, :created_at.gt => 7.days.ago).desc(:likes_count) }
-  scope :for_homepage, where(:show_in_homepage => true).desc(:created_at)
+  scope :all_popular, proc { where(:likes_count.gt => 1, :created_at.gt => 7.days.ago).desc(:likes_count) }
+  scope :for_homepage, where(show_in_homepage: true).desc(:created_at)
 
-  #before_save :crop_file # we receive only the cropped images from client.
   before_save   :set_sos_approved_at
   after_create  :populate_mentions
-  after_save    :send_sos_requested_mail, if: lambda { |photo| photo.font_help_changed? && photo.font_help? }
+  after_save    :send_sos_requested_mail, if: ->(photo) { photo.font_help_changed? && photo.font_help? }
   after_save    :save_data_to_file, :save_thumbnail, :save_data_to_aws
-  after_save    :update_user_photos_count, :if => lambda { |photo| photo.caption_changed? || photo.flags_count? }
-  after_save    :create_sos_approved_notification, if: lambda { |photo| photo.sos_approved_changed? && photo.sos_approved? }
+  after_save    :update_user_photos_count, if: ->(photo) { photo.caption_changed? || photo.flags_count? }
+  after_save    :create_sos_approved_notification, if: ->(photo) { photo.sos_approved_changed? && photo.sos_approved? }
   after_destroy :delete_file
   after_destroy :update_user_photos_count
-  
+
   class << self
     def [](foto_id)
-      self.where(:_id => foto_id.to_s).first
+      where(_id: foto_id.to_s).first
     end
 
     # mostly used in scripts to batch process the photos
     def in_batches(batch_size = 1000, conds = nil)
       conds ||= { :_id.ne => nil }
-      scpe = self.where(conds)
+      scpe = where(conds)
       fetched_cnt = 0
 
-      while scpe.count > fetched_cnt do
+      while scpe.count > fetched_cnt
         fotos = scpe.asc(:created_at).skip(fetched_cnt).limit(batch_size).to_a
         fetched_cnt += fotos.length
 
@@ -114,28 +109,28 @@ class Photo
 
     def human_attribute_name(attr, opts = {})
       humanized_attrs = {
-        :data_filename => 'Filename',
-        :data_size     => 'File size',
-        :data_content_type => 'File type'
+        data_filename: 'Filename',
+        data_size: 'File size',
+        data_content_type: 'File type'
       }
       humanized_attrs[attr.to_sym] || super
     end
 
     def save_data(opts = {})
-      def_opts = { :caption => DEFAULT_TITLE, :from_api => true }
+      def_opts = { caption: DEFAULT_TITLE, from_api: true }
       opts = def_opts.update opts
-      foto = self.unpublished.where(:user_id => opts[:user_id]).first
+      foto = unpublished.where(user_id: opts[:user_id]).first
       # just update the data, where there's one - unpublished
       unless foto.nil?
         foto.update_attributes(opts) if opts[:data]
         return foto
       end
       Rails.logger.info "Foto created at #{Time.now.utc} --#{`date`}--#{Time.zone.now}- with options - #{opts[:user_id].inspect}"
-      self.new(opts).my_save
+      new(opts).my_save
     end
 
     def publish(opts)
-      foto = self.unpublished.where(:_id => opts.delete(:photo_id)).first
+      foto = unpublished.where(_id: opts.delete(:photo_id)).first
       return [nil, :photo_not_found] if foto.nil?
       usr_id = opts.delete(:user_id)
       opts[:created_at] = Time.now.utc
@@ -148,13 +143,15 @@ class Photo
     end
 
     def add_like_for(photo_id, usr_id)
-      opts = { :user_id => usr_id }
-      self.add_interaction_for(photo_id, :likes, opts)
+      opts = { user_id: usr_id }
+      add_interaction_for(photo_id, :likes, opts)
     end
 
     def unlike_for(photo_id, user_id)
-      if photo = self[photo_id]
-        photo.likes.where(:user_id => user_id).first.try(:destroy)
+      photo = self[photo_id]
+
+      if photo
+        photo.likes.where(user_id: user_id).first.try(:destroy)
         photo.reload
       else
         [nil, :record_not_found]
@@ -162,13 +159,13 @@ class Photo
     end
 
     def add_flag_for(photo_id, usr_id)
-      opts = { :user_id => usr_id }
-      self.add_interaction_for(photo_id, :flags, opts)
+      opts = { user_id: usr_id }
+      add_interaction_for(photo_id, :flags, opts)
     end
 
     def add_share_for(photo_id, usr_id)
-      opts = { :user_id => usr_id, :return_bool => true }
-      self.add_interaction_for(photo_id, :shares, opts)
+      opts = { user_id: usr_id, return_bool: true }
+      add_interaction_for(photo_id, :shares, opts)
     end
 
     # opts - photo_id, body, user_id, font_tags, hashes
@@ -179,12 +176,15 @@ class Photo
       ftags = opts.delete(:font_tags) || []
       # group by unique fonts
       ftags = ftags.group_by { |f| f[:family_unique_id] + f[:family_id] + f[:subfont_id].to_s }
-      fnt, valid_font = [nil, true]
-      opts[:font_tag_ids] = ftags.collect do |key, fnts|
-        f, coords = [ fnts.first, fnts.collect { |hsh| hsh[:coords] } ]
+      fnt = nil
+      valid_font = true
+      opts[:font_tag_ids] = ftags.collect do |_key, fnts|
+        f = fnts.first
+        coords = fnts.collect { |hsh| hsh[:coords] }
         f[:user_id] = opts[:user_id]
         fnt, tag_ids = build_font_tags(f, foto, coords)
-        break unless valid_font = (fnt.new_record? || fnt.save)
+        valid_font = (fnt.new_record? || fnt.save)
+        break unless valid_font
         tag_ids
       end.flatten
       return [nil, fnt.errors.full_messages] unless valid_font
@@ -193,49 +193,49 @@ class Photo
       foto.comments.build(opts)
       foto.save ? foto.reload : [nil, foto.errors.full_messages]
     end
-    
+
     def feeds_for(usr = nil, page = 1, lmt = 15)
       usr ||= current_user
       frn_ids = usr.friend_ids + [usr.id]
       collection_ids = usr.followed_collection_ids
       offst = (page.to_i - 1) * lmt
-      Photo.or({:user_id.in => frn_ids}, {:collection_ids.in => collection_ids, :likes_count.gt => 0}).
-        desc(:created_at).skip(offst).limit(lmt)
+      Photo.or({ :user_id.in => frn_ids }, :collection_ids.in => collection_ids, :likes_count.gt => 0)
+           .desc(:created_at).skip(offst).limit(lmt)
     end
 
     def cached_popular
-      pop_ids = Rails.cache.fetch('popular_photos', :expires_in => 1.day.seconds.to_i) do
-        pops = self.all_popular.limit(POPULAR_LIMIT).pluck(:_id)
+      pop_ids = Rails.cache.fetch('popular_photos', expires_in: 1.day.seconds.to_i) do
+        pops = all_popular.limit(POPULAR_LIMIT).pluck(:_id)
         # add recent fotos if there aren't enough populars
         if pops.length < POPULAR_LIMIT
-          pops += self.recent(POPULAR_LIMIT - pops.length).pluck(:_id)
+          pops += recent(POPULAR_LIMIT - pops.length).pluck(:_id)
         end
         pops
       end
-      self.where(:_id.in => pop_ids).desc(:likes_count, :created_at).to_a
+      where(:_id.in => pop_ids).desc(:likes_count, :created_at).to_a
     end
 
     def popular
-      self.cached_popular
+      cached_popular
     end
 
     # return no of popular photos in random
     # assumes there are enough popular photos in DB
     def random_popular(lmt = 1)
-      fotos = self.popular.select(&:show_in_header)
-      fotos.shuffle.first(lmt)
+      fotos = popular.select(&:show_in_header)
+      fotos.sample(lmt)
     end
 
     def all_by_hash_tag(tag_name, pge = 1, lmt = 20)
       return [] if tag_name.blank?
-      hsh_tags = HashTag.where(:name => /^#{tag_name}$/i).only(:hashable_id, :hashable_type)
+      hsh_tags = HashTag.where(name: /^#{tag_name}$/i).only(:hashable_id, :hashable_type)
       foto_ids = HashTag.photo_ids(hsh_tags)
       offst = (pge.to_i - 1) * lmt
-      self.where(:_id.in => foto_ids).skip(offst).limit(lmt)
+      where(:_id.in => foto_ids).skip(offst).limit(lmt)
     end
 
     def sos(pge = 1, lmt = 20)
-      #return [] if pge.to_i > 2
+      # return [] if pge.to_i > 2
       offst = (pge.to_i - 1) * lmt
       sos_approved.desc(:sos_approved_at).skip(offst).limit(lmt).to_a
     end
@@ -247,26 +247,26 @@ class Photo
       return [] if unames.blank?
       # return only valid users hash of id, username
       urs = User.where(:username.in => unames).only(:id, :username).to_a
-      urs.collect { |u| { :user_id => u.id, :username => u.username } }
+      urs.collect { |u| { user_id: u.id, username: u.username } }
     end
 
     def flagged_ids
-      self.unscoped.where(:flags_count.gte => ALLOWED_FLAGS_COUNT).only(:id).collect(&:id)
+      unscoped.where(:flags_count.gte => ALLOWED_FLAGS_COUNT).only(:id).collect(&:id)
     end
 
-    def search(text,sort = nil,dir = nil)
+    def search(text, sort = nil, dir = nil)
       return [] if text.blank?
       text = Regexp.escape(text.strip)
-      res = self.where(:caption => /^#{text}.*/i).to_a
-      res = res.sort{|a,b| a.send(sort) <=> b.send(sort)} if sort
-      res = res.reverse if dir == "asc"
+      res = where(caption: /^#{text}.*/i).to_a
+      res = res.sort { |a, b| a.send(sort) <=> b.send(sort) } if sort
+      res = res.reverse if dir == 'asc'
       res
     end
 
-    def search_autocomplete(text, lmt=20)
+    def search_autocomplete(text, lmt = 20)
       return [] if text.blank?
       text = Regexp.escape(text.strip)
-      self.where(:caption => /^#{text}.*/i).only(:caption).limit(lmt).collect(&:caption)
+      where(caption: /^#{text}.*/i).only(:caption).limit(lmt).collect(&:caption)
     end
   end
 
@@ -280,12 +280,8 @@ class Photo
     self.data_dimension = get_geometry(file)
   end
 
-  def path(style =  :original)
-    fpath = FOTO_PATH.dup
-    fpath.sub!(/:id/, self.id.to_s)
-    fpath.sub!(/:style/, style.to_s)
-    fpath.sub!(/:extension/, extension)
-    fpath
+  def path(style = :original)
+    file_path(FOTO_PATH, style)
   end
 
   # returns original url, if thumb/large doesn't exist
@@ -294,9 +290,9 @@ class Photo
       style = :large if style == :original # we don't store original in aws
       aws_url(style)
     else
-      pth = self.path(style)
-      pth = File.exist?(pth) ? pth : self.path
-      pth = pth.sub("#{Rails.root}/public", "")
+      pth = path(style)
+      pth = File.exist?(pth) ? pth : path
+      pth = pth.sub("#{Rails.root}/public", '')
       File.join(request_domain, pth)
     end
   end
@@ -305,12 +301,8 @@ class Photo
     "#{AWS_SERVER_PATH}#{id}_#{style}.#{extension}"
   end
 
-  def aws_path(style= :large)
-    fpath = AWS_PATH.dup
-    fpath.sub!(/:id/, self.id.to_s)
-    fpath.sub!(/:style/, style.to_s)
-    fpath.sub!(/:extension/, extension)
-    fpath
+  def aws_path(style = :large)
+    file_path(AWS_PATH, style)
   end
 
   def url_thumb
@@ -331,7 +323,7 @@ class Photo
 
   def crop=(crop_opts)
     crop_opts.each do |k, v|
-      self.send("#{k.to_s}=".to_sym, v)
+      send("#{k}=".to_sym, v)
     end
   end
 
@@ -343,21 +335,22 @@ class Photo
     fnts = fnts.group_by { |f| f[:family_unique_id] + f[:family_id] + f[:subfont_id].to_s }
     cur_user_id = current_user.id
     fnt_tag_ids = []
-    fnts.each do |key, fonts|
-      f, coords = [ fonts.first, fonts.collect { |hsh| hsh[:coords] } ]
+    fnts.each do |_key, fonts|
+      f = fonts.first
+      coords = fonts.collect { |hsh| hsh[:coords] }
       f[:user_id] = cur_user_id
-      fnt, tag_ids = self.class.send(:build_font_tags, f, self, coords)
+      _fnt, tag_ids = Photo.build_font_tags(f, self, coords)
       fnt_tag_ids << tag_ids
     end
     # all font tags are also a comment
-    self.comments.build(:user_id => cur_user_id, :font_tag_ids => fnt_tag_ids.flatten)
+    comments.build(user_id: cur_user_id, font_tag_ids: fnt_tag_ids.flatten)
   end
 
-  #hshs - Array of HashTag hashes
+  # hshs - Array of HashTag hashes
   def hashes=(hshs)
     return true if hshs.blank?
     hshs.each do |h|
-      self.hash_tags.build(h)
+      hash_tags.build(h)
     end
   end
 
@@ -367,23 +360,23 @@ class Photo
     return true if c_names.blank?
     c_names.each do |c_name|
       next if c_name.strip.blank?
-      opts = { :name => c_name, :user => current_user, :active => true }
-      c = Collection.where(:name => c_name).first || Collection.create(opts)
-      self.collections.concat([c])
+      opts = { name: c_name, user: current_user, active: true }
+      c = Collection.where(name: c_name).first || Collection.create(opts)
+      collections.concat([c])
     end
   end
 
   def collection_names
-    self.collections.active.pluck(:name).join('||')
+    collections.active.pluck(:name).join('||')
   end
 
   def add_to_collections(c_names)
     collctns = Collection.where(:name.in => c_names).to_a
-    self.collections.concat(collctns)
+    collections.concat(collctns)
   end
 
   def aspect_fit(frame_width, frame_height)
-    image_width, image_height = self.data_dimension.split('x')
+    image_width, image_height = data_dimension.split('x')
     ratio_frame = frame_width / frame_height
     ratio_image = image_width.to_f / image_height.to_f
     if ratio_image > ratio_frame
@@ -397,37 +390,37 @@ class Photo
   end
 
   def username
-    @usr ||= self.user
+    @usr ||= user
     @usr.username
   end
 
   def user_url_thumb
-    @usr ||= self.user
+    @usr ||= user
     @usr.url_thumb
   end
 
   def top_fonts
-    top_picks = self.fonts.where(:pick_status.gt => 0).to_a
-    top_agreed = self.fonts.where(:agrees_count.gt => 10).to_a
+    top_picks = fonts.where(:pick_status.gt => 0).to_a
+    top_agreed = fonts.where(:agrees_count.gt => 10).to_a
     top_picks + top_agreed
   end
 
   def most_agreed_font
-    self.fonts.desc(:agrees_count).first
+    fonts.desc(:agrees_count).first
   end
 
   # order fonts by top; pick_status -> agrees_count -> tags_count
   def fonts_ord
-    fnts = self.fonts.to_a
-    fnts.sort_by {|f| [-f.pick_status, -f.agrees_count, -f.tags_count] }
+    fnts = fonts.to_a
+    fnts.sort_by { |f| [-f.pick_status, -f.agrees_count, -f.tags_count] }
   end
 
   def liked?
-    current_user.fav_photo_ids.include?(self.id)
+    current_user.fav_photo_ids.include?(id)
   end
 
   def commented?
-    current_user.commented_photo_ids.include?(self.id)
+    current_user.commented_photo_ids.include?(id)
   end
 
   # populate recent 5 liked and 2 commented usernames for a foto.
@@ -437,9 +430,9 @@ class Photo
     lks_lmt = opts[:likes_limit] || 5
     cmts_lmt = opts[:comments_limit] || 2
 
-    lkd_usr_ids ||= self.likes.desc(:created_at).limit(lks_lmt).only(:user_id).collect(&:user_id)
+    lkd_usr_ids ||= likes.desc(:created_at).limit(lks_lmt).only(:user_id).collect(&:user_id)
     cur_usr_id = lkd_usr_ids.delete(current_user.id)
-    cmt_usr_ids ||= self.comments.desc(:created_at).limit(cmts_lmt).only(:user_id).collect(&:user_id)
+    cmt_usr_ids ||= comments.desc(:created_at).limit(cmts_lmt).only(:user_id).collect(&:user_id)
     unless (lkd_usr_ids + cmt_usr_ids).empty?
       usrs = User.where(:_id.in => (lkd_usr_ids + cmt_usr_ids)).only(:id, :username).to_a
       usrs = usrs.group_by(&:id)
@@ -451,10 +444,8 @@ class Photo
   def flagged?
     current_user.flags.pluck(:photo_id).include?(id)
   end
-  
-private
 
-  def self.add_interaction_for(photo_id, klass, opts = {} )
+  def self.add_interaction_for(photo_id, klass, opts = {})
     photo = self[photo_id]
     return [nil, :photo_not_found] if photo.nil?
 
@@ -464,121 +455,112 @@ private
   end
 
   def self.build_font_tags(opts, foto, coords)
-    find_opts = opts.dup.keep_if { |k, v| [:family_unique_id, :family_id, :subfont_id].include? k.to_sym }
+    find_opts = opts.dup.keep_if { |k, _v| [:family_unique_id, :family_id, :subfont_id].include? k.to_sym }
     fnt = foto.fonts.find_or_initialize_by(find_opts)
     okeys = opts.keys - find_opts.keys - ['coords']
     okeys.each { |k| fnt.send("#{k}=".to_sym, opts[k]) }
     tag_ids = coords.collect do |c|
-      tg = fnt.font_tags.build(:coords => c, :user_id => opts[:user_id])
+      tg = fnt.font_tags.build(coords: c, user_id: opts[:user_id])
       tg.id
     end
     [fnt, tag_ids]
   end
 
+  private
+
   def populate_mentions
-    mnts = Photo.check_mentions_in(self.caption)
-    mnts.each { |hsh| self.mentions.create(hsh) }
+    mnts = Photo.check_mentions_in(caption)
+    mnts.each { |hsh| mentions.create(hsh) }
     true
   end
 
   def save_data_to_file
-    return true if self.data.nil?
+    return true if data.nil?
     ensure_dir(FOTO_DIR)
-    ensure_dir(File.join(FOTO_DIR, self.id.to_s))
+    ensure_dir(File.join(FOTO_DIR, id.to_s))
     # skip storing original locally, when aws_storage is enabled
     # but we need to ensure_dir with self.id, for storing thumbnails
     return true if AWS_STORAGE
 
-    Rails.logger.info "Saving file: #{self.path}"
-    FileUtils.cp(self.data, self.path)
+    Rails.logger.info "Saving file: #{path}"
+    FileUtils.cp(data, path)
     true
   end
 
   def save_data_to_aws
     if AWS_STORAGE
-      return true if self.data.nil?
-      Rails.logger.info "Saving file in AWS S3: #{self.aws_path(:large)}"
+      return true if data.nil?
+      Rails.logger.info "Saving file in AWS S3: #{aws_path(:large)}"
       aws_dir = AWS_STORAGE_CONNECTIVITY.directories.get(AWS_BUCKET)
-      
+
       # ensure thumbnails are generate before this step
       THUMBNAILS.keys.each do |style|
-        fp = File.open(self.path(style))
-        aws_dir.files.create(:key => aws_path(style), :body => fp, :public => true, :content_type => @file_obj.content_type)
+        fp = File.open(path(style))
+        aws_dir.files.create(key: aws_path(style), body: fp, public: true, content_type: @file_obj.content_type)
       end
 
       # cleanup the assets on local storage
-      delete_file 
+      delete_file
 
-      if APP_CONFIG["filesystem_storage"]
+      if APP_CONFIG['filesystem_storage']
         # store only the original file
         ensure_dir(FOTO_DIR)
-        ensure_dir(File.join(FOTO_DIR, self.id.to_s))
-        FileUtils.cp(self.data, self.path)
+        ensure_dir(File.join(FOTO_DIR, id.to_s))
+        FileUtils.cp(data, path)
       end
     end
     true
   end
 
   def delete_file
-    Rails.logger.info "Deleting thumbnails.."
-    remove_dir(File.join(FOTO_DIR, self.id.to_s))
+    Rails.logger.info 'Deleting thumbnails..'
+    remove_dir(File.join(FOTO_DIR, id.to_s))
     true
   end
 
   def ensure_dir(dirname = nil)
-    raise "directory path cannot be empty" if dirname.nil?
-    unless File.exist?(dirname)
-      FileUtils.mkdir(dirname)
-    end
+    raise 'directory path cannot be empty' if dirname.nil?
+    FileUtils.mkdir(dirname) unless File.exist?(dirname)
   end
 
   def remove_dir(dirname = nil)
-    raise "directory path cannot be empty" if dirname.nil?
-    if File.exist?(dirname)
-      FileUtils.remove_dir(dirname, true)
-    end
+    raise 'directory path cannot be empty' if dirname.nil?
+    FileUtils.remove_dir(dirname, true) if File.exist?(dirname)
   end
 
   def get_geometry(file = nil)
-    `identify -format %wx%h #{file.nil? ? self.path : file.path}`.strip
-  end
-
-  def crop_file
-    return true unless crop?
-    `convert #{self.path} -crop '#{crop_w.to_i}x#{crop_h.to_i}+#{crop_x.to_i}+#{crop_y.to_i}' #{self.path}`
-    # update the dimension after cropping
-    self.data_dimension = get_geometry
+    `identify -format %wx%h #{file.nil? ? path : file.path}`.strip
   end
 
   def save_thumbnail
-    return true if self.data.nil?
+    return true if data.nil?
     THUMBNAILS.each do |style, size|
-      Rails.logger.info "Saving #{style.to_s}.."
+      Rails.logger.info "Saving #{style}.."
       frame_w, frame_h = size.split('x')
-      size = self.aspect_fit(frame_w.to_i, frame_h.to_i).join('x')
-      `convert #{self.data} -resize '#{size}' -quality 85 -strip -unsharp 0.5x0.5+0.6+0.008 #{self.path(style)}`
+      size = aspect_fit(frame_w.to_i, frame_h.to_i).join('x')
+      system('convert', data, '-resize', size, '-quality', '85', '-strip', '-unsharp', '0.5x0.5+0.6+0.008', path(style))
     end
     true
   end
 
   def extension
-    File.extname(self.data_filename).gsub(/\.+/, '')
+    File.extname(data_filename).gsub(/\.+/, '')
   end
 
   def set_sos_approved_at
-    if self.sos_approved_changed? && self.sos_approved?
+    if sos_approved_changed? && sos_approved?
       self.sos_approved_at = Time.now.utc
     end
     true
   end
 
-  #changes for hashsable polymorphic associations
+  # changes for hashsable polymorphic associations
   def photos_count
     1
   end
 
   def photo_ids
-   [self.id]
+    [id]
   end
 
   def update_user_photos_count
@@ -590,6 +572,14 @@ private
   end
 
   def create_sos_approved_notification
-    Notification.create(:to_user_id => user_id, :notifiable => self)
+    Notification.create(to_user_id: user_id, notifiable: self)
+  end
+
+  def file_path(path, style = :original)
+    fpath = path.dup
+    fpath.sub!(/:id/, id.to_s)
+    fpath.sub!(/:style/, style.to_s)
+    fpath.sub!(/:extension/, extension)
+    fpath
   end
 end
