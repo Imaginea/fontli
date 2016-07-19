@@ -3,7 +3,7 @@ require 'storify_client'
 
 class WelcomeController < ApplicationController
   include AuthClient
-  skip_before_filter :login_required, :except => [:logout]
+  skip_before_filter :login_required, only: [:keepalive, :index, :login, :signup, :auth_callback, :api_doc]
   skip_before_filter :set_current_controller, :only => [:keepalive]
 
   layout :select_layout

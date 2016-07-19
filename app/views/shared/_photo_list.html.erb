@@ -1,5 +1,5 @@
 <% content_for :custom_js do %>
-  photoIds = <%= @photos.collect(&:id).to_json.html_safe %>;
+  photoIds = <%= sanitize @photos.collect(&:id).to_json %>;
 <% end %>
 
 <% usr = @photos.first.try(:user) if @users_map.nil? # for user profile %>

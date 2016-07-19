@@ -13,7 +13,7 @@
 <div class="wrapper search-results-container">
 <% if @posts.any? %>
   <% content_for :custom_js do %>
-    photoIds = <%= @posts.collect(&:id).to_json.html_safe %>;
+    photoIds = <%= sanitize @posts.collect(&:id).to_json %>;
   <% end %>
 
   <div class="font-list" id="posts">
