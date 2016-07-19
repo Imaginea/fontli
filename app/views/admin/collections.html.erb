@@ -27,7 +27,7 @@
       <td><%= c.active? ? 'Yes' : 'No' %></td>
       <td>
         <% unless c.active? %>
-          <%= link_to('Activate', '/admin/activate_collection?id='+c.id.to_s) %>
+          <%= link_to('Activate', activate_collection_admin_path(id: c.id), method: 'put') %>
         <% end %>
       </td>
     </tr>
@@ -37,7 +37,7 @@
 <div class="clearfix"></div>
 
 <div id='new_collection'>
-  <%= form_for :collection, :url => '/admin/create_collection', :class => 'form-inline' do |f| %>
+  <%= form_for :collection, url: create_collection_admin_path, class: 'form-inline' do |f| %>
     <%= f.text_field :name, :placeholder => 'Name' %>
     <%= f.text_field :description, :class => 'input-xlarge', :placeholder => 'Description (Optional)' %>
     <%= submit_tag 'Create New', :class => 'btn btn-primary', :style => 'margin-bottom:10px;' %>

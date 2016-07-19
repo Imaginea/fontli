@@ -35,7 +35,7 @@
       <td><%= valid_string(u.full_name) %></td>
       <td><%= u.email %></td>
       <% if fotos_cnt > 0 %>
-        <td><%= link_to fotos_cnt, '/admin/photos?user_id='+u.id.to_s %></td>
+        <td><%= link_to fotos_cnt, photos_admin_path(user_id: u.id) %></td>
       <% else %>
         <td><%= fotos_cnt %></td>
       <% end %>
@@ -46,16 +46,16 @@
       <td><%= u.created_dt %></td>
       <td>
         <% if @suspend_user %>
-          <%= link_to('Suspend', '/admin/suspend_user?id='+u.id.to_s) %>
+          <%= link_to('Suspend', suspend_user_admin_path(id: u.id), method: 'put') %>
         <% end %>
         <% if @unflag_user %>
-          <%= link_to('UnFlag', '/admin/unflag_user?id='+u.id.to_s) %>
+          <%= link_to('UnFlag', unflag_user_admin_path(id: u.id), method: 'put') %>
         <% end %>
         <% if @activate_user %>
-          <%= link_to('Activate', '/admin/activate_user?id='+u.id.to_s) %>
+          <%= link_to('Activate', activate_user_admin_path(id: u.id), method: 'put') %>
         <% end %>
         <% if @delete_user %>
-          <%= link_to('Delete', '/admin/delete_user?id='+u.id.to_s, confirm: "Are you sure you want to delete #{u.username}? This cannot be undone!") %>
+          <%= link_to('Delete', delete_user_admin_path(id: u.id), method: :delete, confirm: "Are you sure you want to delete #{u.username}? This cannot be undone!") %>
         <% end %>
       </td>
     </tr>

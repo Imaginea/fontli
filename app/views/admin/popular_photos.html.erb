@@ -8,7 +8,7 @@
     Popular <%= @font_page ? 'Fonts' : 'Photos' %>
     <span class='label label-info'>Cached for <%= @font_page ? 48 : 24 %> hours</span>
   </h3>
-  <%= link_to('Expire cache now', '/admin/expire_popular_cache', :method => :post, :class => 'btn btn-primary pull-right', :title => 'Please run this once you are completely done curating Users, Photos and Fonts.', :rel => 'tooltip') %>
+  <%= link_to('Expire cache now', expire_popular_cache_admin_path, method: :post, class: 'btn btn-primary pull-right', title: 'Please run this once you are completely done curating Users, Photos and Fonts.', rel: 'tooltip') %>
   <div style='clear:both;'>&nbsp;</div>
 </div>
 

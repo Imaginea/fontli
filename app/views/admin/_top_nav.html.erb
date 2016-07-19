@@ -1,50 +1,49 @@
 <ul class="nav">
-  <li class="<%= 'active' if params[:action] == 'index' %>">
-    <a href="/admin">Home</a>
+  <li class="<%=  active_class('index') %>">
+    <%= link_to 'Home', admin_path %>
   </li>
-  <% # Can refactor all these dropdown options as nav_dropdown helper method %>
-  <li class="dropdown <%= 'active' if [:users, :suspended_users].include?(params[:action].to_sym) %>" id="menu1">
+  <li class="dropdown <%= active_class('users', 'suspended_users', 'users_statistics', 'top_contributors') %>" id="menu1">
     <a class="dropdown-toggle" data-toggle="dropdown" href="#menu1">Users <b class="caret"></b></a>
     <ul class="dropdown-menu">
-      <li><a href="/admin/users">All</a></li>
-      <li><a href="/admin/suspended_users">Suspended</a></li>
-      <li><a href="/admin/users_statistics">Statistics</a></li>
-      <li><a href="/admin/top_contributors">Top Contributors</a></li>
+      <li><%= link_to 'All', users_admin_path %></li>
+      <li><%= link_to 'Suspended', suspended_users_admin_path %></li>
+      <li><%= link_to 'Statistics', users_statistics_admin_path %></li>
+      <li><%= link_to 'Top Contributors', top_contributors_admin_path %></li>
     </ul>
   </li>
-  <li class="dropdown <%= 'active' if params[:action] == 'photos' %>" id="menu2">
+  <li class="dropdown <%= active_class('photos') %>" id="menu2">
     <a class="dropdown-toggle" data-toggle="dropdown" href="#menu2">Photos <b class="caret"></b></a>
     <ul class="dropdown-menu">
-      <li><a href='/admin/photos'>All</a></li>
-      <li><a href='/admin/photos?home=true'>For homepage</a></li>
+      <li><%= link_to 'All', photos_admin_path %></li>
+      <li><%= link_to 'For homepage', photos_admin_path(home: true) %></li>
     </ul>
   </li>
-  <li class="dropdown <%= 'active' if params[:action] == 'collections' %>" id="menu6">
+  <li class="dropdown <%= active_class('collections') %>" id="menu6">
     <a class="dropdown-toggle" data-toggle="dropdown" href="#menu6">Collections <b class="caret"></b></a>
     <ul class="dropdown-menu">
-      <li><a href='/admin/collections'>View List</a></li>
+      <li><%= link_to 'View List', collections_admin_path %></li>
     </ul>
   </li>
-  <li class="dropdown <%= 'active' if params[:action] == 'sos' %>" id="menu3">
+  <li class="dropdown <%= active_class('sos') %>" id="menu3">
     <a class="dropdown-toggle" data-toggle="dropdown" href="#menu3">SoS <b class="caret"></b></a>
     <ul class="dropdown-menu">
-      <li><a href='/admin/sos'>Approved</a></li>
-      <li><a href='/admin/sos?req=true'>Requested</a></li>
+      <li><%= link_to 'Approved', sos_admin_path %></li>
+      <li><%= link_to 'Requested', sos_admin_path(req: true) %></li>
     </ul>
   </li>
-  <li class="dropdown <%= 'active' if params[:action] =~ /^popular_.*$/ %>" id="menu4">
+  <li class="dropdown <%= active_class('popular_users', 'popular_photos', 'popular_fonts') %>" id="menu4">
     <a class="dropdown-toggle" data-toggle="dropdown" href="#menu4">Popular Content <b class="caret"></b></a>
     <ul class="dropdown-menu">
-      <li><a href='/admin/popular_users'>Users</a></li>
-      <li><a href='/admin/popular_photos'>Photos</a></li>
-      <li><a href='/admin/popular_fonts'>Fonts</a></li>
+      <li><%= link_to 'Users', popular_users_admin_path %></li>
+      <li><%= link_to 'Photos', popular_photos_admin_path %></li>
+      <li><%= link_to 'Fonts', popular_fonts_admin_path %></li>
     </ul>
   </li>
-  <li class="dropdown <%= 'active' if params[:action] =~ /^flagged_.*$/ %>" id="menu5">
+  <li class="dropdown <%= active_class('flagged_users', 'flagged_photos') %>" id="menu5">
     <a class="dropdown-toggle" data-toggle="dropdown" href="#menu5">Flagged Content <b class="caret"></b></a>
     <ul class="dropdown-menu">
-      <li><a href='/admin/flagged_users'>Users</a></li>
-      <li><a href='/admin/flagged_photos'>Photos</a></li>
+      <li><%= link_to 'Users', flagged_users_admin_path  %></li>
+      <li><%= link_to 'Photos', flagged_photos_admin_path %></li>
     </ul>
   </li>
 </ul>
