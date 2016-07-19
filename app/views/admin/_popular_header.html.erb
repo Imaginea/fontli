@@ -33,6 +33,7 @@
     var url = '/admin/select_for_header';
     $.ajax({
       url: url,
+      type: 'put',
       data: {id: id, modal: modal, status: status},
       success: function(data) { $item.appendTo(targetElem); },
       error: function(data) { alert('failed'); }

@@ -62,7 +62,7 @@ describe AdminController do
 
   describe '#suspend_user' do
     before do
-      get :suspend_user, id: user.id
+      put :suspend_user, id: user.id
     end
 
     it 'should make the user inactive' do
@@ -77,7 +77,7 @@ describe AdminController do
 
   describe '#delete_user' do
     before do
-      get :delete_user, id: user.id
+      put :delete_user, id: user.id
     end
 
     it 'should delete a user' do
@@ -107,7 +107,7 @@ describe AdminController do
 
   describe '#activate_user' do
     before do
-      get :activate_user, id: inactive_user.id
+      put :activate_user, id: inactive_user.id
     end
 
     it 'should activate a user' do
@@ -205,7 +205,7 @@ describe AdminController do
   describe '#activate_collection' do
     context 'valid collection' do
       before do
-        get :activate_collection, id: collection.id
+        put :activate_collection, id: collection.id
       end
 
       it 'should activate the collection' do
@@ -224,7 +224,7 @@ describe AdminController do
     context 'invalid collection' do
       before do
         Collection.any_instance.stubs(:update_attribute).returns(false)
-        get :activate_collection, id: collection.id
+        put :activate_collection, id: collection.id
       end
 
       it 'should not activate the collection' do
@@ -259,7 +259,7 @@ describe AdminController do
   describe '#unflag_user' do
     before do
       create_list(:user_flag, 4, user: other_user)
-      get :unflag_user, id: other_user.id
+      put :unflag_user, id: other_user.id
     end
 
     it 'should destroy the user flags' do
@@ -297,7 +297,7 @@ describe AdminController do
   describe '#unflag_photo' do
     before do
       create_list(:flag, 4, photo: other_photo)
-      xhr :get, :unflag_photo, id: other_photo.id
+      xhr :put, :unflag_photo, id: other_photo.id
       other_photo.reload
     end
 
@@ -357,7 +357,7 @@ describe AdminController do
 
   describe '#approve_sos' do
     before do
-      xhr :get, :approve_sos, photo_id: sos_requested.id
+      xhr :put, :approve_sos, photo_id: sos_requested.id
     end
 
     it 'should approve a requested sos' do
@@ -367,7 +367,7 @@ describe AdminController do
 
   describe '#delete_photo' do
     before do
-      xhr :get, :delete_photo, id: photo.id
+      xhr :put, :delete_photo, id: photo.id
     end
 
     it 'should delete a photo' do
@@ -377,13 +377,13 @@ describe AdminController do
 
   describe '#select_photo' do
     it 'should select a photo for homepage' do
-      xhr :get, :select_photo, id: other_photo.id
+      xhr :put, :select_photo, id: other_photo.id
       assigns(:res).must_equal true
       other_photo.reload.show_in_homepage.must_equal true
     end
 
     it 'should remove a photo from homepage' do
-      xhr :get, :select_photo, id: photo.id, select: 'false'
+      xhr :put, :select_photo, id: photo.id, select: 'false'
       assigns(:res).must_equal true
       photo.reload.show_in_homepage.must_equal false
     end
@@ -430,13 +430,13 @@ describe AdminController do
 
   describe '#select_for_header' do
     it 'show update show_in_header of user' do
-      get :select_for_header, modal: 'User', id: user.id, status: 'true'
+      put :select_for_header, modal: 'User', id: user.id, status: 'true'
       user.reload.show_in_header.must_equal true
       response.body.must_equal ' '
     end
 
     it 'show update show_in_header of photo' do
-      get :select_for_header, modal: 'Photo', id: photo.id, status: 'true'
+      put :select_for_header, modal: 'Photo', id: photo.id, status: 'true'
       photo.reload.show_in_header.must_equal true
       response.body.must_equal ' '
     end
@@ -444,7 +444,7 @@ describe AdminController do
     context 'with non-existing class name as params modal' do
       it 'should raise StandardError with a message' do
         exception = proc do
-          get :select_for_header, modal: 'NonExistingClass', id: photo.id, status: 'true'
+          put :select_for_header, modal: 'NonExistingClass', id: photo.id, status: 'true'
         end.must_raise StandardError
         exception.message.must_equal 'unexpected request!'
       end
@@ -485,7 +485,7 @@ describe AdminController do
   describe '#update_stat' do
     before do
       create(:stat)
-      post :update_stat, version: '2.2'
+      put :update_stat, version: '2.2'
     end
 
     it 'should update app version' do

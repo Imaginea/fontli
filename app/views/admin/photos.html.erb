@@ -46,19 +46,19 @@
       <td><%= f.created_dt %></td>
       <td>
         <% if @approve_sos %>
-          <%= link_to('Approve SoS', '/admin/approve_sos?photo_id='+f.id.to_s, :remote => true) %>
+          <%= link_to('Approve SoS', approve_sos_admin_path(photo_id: f.id), remote: true, method: :put) %>
         <% end %>
         <% if @unflag_photo %>
-          <%= link_to('Unflag', '/admin/unflag_photo?id='+f.id.to_s, remote: true, confirm: 'Are you sure you want to unflag this photo?') %>
+          <%= link_to('Unflag', unflag_photo_admin_path(id: f.id), remote: true, method: :put, confirm: 'Are you sure you want to unflag this photo?') %>
         <% end %>
         <% if @delete_photo %>
-          <%= link_to('Delete', '/admin/delete_photo?id='+f.id.to_s, :remote => true, confirm: 'Are you sure you want to delete this photo? This cannot be undone!') %>
+          <%= link_to('Delete', delete_photo_admin_path(id: f.id), remote: true, method: :delete, confirm: 'Are you sure you want to delete this photo? This cannot be undone!') %>
         <% end %>
         <% if @select_photo && !f.show_in_homepage? %>
-          <%= link_to('Select', '/admin/select_photo?id='+f.id.to_s, :remote => true, :title => 'Select for homepage') %>
+          <%= link_to('Select', select_photo_admin_path(id: f.id), remote: true, method: :put, title: 'Select for homepage') %>
         <% end %>
         <% if @unselect_photo && f.show_in_homepage? %>
-          <%= link_to('Unselect', '/admin/select_photo?id='+f.id.to_s+'&select=false', :remote => true) %>
+          <%= link_to('Unselect', select_photo_admin_path(id: f.id, select: false), remote: true, method: :put) %>
         <% end %>
       </td>
     </tr>

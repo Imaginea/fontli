@@ -6,7 +6,7 @@
 
 <%= render 'flash_notices' %>
 
-<%= form_tag '/admin/send_push_notifications', :method => 'post', :class => 'form' do %>
+<%= form_tag send_push_notifications_admin_path, method: 'post', class: 'form' do %>
   <div class="control-group">
     <label>Message (120 chars max):</label>
     <input type="text" name="message" class="span8" />

@@ -36,7 +36,7 @@
       <td><%= valid_string(u.full_name) %></td>
       <td><%= u.email %></td>
       <% if fotos_cnt > 0 %>
-        <td><%= link_to fotos_cnt, '/admin/photos?user_id='+u.id.to_s %></td>
+        <td><%= link_to fotos_cnt, photos_admin_path(user_id: u.id) %></td>
       <% else %>
         <td><%= fotos_cnt %></td>
       <% end %>
