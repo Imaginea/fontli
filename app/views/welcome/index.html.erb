@@ -19,7 +19,6 @@
 <section id="secondaryHeader">
 <div class="wrapper">
   <blockquote>
-    <!--<a class="avatar"><img src="<%= @story.avatar %>" width="73" height="71" /></a>-->
     <p>
       <%= @story.text %> <br />
       <cite><%= @story.name %></cite>
@@ -27,12 +26,6 @@
     </p>
   </blockquote>
   <aside>
-  <% if false %>
-    <button id="join_fontli" href="<%= signup_path(:default) %>">
-      <span>Join <%= number_with_delimiter(User.count) %></span>
-      <span>typoholics</span>
-    </button>
-  <% elsif true %>
     <button id="join_fontli" href="<%= popular_path(:type => 'post') %>">
       <span class='join-cta'>
         Discover
@@ -40,20 +33,6 @@
         typoholics
       </span>
     </button>
-  <% else %>
-    <button style='cursor:default;'>
-      <% if false # countdown not required for now %>
-      <span data-count='<%= user_countdown_count %>' class='user-countdown'>
-        <% user_countdown_count.to_s.length.times do |i| %>
-          <strong class='<%= i %>'><%= 0 %></strong>
-        <% end %>
-        typoholics
-      </span>
-      <% end %>
-      <span><%= number_with_delimiter(User.count) %></span>
-      <span>typoholics</span>
-    </button>
-  <% end %>
     <div class="share">
       <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.fontli.com" data-text="@fontli, Fontli- discover and share pure type love!"></a>
       <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
