@@ -59,7 +59,6 @@ class AdminController < ApplicationController
       @select_photo = true
     end
     @fotos = Kaminari.paginate_array(@fotos.to_a).page(params[:page])
-    @delete_photo = true
   end
 
   def collections
@@ -112,7 +111,6 @@ class AdminController < ApplicationController
     @title = 'Flagged Photos'
     params[:search] = 'Not Implemented'
     @unflag_photo = true
-    @delete_photo = true
     @fotos = Kaminari.paginate_array(@fotos.to_a).page(params[:page])
     render :photos
   end
@@ -126,26 +124,12 @@ class AdminController < ApplicationController
   end
 
   def sos
-    @title = 'SoS photos'
-    conds = { font_help: true, sos_approved: true }
-
-    if params[:req] == 'true'
-      @title = 'SoS photos waiting for approval'
-      conds = conds.merge(sos_approved: false)
-      params[:sort] ||= 'sos_requested_at'
-      @approve_sos = true
-    else
-      params[:sort] ||= 'sos_approved_at'
-    end
-
-    search_term = format('%s', params[:search])
-    conds = conds.merge(caption: /^#{search_term}.*/i) if search_term.present?
-    @fotos = Photo.where(conds).order_by(sort_column => sort_direction)
+    fetch_sos
+    @fotos = @fotos.search(params[:search], sort_column, sort_direction) if params[:search].present?
     @fotos = Kaminari.paginate_array(@fotos.to_a).page(params[:page])
-    @delete_photo = true
     render :photos
   end
-
+  
   def approve_sos
     @res = Photo[params[:photo_id]].update_attribute(:sos_approved, true) rescue false
   end
@@ -243,8 +227,8 @@ class AdminController < ApplicationController
     platform = nil if platform == 'email'
     users = User.order_by(created_at: :asc).collection.
                   aggregate({ '$match' => { admin: false, platform: platform } },
-                            {'$group'  => { _id: { 'month' => { '$month' => '$created_at' },
-                                  'year' => { '$year' => '$created_at'} }, 'count' => { '$sum' => 1 } } })
+                            { '$group' => { _id: { 'month' => { '$month' => '$created_at' },
+                                  'year' => { '$year' => '$created_at' } }, 'count' => { '$sum' => 1 } } })
     {}.tap do |h|
       users.each do |user|
         year = user['_id']['year']
@@ -259,7 +243,7 @@ class AdminController < ApplicationController
           months_list.index(a.first) <=> months_list.index(b.first)
         end
       end
-      active_years = User.collection.aggregate({ '$group' => { _id: { year: { '$year' => '$created_at'} } } }).collect { |u| u['_id']['year'] }
+      active_years = User.collection.aggregate({ '$group' => { _id: { year: { '$year' => '$created_at' } } } }).collect { |u| u['_id']['year'] }
       (active_years - h.keys).each do |year|
         h[year] = {}
       end
@@ -285,5 +269,17 @@ class AdminController < ApplicationController
     return params[:modal] if %w(User Photo).include? params[:modal]
 
     raise StandardError, 'unexpected request!'
+  end
+  
+  def fetch_sos
+    if params[:req] == 'true'
+      @title = 'SoS photos waiting for approval'
+      @fotos = Photo.sos_requested
+      params[:sort] ||= 'sos_requested_at'
+    else
+      @title = 'SoS photos'
+      @fotos = Photo.sos_approved
+      params[:sort] ||= 'sos_approved_at'
+    end
   end
 end

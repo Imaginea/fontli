@@ -45,15 +45,13 @@
       <td><%= f.user.username rescue 'User Flagged' %></td>
       <td><%= f.created_dt %></td>
       <td>
-        <% if @approve_sos %>
+        <% if params[:req] == 'true' %>
           <%= link_to('Approve SoS', approve_sos_admin_path(photo_id: f.id), remote: true, method: :put) %>
         <% end %>
         <% if @unflag_photo %>
           <%= link_to('Unflag', unflag_photo_admin_path(id: f.id), remote: true, method: :put, confirm: 'Are you sure you want to unflag this photo?') %>
         <% end %>
-        <% if @delete_photo %>
-          <%= link_to('Delete', delete_photo_admin_path(id: f.id), remote: true, method: :delete, confirm: 'Are you sure you want to delete this photo? This cannot be undone!') %>
-        <% end %>
+        <%= link_to('Delete', delete_photo_admin_path(id: f.id), remote: true, method: :delete, confirm: 'Are you sure you want to delete this photo? This cannot be undone!') %>
         <% if @select_photo && !f.show_in_homepage? %>
           <%= link_to('Select', select_photo_admin_path(id: f.id), remote: true, method: :put, title: 'Select for homepage') %>
         <% end %>
