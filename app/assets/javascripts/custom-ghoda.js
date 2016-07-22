@@ -1,9 +1,9 @@
 // document ready events
 $(document).ready(function() {
  //popup
-	$('.bigpic, .collapse, .likes_cnt, .fonts_cnt, .popup .set1-b').live('click', function() {
-		$('.popup').toggleClass('closed open');
-	});
+    $('.bigpic, .collapse, .likes_cnt, .fonts_cnt, .popup .set1-b').live('click', function() {
+	$('.popup').toggleClass('closed open');
+    });
   $('.popup .set1-c, .popup .comments_cnt').live('click', function() {
     $('.popup').toggleClass('closed open');
     $('.popup .view-typetalk').trigger('click');
@@ -16,17 +16,17 @@ $(document).ready(function() {
       $('.popup').toggleClass('open closed');
     $('#popup_loader').hide(); // just in case
     $("body").css("overflow", "inherit");
-    if(prevPageUrl != '') {
+    if(prevPageUrl !== '') {
       history.pushState('data', '', prevPageUrl);
     }
   });
   $(document).keyup(function(e) {
-    if (e.keyCode == 27) { //ESC key
+    if (e.keyCode === 27) { //ESC key
       $('#popup_container').html('').hide();
       if($('.popup').hasClass('open'))
         $('.popup').toggleClass('open closed');
       $('#popup_loader').hide(); // just in case
-      if(prevPageUrl != '') {
+      if(prevPageUrl !== '') {
         history.pushState('data', '', prevPageUrl);
       }
       $("body").css("overflow", "inherit");
@@ -37,7 +37,7 @@ $(document).ready(function() {
   $('#join_fontli').click(function() {
     location.href = $(this).attr('href');
   });
-  if(typeof($('#slider1').lemmonSlider) != 'undefined') {
+  if(typeof($('#slider1').lemmonSlider) !== 'undefined') {
     $('#slider1').lemmonSlider({
       infinite: true
     });
@@ -146,7 +146,7 @@ $(document).ready(function() {
   $('.popup .view-spotted, .popup .fonts_cnt, .popup .set1-b').live('click', function() {
     var url = $(this).attr('data-url');
     if(spottedContentLoaded) {
-      animateSpottedPopup();
+      animatePopup('aa-spotted');
     }else {
       var elem = $(this);
       elem.attr('disabled', 'disabled');
@@ -164,7 +164,7 @@ $(document).ready(function() {
     updateScrollBars('.aa-spotted');
   });
   $('.popup .view-typetalk').live('click', function() {
-    animateTypetalkPopup();
+    animatePopup('aa-typetalk');
     hideSpotContent();
     $('.right-pop .like-box.pop-nav a').removeClass('strong');
     $(this).addClass('strong');
@@ -172,7 +172,7 @@ $(document).ready(function() {
     updateScrollBars('.aa-typetalk');
   });
   $('.popup .view-likes').live('click', function() {
-    animateLikesPopup();
+    animatePopup('aa-likes');
     hideSpotContent();
     $('.right-pop .like-box.pop-nav a').removeClass('strong');
     $('.right-pop .like-box.pop-nav a.view-likes').addClass('strong');
@@ -230,7 +230,7 @@ $(document).ready(function() {
     var url = $(this).attr('action');
     var input = $('.comment-form input[name=comment]');
     var comment = input.val().trim();
-    if(comment != "") {
+    if(comment !== "") {
       showAjaxLoader();
       var params = $(this).serializeArray();
       $.ajax({url: url, data: params, dataType: 'script'});
@@ -254,18 +254,12 @@ $(document).ready(function() {
 $(window).load(function() {
   loadMoreImages('next');
   userCountdownTimer = 0;
-  $('.user-countdown strong').each(function() {
-    var countArray = $.map($('.user-countdown').attr('data-count').split(''), Number);
-    var elem = $(this);
-    var digit = countArray[parseInt(elem.attr('class'))];
-    for(var i=1; i <= digit; i++) { updateCounter(i, digit, elem) }
-  });
   timeout = setTimeout(function() {
     $('.controls .next-page').trigger('click');
   }, userCountdownTimer + 7000);
   interval = null;
   setInterval(function() {
-    if('#slideshow') slideSwitch();
+    if($('#slideshow').length !== 0) slideSwitch();
   }, userCountdownTimer + 8000);
   $('.controls a').click(function() {
     var direction = $(this).attr('class').replace('-page', '');
@@ -277,20 +271,21 @@ $(window).load(function() {
 
 function loadMoreImages(direction) {
   var limit = 5;
-  if(direction == 'prev') limit = limit * -1;
+  if(direction === 'prev') limit = limit * -1;
+  setImageSource($('img[class=hidden-img][xsrc]').slice(limit));
+  setImageSource($('img[class!=hidden-img][xsrc]').slice(limit));
+}
 
-  $('img[class=hidden-img][xsrc]').slice(limit).each(function() {
-    $(this).attr('src', $(this).attr('xsrc'));
-    $(this).removeAttr('xsrc');
-  });
-  $('img[class!=hidden-img][xsrc]').slice(limit).each(function() {
+function setImageSource(fields) {
+  fields.each(function() {
     $(this).attr('src', $(this).attr('xsrc'));
     $(this).removeAttr('xsrc');
   });
 }
+
 function isMobReq() {
   var ua = navigator.userAgent.toLowerCase();
-  var res = ua.match(/windows\sphone|iphone|android/) != null;
+  var res = ua.match(/windows\sphone|iphone|android/) !== null;
   return res;
 }
 function photoDetailPopup(id, url) {
@@ -340,37 +335,33 @@ function hideAjaxLoader(popup) {
 }
 function centerPopup(selector) {
   var elem = $(selector);
+  var marginTop;
+
   if(isMobReq()) {
-    var marginTop = 0; }
+    marginTop = 0; }
   else {
     var windowHeight = $(window).height();
     var popupHeight = elem.height();
-    var marginTop = (windowHeight - popupHeight) / 2;
+    marginTop = (windowHeight - popupHeight) / 2;
   }
   elem.css('margin-top', marginTop + 'px');
 }
 function getDocHeight() {
   return ($(document).height() || $(document).innerHeight());
 }
-function animateSpottedPopup() {
-  $('.popup .right-pop .aa-spotted').fadeIn(1000);
-  $('.popup .right-pop .aa-likes').hide();
-  $('.popup .right-pop .aa-typetalk').hide();
-}
-function animateTypetalkPopup() {
-  $('.popup .right-pop .aa-typetalk').fadeIn(1000);
-  $('.popup .right-pop .aa-likes').hide();
-  $('.popup .right-pop .aa-spotted').hide();
-}
-function animateLikesPopup() {
-  $('.popup .right-pop .aa-likes').fadeIn(1000);
-  $('.popup .right-pop .aa-spotted').hide();
-  $('.popup .right-pop .aa-typetalk').hide();
+function animatePopup(ele) {
+  rightPopup = $('.popup .right-pop');
+  $.each(['aa-spotted', 'aa-likes', 'aa-typetalk'], function(i, field_id) {
+    if (field_id === ele)
+      rightPopup.find('.'+field_id).fadeIn(1000);
+    else
+      rightPopup.find('.'+field_id).hide();
+  });
 }
 function setupPopupNavLinks(id) {
   //expects photoIds variable set on the main page
   //if not just hide the left/right arrows
-  if(photoIds.length == 0) {
+  if(photoIds.length === 0) {
     $('.popup .set5').hide();
     $('.popup .set4').hide();
     return false;
@@ -380,13 +371,13 @@ function setupPopupNavLinks(id) {
   var nextID = photoIds[i+1];
   var prevID = photoIds[i-1];
   //cycle through the list if its last or first
-  if(i == last) nextID = photoIds[0];
-  else if(i == 0) prevID = photoIds[last];
+  if(i === last) nextID = photoIds[0];
+  else if(i === 0) prevID = photoIds[last];
   $('.popup .set5').attr('data-id', nextID);
   $('.popup .set4').attr('data-id', prevID);
 }
 function enableScrollBars(selector) {
-  if(typeof($(selector).mCustomScrollbar) == 'undefined') return true;
+  if(typeof($(selector).mCustomScrollbar) === 'undefined') return true;
   $(selector).mCustomScrollbar({
 	  scrollButtons:{
 			enable:true
@@ -394,12 +385,12 @@ function enableScrollBars(selector) {
  	});
 }
 function updateScrollBars(selector) {
-  if(typeof($(selector).mCustomScrollbar) == 'undefined') return true;
+  if(typeof($(selector).mCustomScrollbar) === 'undefined') return true;
   $(selector).mCustomScrollbar('update');
 }
 function slideSwitch() {
   var $active = $('#slideshow DIV.active');
-  if ( $active.length == 0 ) $active = $('#slideshow DIV:last');
+  if ( $active.length === 0 ) $active = $('#slideshow DIV:last');
   // use this to pull the divs in the order they appear in the markup
   var $next =  $active.next().length ? $active.next() : $('#slideshow DIV:first');
   // uncomment below to pull the divs randomly
@@ -477,6 +468,6 @@ function loadSpottedContent(data, elem) {
   $('.popup .right-pop .aa-spotted').html(data);
   spottedContentLoaded = true;
   if(elem) elem.removeAttr('disabled');
-  animateSpottedPopup();
+  animatePopup('aa-spotted');
   enableScrollBars('.aa-spotted');
 }
