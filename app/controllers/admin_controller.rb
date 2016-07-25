@@ -177,7 +177,6 @@ class AdminController < ApplicationController
     redirect_to admin_path
   end
 
-  # TODO: batch process and or add more criterias to user search.
   def send_push_notifications
     if params[:message].blank?
       flash.now[:alert] = 'Message can\'t be blank' if request.post?
