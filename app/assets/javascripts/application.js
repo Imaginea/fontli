@@ -4,7 +4,7 @@
 // It's not advisable to add code directly here, but if you do, it'll appear at the bottom of the
 // the compiled file.
 //
-//= require less
+//= require less.min
 //= require jquery-1.7.min
 //= require jquery-ui.min
 //= require lemmon-slider
