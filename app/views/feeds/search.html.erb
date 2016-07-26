@@ -38,13 +38,13 @@
     <% @users.each_with_index do |u, i| %>
       <% if i == 6 %> <div id="users_more"> <% end %>
       <div class="profile-detail">
-        <a href="<%= profile_path(:user_id => u.id) %>" class="pro-img-big-none">
+        <a href="<%= profile_path(u.id) %>" class="pro-img-big-none">
           <img width="100%" height="auto" src="<%= u.url_thumb %>" />
           <div class="overlap-a-none"></div>
         </a>
         <div class="block-b-none">
-          <a class="header-user-none" href="<%= profile_path(:user_id => u.id) %>">@<%= u.username %></a>
-          <h1><%= link_to truncate(u.full_name, :length => 12), profile_path(:user_id => u.id), :title => u.full_name %></h1>
+          <a class="header-user-none" href="<%= profile_path(u.id) %>">@<%= u.username %></a>
+          <h1><%= link_to truncate(u.full_name, :length => 12), profile_path(u.id), :title => u.full_name %></h1>
         </div>
       </div>
       <% if (i > 5) && (i == @users.length - 1) %> </div> <% end %>

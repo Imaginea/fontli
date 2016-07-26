@@ -1,22 +1,22 @@
 <ul class='float-Lt'>
   <li class="profile-cta post <%= 'selected' if params[:type].nil? %>">
-    <a data-href="<%= profile_path(:user_id => @user.id) %>" remote=true><%= pluralize(@user.photos_count, 'Post') %></a>
+    <a data-href="<%= profile_path(@user.id) %>" remote=true><%= pluralize(@user.photos_count, 'Post') %></a>
   </li>
   <li class="profile-cta like <%= 'selected' if params[:type] == 'like' %>">
-    <a data-href="<%= profile_path(:user_id => @user.id, :type => 'like') %>" remote=true><%= pluralize(@user.likes_count, 'Like') %></a>
+    <a data-href="<%= profile_path(@user.id, type: 'like') %>" remote=true><%= pluralize(@user.likes_count, 'Like') %></a>
   </li>
   <li class="profile-cta fav_font <%= 'selected' if params[:type] == 'fav_font' %>">
-    <a data-href="<%= profile_path(:user_id => @user.id, :type => 'fav_font') %>" remote=true><%= pluralize(@user.fav_fonts_count, 'Favourite') %></a>
+    <a data-href="<%= profile_path(@user.id, type: 'fav_font') %>" remote=true><%= pluralize(@user.fav_fonts_count, 'Favourite') %></a>
   </li>
   <li class="profile-cta spotted <%= 'selected' if params[:type] == 'spotted' %>">
-    <a data-href="<%= profile_path(:user_id => @user.id, :type => 'spotted') %>" remote=true><%= @user.my_fonts_count %> Spotted</a>
+    <a data-href="<%= profile_path(@user.id, type: 'spotted') %>" remote=true><%= @user.my_fonts_count %> Spotted</a>
   </li>
 </ul>
 <ul class='float-Rt'>
   <li class="profile-cta followers <%= 'selected' if params[:type] == 'followers' %>">
-    <a data-href="<%= profile_path(:user_id => @user.id, :type => 'followers') %>" remote=true><%= pluralize(@user.followers_count, 'Follower') %></a>
+    <a data-href="<%= profile_path(@user.id, type: 'followers') %>" remote=true><%= pluralize(@user.followers_count, 'Follower') %></a>
   </li>
   <li class="profile-cta follows <%= 'selected' if params[:type] == 'follows' %>">
-    <a data-href="<%= profile_path(:user_id => @user.id, :type => 'follows') %>" remote=true><%= @user.follows_count %> Following</a>
+    <a data-href="<%= profile_path(@user.id, type: 'follows') %>" remote=true><%= @user.follows_count %> Following</a>
   </li>
 </ul>

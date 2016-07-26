@@ -114,12 +114,6 @@ module ApplicationHelper
     end
   end
 
-  # HACK: to NOT show any links for V1 launch
-  def profile_path(opts=nil)
-    #session[:test_version] ? super(opts) : 'javascript:;'
-    super(opts)
-  end
-
   def login_required_class
     'login-req' if !logged_in?
   end

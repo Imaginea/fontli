@@ -1,13 +1,13 @@
 <% u ||= c.user %>
 <% fnts_map ||= [] %>
 <div class="comment">
-  <a class="propic" href="<%= profile_path(:user_id => u.id) %>">
+  <a class="propic" href="<%= profile_path(u.id) %>">
     <img src="<%= u.url_thumb %>" width="100%" height="auto">
     <div class="overlap"></div>
   </a>
   <ul>
     <li class="a">
-      <a href="<%= profile_path(:user_id => u.id) %>"><span class="name"><%= u.username %></span></a>
+      <a href="<%= profile_path(u.id) %>"><span class="name"><%= u.username %></span></a>
       <span class="time"><%= timestamp(c.created_at) %></span>
     </li>
     <li class="b">
