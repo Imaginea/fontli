@@ -55,17 +55,10 @@ class FeedsController < ApplicationController
   end
 
   def profile
-    params[:username] = nil if params[:username] == 'You'
-    @user = if !params[:user_id].blank?
-              User.by_id(params[:user_id])
-            elsif !params[:username].blank?
-              User[params[:username]]
-            else
-              current_user
-            end
+    @user = User.by_id(params[:user_id]) || current_user
     page = params[:page] || 1
     offst = (page.to_i - 1) * 18
-
+    
     case params[:type]
     when 'like'
       @photos = @user.fav_photos(page, 18).to_a
@@ -85,7 +78,7 @@ class FeedsController < ApplicationController
       preload_photos_my_likes_comments
     end
   end
-
+  
   def popular
     case params[:type]
     when 'post'
