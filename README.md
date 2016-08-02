@@ -1,11 +1,12 @@
 Fontli is a web application that helps designers and Type enthusiasts to discover fonts and great Typography.
 It also serves as a backend/webservice for the supporting mobile applications.
 
+[![Code Climate](https://codeclimate.com/github/Imaginea/fontli/badges/gpa.svg)](https://codeclimate.com/github/Imaginea/fontli)
 ###Prerequisites:
 - Ruby version         1.9.3 (i686-linux)
 - RubyGems version     1.8.25
-- Rails version        3.2.19
-- Mongo version        2.4.9
+- Rails version        3.2.22.2
+- Mongo version        2.6.4
 - JavaScript Runtime   therubyracer (V8)
 - Image Manipulation   ImageMagick
 

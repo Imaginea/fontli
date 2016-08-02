@@ -375,20 +375,6 @@ class Photo
     collections.concat(collctns)
   end
 
-  def aspect_fit(frame_width, frame_height)
-    image_width, image_height = data_dimension.split('x')
-    ratio_frame = frame_width / frame_height
-    ratio_image = image_width.to_f / image_height.to_f
-    if ratio_image > ratio_frame
-      image_width  = frame_width
-      image_height = frame_width / ratio_image
-    elsif image_height.to_i > frame_height
-      image_width = frame_height * ratio_image
-      image_height = frame_height
-    end
-    [image_width.to_i, image_height.to_i]
-  end
-
   def username
     @usr ||= user
     @usr.username
@@ -534,12 +520,8 @@ class Photo
 
   def save_thumbnail
     return true if data.nil?
-    THUMBNAILS.each do |style, size|
-      Rails.logger.info "Saving #{style}.."
-      frame_w, frame_h = size.split('x')
-      size = aspect_fit(frame_w.to_i, frame_h.to_i).join('x')
-      system('convert', data, '-resize', size, '-quality', '85', '-strip', '-unsharp', '0.5x0.5+0.6+0.008', path(style))
-    end
+    image_manipulation = ImageManipulation.new(self)
+    image_manipulation.save_thumbnail(data, data_dimension)
     true
   end
 

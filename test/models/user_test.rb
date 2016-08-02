@@ -561,15 +561,6 @@ describe User do
     end
   end
 
-  describe '#aspect_fit' do
-    let(:image_data) { Rack::Test::UploadedFile.new(Rails.root + 'test/factories/files/image.jpg', 'image/jpeg') }
-    let(:other_user) { create(:user, avatar: image_data) }
-
-    it 'should return image height and width' do
-      other_user.aspect_fit(75, 75).must_equal [75, 30]
-    end
-  end
-
   describe '#delete_photo' do
     before do
       photo

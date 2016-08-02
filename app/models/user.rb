@@ -343,20 +343,6 @@ class User
     id.to_s
   end
 
-  def aspect_fit(frame_width, frame_height)
-    image_width, image_height = avatar_dimension.split('x')
-    ratio_frame = frame_width / frame_height
-    ratio_image = image_width.to_f / image_height.to_f
-    if ratio_image > ratio_frame
-      image_width  = frame_width
-      image_height = frame_width / ratio_image
-    elsif image_height.to_i > frame_height
-      image_width = frame_height * ratio_image
-      image_height = frame_height
-    end
-    [image_width.to_i, image_height.to_i]
-  end
-
   def delete_photo(foto_id)
     foto = photos.where(_id: foto_id).first
     !foto.nil? && foto.destroy
@@ -474,44 +460,35 @@ class User
   end
 
   def my_photos(page = 1, lmt = 20)
-    offst = (page.to_i - 1) * lmt
-    @my_photos ||= photos.recent(lmt).skip(offst).to_a
+    @my_photos ||= photos.recent(lmt).skip(page_offset(page, lmt)).to_a
   end
 
   def popular_photos(page = 1, lmt = 20)
-    offst = (page.to_i - 1) * lmt
-    @popular_photos ||= photos.desc(:likes_count).limit(lmt).skip(offst).to_a
+    @popular_photos ||= photos.desc(:likes_count).limit(lmt).skip(page_offset(page, lmt)).to_a
   end
 
   def my_workbooks(page = 1, lmt = 20)
-    offst = (page.to_i - 1) * lmt
-    workbooks.only(:id, :title).recent(lmt).skip(offst).to_a
+    workbooks.only(:id, :title).recent(lmt).skip(page_offset(page, lmt)).to_a
   end
 
   def fav_photos(page = 1, lmt = 20)
-    offst = (page.to_i - 1) * lmt
-    foto_ids = fav_photo_ids
-    return [] if foto_ids.empty?
-    Photo.where(:_id.in => foto_ids).limit(lmt).skip(offst).desc(:created_at)
+    Photo.where(:id.in => fav_photo_ids).limit(lmt).skip(page_offset(page, lmt)).desc(:created_at).to_a
   end
 
   def spotted_photos(page = 1, lmt = 20)
-    offst = (page.to_i - 1) * lmt
     foto_ids = fonts.only(:photo_id).collect(&:photo_id)
     return [] if foto_ids.empty?
-    Photo.where(:_id.in => foto_ids).limit(lmt).skip(offst).desc(:created_at)
+    Photo.where(:_id.in => foto_ids).limit(lmt).skip(page_offset(page, lmt)).desc(:created_at)
   end
 
   def my_fonts(page = 1, lmt = 20)
-    offst = (page.to_i - 1) * lmt
-    fonts.limit(lmt).skip(offst)
+    fonts.limit(lmt).skip(page_offset(page, lmt))
   end
 
   def my_fav_fonts(page = 1, lmt = 20)
-    offst = (page.to_i - 1) * lmt
     fnt_ids = fav_font_ids
     return [] if fnt_ids.empty?
-    Font.where(:_id.in => fnt_ids).limit(lmt).skip(offst).desc(:created_at)
+    Font.where(:id.in => fnt_ids).limit(lmt).skip(page_offset(page, lmt)).desc(:created_at)
   end
 
   # return count of favorite fonts
@@ -553,7 +530,6 @@ class User
   end
 
   def my_updates(pge = 1, lmt = 20)
-    offst = (pge.to_i - 1) * lmt
     # find out all possible inactive (notifiable) items
     inactv_uids = User.inactive_ids
     inactv_pids = Photo.flagged_ids
@@ -565,7 +541,7 @@ class User
     inactv_aids = Agree.where(:font_id.in => inactv_fids).only(&:id).collect(&:id)
     blacklst_ids = inactv_pids + inactv_lids + inactv_cids + inactv_mids + inactv_ftids + inactv_aids
 
-    notifs = notifications.where(:from_user_id.nin => inactv_uids, :notifiable_id.nin => blacklst_ids).skip(offst).limit(lmt).to_a
+    notifs = notifications.where(:from_user_id.nin => inactv_uids, :notifiable_id.nin => blacklst_ids).skip(page_offset(pge, lmt)).limit(lmt).to_a
     # mark all notifications as read, on page 1
     notifications.unread.update_all(unread: false)
     notifs
@@ -673,12 +649,8 @@ class User
 
   def save_thumbnail
     return true if avatar.nil?
-    THUMBNAILS.each do |style, size|
-      Rails.logger.info "Saving #{style}.."
-      frame_w, frame_h = size.split('x')
-      size = aspect_fit(frame_w.to_i, frame_h.to_i).join('x')
-      system('convert', path, '-resize', size, '-quality', '85', '-strip', '-unsharp', '0.5x0.5+0.6+0.008', path(style))
-    end
+    image_manipulation = ImageManipulation.new(self)
+    image_manipulation.save_thumbnail(path, avatar_dimension)
     # reset the avatar so that any save on this object
     # will not trigger the thumbnail creation twice.
     @avatar = nil
@@ -733,5 +705,9 @@ class User
   def update_device_token
     User.where(:id.ne => id, :android_registration_id => android_registration_id).update_all(android_registration_id: nil) if android_registration_id_changed?
     User.where(:id.ne => id, :iphone_token => iphone_token).update_all(iphone_token: nil) if iphone_token_changed?
+  end
+
+  def page_offset(page = 1, lmt = 20)
+    (page.to_i - 1) * lmt
   end
 end
