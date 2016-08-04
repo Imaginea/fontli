@@ -357,7 +357,7 @@ class ApiActionsController < ApiBaseController
 
   def user_favorites
     usr = @user_id ? User.by_id(@user_id) : @current_user
-    photos = usr.fav_photos(@page || 1).to_a
+    photos = usr.fav_photos(@page || 1)
     render_response(photos)
   end
 

@@ -3,7 +3,7 @@ require 'test_helper'
 describe ApiActionsController do
   let(:user)              { create(:user) }
   let(:api_session)       { create(:api_session, expires_at: Time.now.utc + 40.weeks) }
-  let(:username)          { Faker::Name.first_name + '11' }
+  let(:username)          { Faker::Lorem.characters(5) }
   let(:collection)        { create(:collection, active: true) }
   let(:photo)             { create(:photo, created_at: Time.now.utc, user: user) }
   let(:photo_data)        { Rack::Test::UploadedFile.new(Rails.root + 'test/factories/files/everlast.jpg', 'image/jpeg') }
