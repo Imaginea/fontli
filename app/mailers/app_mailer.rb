@@ -16,18 +16,6 @@ class AppMailer < ActionMailer::Base
          :subject => "Fontli: New password")
   end
 
-  def invite_mail(from_user, to_user)
-    @user = to_user
-    @from_user = from_user
-    mail(:to => to_user.email,
-         :subject => "Invitation to Fontli")
-  end
-
-  def share_photo_mail(opts = {})
-    @message = opts.delete(:message)
-    mail(opts)
-  end
-
   def feedback_mail(feedbk)
     @feedbk = feedbk
     @user = feedbk.user

@@ -282,12 +282,6 @@ describe FeedsController do
     end
   end
 
-  describe '#remove_unpublished_feed' do
-    it 'should remove an unpublished feed' do
-      proc { post :remove_unpublished_feed, photo_id: unpublished_photo.id }.must_raise ActionController::RoutingError
-    end
-  end
-
   describe '#socialize_feed' do
     context 'with like as params modal' do
       it 'should add a photo like' do
