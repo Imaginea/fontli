@@ -10,7 +10,7 @@ module ApiHelper
   COLLECTION_COMMON_RESPONSE_ATTRS = [:id, :name, :can_follow?].freeze
   FONT_COMMON_RESPONSE_ATTRS = [:user_id, :family_unique_id, :family_name, :family_id, :subfont_name, :subfont_id,
                                 :tags_count, :agrees_count, :pick_status, :img_url, :my_fav?, :expert_tagged]
-  
+
   SIGNATURE_MAP = {
     log_crash: { accepts: [:content],
                  returns: true },
@@ -62,7 +62,7 @@ module ApiHelper
 
     photo_detail: { accepts: [:photo_id],
                     returns: PHOTOS_COMMON_RESPONSE_ATTRS + [:collections, :hash_tags],
-                    fonts_ord: [:id, :my_agree_status] + FONT_COMMON_RESPONSE_ATTRS,
+                    fonts_ord: [:id, :my_agree_status, :coords] + FONT_COMMON_RESPONSE_ATTRS,
                     collections: COLLECTION_COMMON_RESPONSE_ATTRS,
                     hash_tags: [:name] },
     delete_photo: { accepts: [:photo_id],
@@ -126,7 +126,7 @@ module ApiHelper
     my_feeds: { accepts: [[:page]],
                 returns: PHOTOS_COMMON_RESPONSE_ATTRS + [:collections],
                 collections: COLLECTION_COMMON_RESPONSE_ATTRS,
-                fonts_ord: FONT_COMMON_RESPONSE_ATTRS },
+                fonts_ord: FONT_COMMON_RESPONSE_ATTRS + [:coords] },
     feed_detail: { accepts: [:feed_id],
                    returns: PHOTOS_COMMON_RESPONSE_ATTRS + [:collections],
                    collections: COLLECTION_COMMON_RESPONSE_ATTRS,

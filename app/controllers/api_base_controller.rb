@@ -24,7 +24,7 @@ class ApiBaseController < ActionController::Base
     token, devic_id = token_str.split('||')
     @current_session ||=  devic_id ? ApiSession[token, devic_id] : ApiSession.where(:auth_token => token).first
   end
-  
+
   def reset_current_user_and_session
     @current_user = nil
     @current_session = nil
@@ -93,7 +93,7 @@ class ApiBaseController < ActionController::Base
   end
 
 private
-  
+
   # extuid_token is derived from auth_token, when it doesn't include "||"
   # uses encryptor plugin. Check initializers for decryption options used.
   def get_extuid_token
@@ -149,7 +149,7 @@ private
     return result.collect { |res| current_api_result_map(res, returns) } if result_types.include?(result.class)
     returns_with_conditional(result, returns).inject({}) do |hsh, meth|
       val = result.send(meth)
-      val = current_api_result_map(val, current_api_signature_map[meth] ) if result_types.include?(val.class)
+      val = current_api_result_map(val, current_api_signature_map[meth]) if result_types.include?(val.class) && meth != :coords
       hsh.update(meth => (val.nil? ? '' : val)) # send '' instead of nil
     end
   end
