@@ -2,7 +2,7 @@
 lock '3.2.1'
 
 set :application, "typestry"
-set :repo_url,  "git@github.com:Imaginea/fontli.git"
+set :repo_url,  "git@gitlab.pramati.com:Fontli/Backend.git"
 
 # Default branch is :master
 # ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
