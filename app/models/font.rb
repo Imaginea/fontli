@@ -105,7 +105,7 @@ class Font
     end
 
     # reliably find a random photo(selected for header) of all the popular fonts
-    # Uses the inefficient skip random count logic, which is the easiest option 
+    # Uses the inefficient skip random count logic, which is the easiest option
     def random_popular_photo(lmt = 1)
       fids = self.cached_popular_foto_ids_map.values.flatten
       return [] if fids.empty?
@@ -247,6 +247,10 @@ class Font
 
   def myfonts_url
     details.try(:url)
+  end
+
+  def coords
+    font_tags.collect(&:coords)
   end
 
   private
