@@ -110,12 +110,7 @@ class FeedsController < ApplicationController
     redirect_to feeds_url, :notice => "Posted to feed, successfully."
     end
   end
-
-  def remove_unpublished_feed
-    @photo = current_user.photos.unpublished.find(params[:photo_id])
-    @photo.destroy
-  end
-
+  
   def socialize_feed
     @photo = Photo.find(params[:id])
     meth_name = "#{whitelisted_feed}_feed".to_sym
@@ -216,18 +211,14 @@ class FeedsController < ApplicationController
 
   def preload_photos_my_likes_comments(opts={})
     f_ids, user = @photos.collect(&:id), @user
+    
     if f_ids.any?
       @users_map = User.where(:_id.in => @photos.collect(&:user_id)).group_by(&:id)
       @my_lks = @my_cmts = {}
       return true
-
-      unless opts[:skip_likes]
-        @my_lks = user.likes.where(:photo_id.in => f_ids).desc(:created_at).group_by(&:photo_id)
-      end
-      @my_cmts = user.comments.where(:photo_id.in => f_ids).desc(:created_at).group_by(&:photo_id)
     end
   end
-
+  
   def whitelisted_feed
     return params[:modal] if %w(like unlike comment share flag unflag remove).include? params[:modal]
 

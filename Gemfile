@@ -22,6 +22,7 @@ gem 'jquery-rails', '~> 3.1.3'
 gem 'kaminari'
 gem 'ruby-progressbar'
 gem 'dotenv-rails'
+gem 'rubocop', require: false
 
 group :assets do
   gem 'sass-rails',   '~> 3.2.6'
@@ -51,7 +52,6 @@ group :test do
   gem 'mongoid-minitest'
   gem 'factory_girl_rails'
   gem 'faker'
-  gem 'rubocop', require: false
   gem 'database_cleaner'
   gem 'mocha'
 end
