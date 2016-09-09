@@ -316,4 +316,16 @@ describe Font do
       font.myfonts_url.wont_be_nil
     end
   end
+
+  describe '#coords' do
+    let(:font_tag) { create(:font_tag, font: font) }
+
+    before do
+      font_tag
+    end
+
+    it 'should return coords of fonts' do
+      font.coords.must_equal ["#{font_tag.coords_x},#{font_tag.coords_y}"]
+    end
+  end
 end
