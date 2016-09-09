@@ -11,7 +11,7 @@ module AuthClient
     fb_auth = FbGraph::Auth.new(fb_config['app_key'], fb_config['app_secret'])
     @fb_client = fb_auth.client
     @fb_client.redirect_uri = fb_config['callback_url']
-    @fb_client.access_token = session[:fb_access_token]
+    fb_auth.access_token = session[:fb_access_token]
     @fb_client
   end
 

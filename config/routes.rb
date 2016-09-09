@@ -51,10 +51,8 @@ Fontli::Application.routes.draw do
   root to: 'welcome#index'
 
   match 'keepalive' => 'welcome#keepalive', :as => :keepalive
-  match 'signup/:platform' => 'welcome#signup', :as => :signup
   match 'login/:platform'  => 'welcome#login',  :as => :login
-  match 'auth/:platform/callback' => 'welcome#auth_callback', :as => :auth_callback
-  match 'logout' => 'welcome#logout', :as => :logout
+  #match 'auth/:platform/callback' => 'welcome#auth_callback', :as => :auth_callback
 
   # admin controller
   get 'admin', to: 'admin#index', as: 'admin'

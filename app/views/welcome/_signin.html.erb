@@ -11,26 +11,10 @@
     <div class="signin-panel">
       <div class="credential-panel">
       <%= form_tag login_path(:default) do %>
-        <input type="text" name="username" placeholder="Username or Email Id" class="credential" />
-        <input type="password" name="password" placeholder="Password" class="credential" />
-        <a>Forgot Password?</a>
+        <input type="text" name="username" placeholder="Username or Email Id" class="credential" /><br/>
+        <input type="password" name="password" placeholder="Password" class="credential" /><br />
         <button>Sign in</button>
       <% end %>
-      </div>
-
-      <div class="networking" >
-        <div class="membership">
-          <span>Not a member?</span>
-          <p>Sign up now with</p>
-        </div>
-        <a href='<%= login_path(:facebook) %>' class="social">
-          <img src="<%= asset_path('facebook-white.png') %>" width="12" height="25" alt="" title="" />
-          <span>Connect with Facebook</span>
-        </a>
-        <a href='<%= login_path(:twitter) %>' class="social">
-          <img src="<%= asset_path('twitter-white.png') %>" width="24" height="22" alt="" title="" class="twitter" />
-          <span>Connect with Twitter</span>
-        </a>
       </div>
     </div>
   </div>
