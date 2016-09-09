@@ -256,6 +256,8 @@ describe Photo do
   end
 
   describe '.publish' do
+    let(:published_photo) { create(:photo, caption: Faker::Lorem.characters(5)) }
+
     it 'should publish a unpublished photo' do
       opts = { photo_id: unpublished_photo.id, caption: Faker::Lorem.characters(5) }
       Photo.publish(opts)
@@ -268,6 +270,12 @@ describe Photo do
                font_help: true }
       Photo.publish(opts)
       unpublished_photo.reload.font_help.must_equal true
+    end
+
+    it 'should allow to edit a published photo' do
+      opts = { photo_id: published_photo.id, caption: Faker::Lorem.characters(5) }
+      Photo.publish(opts)
+      published_photo.reload.caption.must_equal opts[:caption]
     end
   end
 

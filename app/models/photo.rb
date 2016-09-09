@@ -130,7 +130,7 @@ class Photo
     end
 
     def publish(opts)
-      foto = unpublished.where(_id: opts.delete(:photo_id)).first
+      foto = unscoped.where(_id: opts.delete(:photo_id)).first
       return [nil, :photo_not_found] if foto.nil?
       usr_id = opts.delete(:user_id)
       opts[:created_at] = Time.now.utc
