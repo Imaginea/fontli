@@ -727,4 +727,26 @@ describe Photo do
       photo.flagged?.must_equal false
     end
   end
+
+  describe '#update_collections' do
+    let(:collection)  { create(:collection) }
+    let(:collection1) { create(:collection) }
+
+    before do
+      photo.collections << collection
+    end
+
+    it 'should update photo collections' do
+      photo.collections.must_include collection
+      photo.update_collections([collection1.name])
+      photo.reload.collections.wont_include collection
+      photo.reload.collections.must_include collection1
+    end
+
+    it 'should set collections as empty' do
+      photo.collections.must_include collection
+      photo.update_collections([])
+      photo.reload.collections.must_be_empty
+    end
+  end
 end
