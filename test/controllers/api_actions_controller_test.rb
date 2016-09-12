@@ -1023,6 +1023,15 @@ describe ApiActionsController do
         proc { post :unfav_workbook, workbook_id: workbook.id }.must_raise NoMethodError
       end
     end
+
+    describe '#update_photo_collections' do
+      it 'should return a success response' do
+        post :update_photo_collections, photo_id: photo.id, collection_names: [collection.name]
+        parsed_result = JSON.parse(response.body)
+        parsed_result['response'].first['photo_ids'].wont_be_empty
+        parsed_result['status'].must_equal 'Success'
+      end
+    end
   end
 
   context 'without current_user' do

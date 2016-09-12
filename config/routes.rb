@@ -14,7 +14,7 @@ Fontli::Application.routes.draw do
                  :user_fav_fonts, :follow_user, :unfollow_friend, :add_suggestion, :feeds_html,
                  :my_notifications_count, :my_updates, :network_updates, :my_feeds, :feed_detail,
                  :add_workbook, :update_workbook, :list_workbooks, :workbook_photos, :fav_workbook,
-                 :unfav_workbook, :recommended_users, :homepage_photos].freeze
+                 :unfav_workbook, :recommended_users, :homepage_photos, :update_photo_collections].freeze
 
   API_ACTIONS.each do |action|
     match "/api/#{action}", to: "api_actions##{action}"

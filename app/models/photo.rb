@@ -452,6 +452,10 @@ class Photo
     [fnt, tag_ids]
   end
 
+  def update_collections(c_names)
+    self.collections = Collection.where(:name.in => c_names).to_a if c_names.is_a?(Array)
+  end
+
   private
 
   def populate_mentions
