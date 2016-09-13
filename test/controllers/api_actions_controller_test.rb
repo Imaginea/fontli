@@ -890,6 +890,7 @@ describe ApiActionsController do
     describe '#feed_detail' do
       context 'with valid feed_id' do
         before do
+          create(:font_tag, font: create(:font, photo: photo))
           get :feed_detail, feed_id: photo.id
         end
 
@@ -907,6 +908,11 @@ describe ApiActionsController do
         it 'should return flags_count' do
           parsed_result = JSON.parse(response.body)
           parsed_result['response']['flags_count'].must_equal 0
+        end
+
+        it 'should return coords' do
+          parsed_result = JSON.parse(response.body)
+          parsed_result['response']['fonts_ord'].first['coords'].wont_be_empty
         end
       end
 
