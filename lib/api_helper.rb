@@ -130,7 +130,7 @@ module ApiHelper
     feed_detail: { accepts: [:feed_id],
                    returns: PHOTOS_COMMON_RESPONSE_ATTRS + [:collections],
                    collections: COLLECTION_COMMON_RESPONSE_ATTRS,
-                   fonts_ord: FONT_COMMON_RESPONSE_ATTRS - [:img_url] },
+                   fonts_ord: FONT_COMMON_RESPONSE_ATTRS + [:coords] - [:img_url] },
 
     popular_photos: { accepts: [],
                       returns: [:id, :user_id, :caption, :created_dt, :url_large, :url_thumb] },
