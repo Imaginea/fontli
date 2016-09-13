@@ -6,7 +6,7 @@ describe WelcomeController do
   before do
     @controller.session[:user_id] = nil
   end
-  
+
   describe '#index' do
     before do
       create(:storify_story)
@@ -17,20 +17,20 @@ describe WelcomeController do
       get :index
       assert_redirected_to '/feeds'
     end
-    
+
     it 'should render template index' do
       get :index
       assert_template :index
     end
   end
-  
+
   describe '#keepalive' do
     it 'should return success' do
       get :keepalive
       response.body.must_equal 'Success'
     end
   end
-  
+
   describe '#api_doc' do
     it 'should return api documentation' do
       get :api_doc

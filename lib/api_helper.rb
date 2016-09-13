@@ -217,7 +217,9 @@ module ApiHelper
                                    :description, :full_name, :friendship_state],
                          recent_photos: [:id, :url_thumb] },
     homepage_photos: { accepts: [[:limit]],
-                       returns: [:photo_urls] }
+                       returns: [:photo_urls] },
+    update_photo_collections: { accepts:  [:photo_id, :collection_names],
+                                returns: true }
   }
 
   GUEST_USER_ALLOWED_APIS = [:signin, :signup, :check_token, :popular_photos, :photo_detail, :comments_list, :likes_list]

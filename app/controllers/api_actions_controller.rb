@@ -492,4 +492,10 @@ class ApiActionsController < ApiBaseController
     urls = urls.shuffle.first(@limit.to_i) if @limit.present?
     render json: { response: { photo_urls: urls } }
   end
+
+  def update_photo_collections
+    photo = Photo.find(@photo_id)
+    resp = photo.update_collections(@collection_names)
+    render_response(resp)
+  end
 end
