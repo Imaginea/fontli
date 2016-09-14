@@ -12,6 +12,7 @@ describe ApiActionsController do
   let(:hash_tag)          { create(:hash_tag, hashable: create(:photo, created_at: Time.now.utc)) }
   let(:other_user)        { create(:user) }
   let(:workbook)          { create(:workbook) }
+  let(:font_tag)          { create(:font_tag, font: create(:font, photo: photo)) }
 
   before do
     create(:user, username: 'fontli')
@@ -118,14 +119,20 @@ describe ApiActionsController do
     describe '#collection_detail' do
       before do
         collection.photos << photo
+        font_tag
+        get :collection_detail, collection_id: collection.id
       end
 
       it 'should return JSON data' do
-        get :collection_detail, collection_id: collection.id
         parsed_result = JSON.parse(response.body)
         parsed_result['response'].wont_be_empty
         parsed_result['response']['fotos'].wont_be_empty
         parsed_result['status'].must_equal 'Success'
+      end
+
+      it 'should return coords' do
+        parsed_result = JSON.parse(response.body)
+        parsed_result['response']['fotos'].first['fonts_ord'].first['coords'].wont_be_empty
       end
     end
 
@@ -163,6 +170,7 @@ describe ApiActionsController do
       before do
         like
         comment
+        font_tag
         get :photo_detail, photo_id: photo.id
       end
 
@@ -180,6 +188,11 @@ describe ApiActionsController do
       it 'should return flags_count' do
         parsed_result = JSON.parse(response.body)
         parsed_result['response']['flags_count'].must_equal 0
+      end
+
+      it 'should return coords' do
+        parsed_result = JSON.parse(response.body)
+        parsed_result['response']['fonts_ord'].first['coords'].wont_be_empty
       end
     end
 
@@ -409,6 +422,13 @@ describe ApiActionsController do
         parsed_result = JSON.parse(response.body)
         parsed_result['response'][0]['flags_count'].must_equal 0
       end
+
+      it 'should return coords' do
+        create(:font_tag, font: create(:font, photo: hash_tag.hashable))
+        get :hash_tag_feeds, name: hash_tag.name
+        parsed_result = JSON.parse(response.body)
+        parsed_result['response'].first['fonts_ord'].first['coords'].wont_be_empty
+      end
     end
 
     describe '#leaderboard' do
@@ -439,7 +459,8 @@ describe ApiActionsController do
 
     describe '#sos_photos' do
       before do
-        create(:photo, font_help: true, sos_approved: true, created_at: Time.now.utc)
+        photo = create(:photo, font_help: true, sos_approved: true, created_at: Time.now.utc)
+        create(:font_tag, font: create(:font, photo: photo))
         get :sos_photos
       end
 
@@ -457,6 +478,11 @@ describe ApiActionsController do
       it 'should return flags_count' do
         parsed_result = JSON.parse(response.body)
         parsed_result['response'][0]['flags_count'].must_equal 0
+      end
+
+      it 'should return coords' do
+        parsed_result = JSON.parse(response.body)
+        parsed_result['response'].first['fonts_ord'].first['coords'].wont_be_empty
       end
     end
 
@@ -885,12 +911,20 @@ describe ApiActionsController do
         parsed_result['response'][0]['flags_count'].must_equal 0
         parsed_result['response'][0]['flagged?'].must_equal false
       end
+
+      it 'should return coords' do
+        photo = create(:photo, user: api_session.user, created_at: Time.now.utc)
+        create(:font_tag, font: create(:font, photo: photo))
+        get :my_feeds
+        parsed_result = JSON.parse(response.body)
+        parsed_result['response'].first['fonts_ord'].first['coords'].wont_be_empty
+      end
     end
 
     describe '#feed_detail' do
       context 'with valid feed_id' do
         before do
-          create(:font_tag, font: create(:font, photo: photo))
+          font_tag
           get :feed_detail, feed_id: photo.id
         end
 
