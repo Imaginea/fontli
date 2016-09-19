@@ -82,7 +82,7 @@ class User
             inclusion: { in: ALLOWED_TYPES, message: 'should be jpg/gif' },
             if: -> { avatar? }
   validates :email, presence: true, unless: -> { PLATFORMS.include? platform }
-  validates :email, uniqueness: { case_sensitive: false }, allow_blank: true
+  validates :email, uniqueness: { case_sensitive: false, message: "is already registered" }, allow_blank: true
   validates :extuid, presence: true, if: -> { PLATFORMS.include? platform }
 
   attr_accessor :password, :password_confirmation, :avatar, :avatar_url, :friendship_state, :invite_state

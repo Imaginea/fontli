@@ -1164,7 +1164,7 @@ describe ApiActionsController do
           post :signup, username: username, email: user.email
           parsed_result = JSON.parse(response.body)
           parsed_result['status'].must_equal 'Failure'
-          parsed_result['errors'].must_equal 'Email is already taken'
+          parsed_result['errors'].must_equal 'Email is already registered'
         end
       end
 
