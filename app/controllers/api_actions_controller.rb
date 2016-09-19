@@ -495,7 +495,8 @@ class ApiActionsController < ApiBaseController
 
   def update_photo_collections
     photo = Photo.find(@photo_id)
-    resp = photo.update_collections(@collection_names)
+    photo.collections = []
+    resp = photo.add_to_collections(@collection_names)
     render_response(resp)
   end
 end

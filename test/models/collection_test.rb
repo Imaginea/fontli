@@ -22,11 +22,27 @@ describe Collection do
   describe 'callback' do
     let(:collection) { build(:collection, user: user) }
 
+    before do
+      ActionMailer::Base.deliveries = []
+    end
+
     describe 'after_create' do
       it 'should add the collection as the followed collection of its user' do
         user.followed_collection_ids.wont_include collection.id
         collection.save
         user.followed_collection_ids.must_include collection.id
+      end
+
+      it 'should send an email to admin if inactive' do
+        ActionMailer::Base.deliveries.count.must_equal 0
+        collection.save
+        ActionMailer::Base.deliveries.count.must_equal 1
+      end
+
+      it 'should not send an email to admin if active' do
+        ActionMailer::Base.deliveries.count.must_equal 0
+        collection.update_attributes(active: true)
+        ActionMailer::Base.deliveries.count.must_equal 0
       end
     end
   end

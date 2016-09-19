@@ -277,6 +277,13 @@ describe Photo do
       Photo.publish(opts)
       published_photo.reload.caption.must_equal opts[:caption]
     end
+
+    it 'should remove collections of photo' do
+      published_photo.collections << create(:collection)
+      opts = { photo_id: published_photo.id, collection_names: [] }
+      Photo.publish(opts)
+      published_photo.reload.collections.must_be_empty
+    end
   end
 
   describe '.add_like_for' do
@@ -550,6 +557,8 @@ describe Photo do
   end
 
   describe '#font_tags=' do
+    let(:font)     { create(:font, photo: photo) }
+    let(:font_tag) { create(:font_tag, font: font) }
     it 'should build font_tags and comments' do
       photo.font_tags = [{ family_unique_id: SecureRandom.hex(4),
                            family_id: SecureRandom.hex(4),
@@ -559,6 +568,38 @@ describe Photo do
       photo.fonts.count.must_equal 1
       FontTag.count.must_equal 1
       photo.comments.count.must_equal 1
+    end
+
+    it 'should remove fonts if empty' do
+      font_tag
+      photo.reload.fonts.count.must_equal 1
+      FontTag.count.must_equal 1
+      photo.font_tags = []
+      photo.save
+      photo.reload.fonts.count.must_equal 0
+      FontTag.count.must_equal 0
+    end
+
+    it 'should remove fonts if nil' do
+      font_tag
+      photo.reload.fonts.count.must_equal 1
+      FontTag.count.must_equal 1
+      photo.font_tags = nil
+      photo.save
+      photo.reload.fonts.count.must_equal 0
+      FontTag.count.must_equal 0
+    end
+
+    it 'should update the photo fonts' do
+      font_tag
+      photo.font_ids.must_include font.id
+      photo.font_tags = [{ family_unique_id: SecureRandom.hex(4),
+                           family_id: SecureRandom.hex(4),
+                           subfont_id: SecureRandom.hex(4),
+                           coords: "#{Faker::Number.decimal(2)}, #{Faker::Number.decimal(2)}" }.with_indifferent_access]
+      photo.save
+      photo.reload.font_ids.wont_include font.id
+      photo.fonts.count.must_equal 1
     end
   end
 
@@ -571,9 +612,18 @@ describe Photo do
   end
 
   describe '#collection_names=' do
+    before do
+      photo.collections = []
+    end
+
     it 'should create a new collection' do
       photo.collection_names = [Faker::Lorem.word]
       photo.collections.count.must_equal 1
+    end
+
+    it 'should create an inactive collection' do
+      photo.collection_names = [Faker::Lorem.word]
+      photo.collections.last.active.must_equal false
     end
 
     it 'should not create collection' do
@@ -602,6 +652,12 @@ describe Photo do
     it 'should add the collection to the collection list' do
       photo.add_to_collections([collection.name])
       photo.reload.collections.must_include collection
+    end
+
+    it 'should create a new collection to the collection list' do
+      new_collection_name = Faker::Lorem.word
+      photo.add_to_collections([new_collection_name])
+      photo.reload.collections.pluck(:name).must_include new_collection_name
     end
   end
 
@@ -725,28 +781,6 @@ describe Photo do
   describe '#flagged?' do
     it 'should return false' do
       photo.flagged?.must_equal false
-    end
-  end
-
-  describe '#update_collections' do
-    let(:collection)  { create(:collection) }
-    let(:collection1) { create(:collection) }
-
-    before do
-      photo.collections << collection
-    end
-
-    it 'should update photo collections' do
-      photo.collections.must_include collection
-      photo.update_collections([collection1.name])
-      photo.reload.collections.wont_include collection
-      photo.reload.collections.must_include collection1
-    end
-
-    it 'should set collections as empty' do
-      photo.collections.must_include collection
-      photo.update_collections([])
-      photo.reload.collections.must_be_empty
     end
   end
 
