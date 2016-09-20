@@ -28,6 +28,8 @@
       <td>
         <% unless c.active? %>
           <%= link_to('Activate', activate_collection_admin_path(id: c.id), method: 'put') %>
+          <%= link_to 'Delete', delete_collection_admin_path(collection_id: c.id), method: :delete,
+            confirm: "Are you sure you want to delete #{c.name}? This will remove all the photos of this collection PERMANENTLY!", class: 'delete_collection' %>
         <% end %>
       </td>
     </tr>

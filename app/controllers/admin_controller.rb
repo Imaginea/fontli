@@ -129,7 +129,7 @@ class AdminController < ApplicationController
     @fotos = Kaminari.paginate_array(@fotos.to_a).page(params[:page])
     render :photos
   end
-  
+
   def approve_sos
     @res = Photo[params[:photo_id]].update_attribute(:sos_approved, true) rescue false
   end
@@ -212,6 +212,11 @@ class AdminController < ApplicationController
     end
   end
 
+  def delete_collection
+    Collection.find(params[:collection_id]).try(:destroy)
+    redirect_to collections_admin_path, notice: 'Deleted successfully'
+  end
+
   private
 
   def sort_column
@@ -269,7 +274,7 @@ class AdminController < ApplicationController
 
     raise StandardError, 'unexpected request!'
   end
-  
+
   def fetch_sos
     if params[:req] == 'true'
       @title = 'SoS photos waiting for approval'
