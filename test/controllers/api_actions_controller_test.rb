@@ -130,9 +130,9 @@ describe ApiActionsController do
         parsed_result['status'].must_equal 'Success'
       end
 
-      it 'should return coords' do
+      it 'should return coordinates' do
         parsed_result = JSON.parse(response.body)
-        parsed_result['response']['fotos'].first['fonts_ord'].first['coords'].wont_be_empty
+        parsed_result['response']['fotos'].first['fonts_ord'].first['coordinates'].wont_be_empty
       end
     end
 
@@ -190,9 +190,9 @@ describe ApiActionsController do
         parsed_result['response']['flags_count'].must_equal 0
       end
 
-      it 'should return coords' do
+      it 'should return coordinates' do
         parsed_result = JSON.parse(response.body)
-        parsed_result['response']['fonts_ord'].first['coords'].wont_be_empty
+        parsed_result['response']['fonts_ord'].first['coordinates'].wont_be_empty
       end
     end
 
@@ -423,11 +423,11 @@ describe ApiActionsController do
         parsed_result['response'][0]['flags_count'].must_equal 0
       end
 
-      it 'should return coords' do
+      it 'should return coordinates' do
         create(:font_tag, font: create(:font, photo: hash_tag.hashable))
         get :hash_tag_feeds, name: hash_tag.name
         parsed_result = JSON.parse(response.body)
-        parsed_result['response'].first['fonts_ord'].first['coords'].wont_be_empty
+        parsed_result['response'].first['fonts_ord'].first['coordinates'].wont_be_empty
       end
     end
 
@@ -480,9 +480,9 @@ describe ApiActionsController do
         parsed_result['response'][0]['flags_count'].must_equal 0
       end
 
-      it 'should return coords' do
+      it 'should return coordinates' do
         parsed_result = JSON.parse(response.body)
-        parsed_result['response'].first['fonts_ord'].first['coords'].wont_be_empty
+        parsed_result['response'].first['fonts_ord'].first['coordinates'].wont_be_empty
       end
     end
 
@@ -912,12 +912,12 @@ describe ApiActionsController do
         parsed_result['response'][0]['flagged?'].must_equal false
       end
 
-      it 'should return coords' do
+      it 'should return coordinates' do
         photo = create(:photo, user: api_session.user, created_at: Time.now.utc)
         create(:font_tag, font: create(:font, photo: photo))
         get :my_feeds
         parsed_result = JSON.parse(response.body)
-        parsed_result['response'].first['fonts_ord'].first['coords'].wont_be_empty
+        parsed_result['response'].first['fonts_ord'].first['coordinates'].wont_be_empty
       end
     end
 
@@ -944,9 +944,9 @@ describe ApiActionsController do
           parsed_result['response']['flags_count'].must_equal 0
         end
 
-        it 'should return coords' do
+        it 'should return coordinates' do
           parsed_result = JSON.parse(response.body)
-          parsed_result['response']['fonts_ord'].first['coords'].wont_be_empty
+          parsed_result['response']['fonts_ord'].first['coordinates'].wont_be_empty
         end
       end
 

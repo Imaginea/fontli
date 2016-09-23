@@ -317,15 +317,15 @@ describe Font do
     end
   end
 
-  describe '#coords' do
+  describe '#coordinates' do
     let(:font_tag) { create(:font_tag, font: font) }
 
     before do
       font_tag
     end
 
-    it 'should return coords of fonts' do
-      font.coords.must_equal ["#{font_tag.coords_x},#{font_tag.coords_y}"]
+    it 'should return coordinates of fonts' do
+      font.coordinates.must_equal ["#{font_tag.coords_x},#{font_tag.coords_y}"]
     end
   end
 end
