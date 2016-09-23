@@ -16,6 +16,7 @@
 
   <body>
     <h3>API Documentation</h3>
+    <span>Last updated on <%= '23/09/2016'.to_date.strftime('%B %d,%Y') %></span>
     <p>All API methods(except <code>signin, signup, login check</code>) requires <code>auth_token</code> param to identify the user session. User-session(and hence the <code>auth_token</code>) expires in 4weeks by default and user has to be signed in again upon expiry.</p>
     <p><span class="note">Note:</span> For FB/Twitter users, there's no concept of sessions. The state is controlled using encrypted <code>extuid_token</code> - derived from <code>auth_token</code>.</p>
     <p>All API response will include: </p>
