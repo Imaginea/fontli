@@ -9,7 +9,7 @@ module ApiHelper
                                   :liked_user, :commented_user, :flags_count, :flagged?].freeze
   COLLECTION_COMMON_RESPONSE_ATTRS = [:id, :name, :can_follow?].freeze
   FONT_COMMON_RESPONSE_ATTRS = [:user_id, :family_unique_id, :family_name, :family_id, :subfont_name, :subfont_id,
-                                :tags_count, :agrees_count, :pick_status, :img_url, :my_fav?, :expert_tagged, :coords]
+                                :tags_count, :agrees_count, :pick_status, :img_url, :my_fav?, :expert_tagged, :coordinates]
 
   SIGNATURE_MAP = {
     log_crash: { accepts: [:content],

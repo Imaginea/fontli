@@ -249,7 +249,7 @@ class Font
     details.try(:url)
   end
 
-  def coords
+  def coordinates
     font_tags.collect(&:coords)
   end
 

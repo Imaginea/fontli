@@ -149,7 +149,7 @@ private
     return result.collect { |res| current_api_result_map(res, returns) } if result_types.include?(result.class)
     returns_with_conditional(result, returns).inject({}) do |hsh, meth|
       val = result.send(meth)
-      val = current_api_result_map(val, current_api_signature_map[meth]) if result_types.include?(val.class) && meth != :coords
+      val = current_api_result_map(val, current_api_signature_map[meth]) if result_types.include?(val.class) && meth != :coordinates
       hsh.update(meth => (val.nil? ? '' : val)) # send '' instead of nil
     end
   end
