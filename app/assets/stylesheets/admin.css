@@ -12,3 +12,7 @@ body {
   border-width: 1px;
   padding: 5px 10px;
 }
+
+a.delete_collection {
+  margin-left: 15px;
+}

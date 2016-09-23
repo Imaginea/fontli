@@ -65,7 +65,7 @@ Fontli::Application.routes.draw do
       post :create_collection, :send_push_notifications, :expire_popular_cache
       put  :suspend_user, :activate_user, :activate_collection, :unflag_user, :unflag_photo
       put  :approve_sos, :select_photo, :select_for_header, :update_stat
-      delete :delete_user, :delete_photo
+      delete :delete_user, :delete_photo, :delete_collection
     end
   end
 

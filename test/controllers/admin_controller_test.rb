@@ -77,7 +77,7 @@ describe AdminController do
 
   describe '#delete_user' do
     before do
-      put :delete_user, id: user.id
+      delete :delete_user, id: user.id
     end
 
     it 'should delete a user' do
@@ -583,6 +583,20 @@ describe AdminController do
         get :top_contributors, format: :csv
         response.body.wont_be_empty
       end
+    end
+  end
+
+  describe '#delete_collection' do
+    before do
+      delete :delete_collection, collection_id: collection.id
+    end
+
+    it 'should delete a collection' do
+      Collection.count.must_equal 0
+    end
+
+    it 'should redirect to admin users page' do
+      assert_redirected_to '/admin/collections'
     end
   end
 end
