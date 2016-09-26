@@ -749,4 +749,10 @@ describe Photo do
       photo.reload.collections.must_be_empty
     end
   end
+
+  describe '#following_user?' do
+    it 'should return false' do
+      photo.following_user?.must_equal false
+    end
+  end
 end

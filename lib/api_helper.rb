@@ -6,7 +6,7 @@ module ApiHelper
   PHOTOS_COMMON_RESPONSE_ATTRS = [:id, :user_id, :caption, :created_dt, :url_large, :username, :user_url_thumb,
                                   :permalink, :likes_count, :fonts_count, :comments_count, :fonts_ord,
                                   :address, :latitude, :longitude, :font_help, :liked?, :commented?,
-                                  :liked_user, :commented_user, :flags_count, :flagged?].freeze
+                                  :liked_user, :commented_user, :flags_count, :flagged?, :following_user?].freeze
   COLLECTION_COMMON_RESPONSE_ATTRS = [:id, :name, :can_follow?].freeze
   FONT_COMMON_RESPONSE_ATTRS = [:user_id, :family_unique_id, :family_name, :family_id, :subfont_name, :subfont_id,
                                 :tags_count, :agrees_count, :pick_status, :img_url, :my_fav?, :expert_tagged, :coordinates]
