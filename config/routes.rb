@@ -59,13 +59,18 @@ Fontli::Application.routes.draw do
 
   resource :admin, controller: :admin, only: [] do
     collection do
-      get  :users, :suspended_users, :photos, :collections, :flagged_users, :flagged_photos, :sos
+      get  :users, :suspended_users, :photos, :flagged_users, :flagged_photos, :sos
       get  :popular_users, :popular_fonts, :users_statistics, :user_stats, :top_contributors
       get  :popular_photos, :send_push_notifications
-      post :create_collection, :send_push_notifications, :expire_popular_cache
-      put  :suspend_user, :activate_user, :activate_collection, :unflag_user, :unflag_photo
+      post :send_push_notifications, :expire_popular_cache
+      put  :suspend_user, :activate_user, :unflag_user, :unflag_photo
       put  :approve_sos, :select_photo, :select_for_header, :update_stat
-      delete :delete_user, :delete_photo, :delete_collection
+      delete :delete_user, :delete_photo
+    end
+    resources :collections, only: [:index, :create, :edit, :update, :destroy] do
+      member do
+        put :activate
+      end
     end
   end
 

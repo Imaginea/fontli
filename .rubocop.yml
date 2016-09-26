@@ -4,6 +4,9 @@ Metrics/LineLength:
 Style/ClassAndModuleChildren:
   EnforcedStyle: compact
 
+Documentation:
+  Enabled: false
+
 AllCops:
   Exclude:
     - 'db/**/*'

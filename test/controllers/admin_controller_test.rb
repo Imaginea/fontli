@@ -157,86 +157,6 @@ describe AdminController do
     end
   end
 
-  describe '#collections' do
-    before do
-      collection
-      get :collections
-    end
-
-    it 'should include all the collections' do
-      assigns(:collections).must_include collection
-    end
-  end
-
-  describe '#create_collection' do
-    context 'with valid params' do
-      before do
-        post :create_collection, collection: { description: Faker::Lorem.sentence, name: Faker::App.name }
-      end
-
-      it 'should create a collection' do
-        Collection.count.must_equal 1
-      end
-
-      it 'should return a success message' do
-        request.flash[:notice].must_equal 'Created successfully'
-      end
-
-      it 'should redirect to admin collections page' do
-        assert_redirected_to '/admin/collections'
-      end
-    end
-
-    context 'without valid params' do
-      before do
-        post :create_collection, collection: { description: Faker::Lorem.sentence }
-      end
-
-      it 'should create a collection' do
-        Collection.count.must_equal 0
-      end
-
-      it 'should return a failure message' do
-        request.flash[:alert].must_equal "Name can't be blank"
-      end
-    end
-  end
-
-  describe '#activate_collection' do
-    context 'valid collection' do
-      before do
-        put :activate_collection, id: collection.id
-      end
-
-      it 'should activate the collection' do
-        collection.reload.active.must_equal true
-      end
-
-      it 'should return a success message' do
-        request.flash[:notice].must_equal 'Activated successfully'
-      end
-
-      it 'should redirect to admin collections page' do
-        assert_redirected_to '/admin/collections'
-      end
-    end
-
-    context 'invalid collection' do
-      before do
-        Collection.any_instance.stubs(:update_attribute).returns(false)
-        put :activate_collection, id: collection.id
-      end
-
-      it 'should not activate the collection' do
-        collection.reload.active.must_equal false
-      end
-
-      it 'should return a failure message' do
-        request.flash[:alert].must_equal 'Activation failed'
-      end
-    end
-  end
-
   describe '#flagged_users' do
     before do
       create_list(:user_flag, 4, user: other_user)
@@ -583,20 +503,6 @@ describe AdminController do
         get :top_contributors, format: :csv
         response.body.wont_be_empty
       end
-    end
-  end
-
-  describe '#delete_collection' do
-    before do
-      delete :delete_collection, collection_id: collection.id
-    end
-
-    it 'should delete a collection' do
-      Collection.count.must_equal 0
-    end
-
-    it 'should redirect to admin users page' do
-      assert_redirected_to '/admin/collections'
     end
   end
 end

@@ -61,31 +61,6 @@ class AdminController < ApplicationController
     @fotos = Kaminari.paginate_array(@fotos.to_a).page(params[:page])
   end
 
-  def collections
-    @collections = Collection.all.to_a
-  end
-
-  def create_collection
-    opts = params[:collection]
-    collection = Collection.new(name: opts[:name], description: opts[:description])
-    if collection.save
-      flash[:notice] = 'Created successfully'
-    else
-      flash[:alert] = collection.errors.full_messages.join('<br/>')
-    end
-    redirect_to collections_admin_path
-  end
-
-  def activate_collection
-    collection = Collection.find(params[:id])
-    if collection.update_attribute(:active, true)
-      flash[:notice] = 'Activated successfully'
-    else
-      flash[:alert] = 'Activation failed'
-    end
-    redirect_to collections_admin_path
-  end
-
   def flagged_users
     params[:sort] ||= 'user_flags_count'
     @users = User.unscoped.where(:user_flags_count.gte => User::ALLOWED_FLAGS_COUNT).order_by(sort_column => sort_direction)
@@ -210,11 +185,6 @@ class AdminController < ApplicationController
     else
       @top_contributors = Kaminari.paginate_array(@top_contributors.to_a).page(params[:page]).per(25)
     end
-  end
-
-  def delete_collection
-    Collection.find(params[:collection_id]).try(:destroy)
-    redirect_to collections_admin_path, notice: 'Deleted successfully'
   end
 
   private

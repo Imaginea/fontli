@@ -2,7 +2,7 @@
   <%= @title || 'Collections' %> <span class="badge badge-info"><%= @collections.length %></span>
 </h3>
 
-<%= render 'flash_notices' %>
+<%= render 'shared/flash_notices' %>
 
 <table class='table table-striped table-condensed span10' style='margin-left:0;'>
   <thead>
@@ -13,6 +13,7 @@
       <th>Photos</th>
       <th>Created By</th>
       <th>Active?</th>
+      <th>Cover Photo</th>
       <th>Actions</th>
     </tr>
   </thead>
@@ -20,16 +21,20 @@
     <% @collections.each_with_index do |c, i| %>
     <tr id='collection_<%= c.id.to_s %>'>
       <td><%= i + 1 %></td>
-      <td><%= link_to c.name, '#'%></td>
+      <td><%= c.name %></td>
       <td><%= c.description %></td>
       <td><%= c.photos_count %></td>
       <td><%= c.custom? ? c.user.try(:username) : 'Admin' %></td>
       <td><%= c.active? ? 'Yes' : 'No' %></td>
-      <td>
+      <td class='collection_cover_photo'>
+        <%= image_tag(c.cover_photo_url) if c.cover_photo_url %>
+      </td>
+      <td class='collection_actions'>
+        <%= link_to 'Edit', edit_admin_collection_path(c.id) %>
         <% unless c.active? %>
-          <%= link_to('Activate', activate_collection_admin_path(id: c.id), method: 'put') %>
-          <%= link_to 'Delete', delete_collection_admin_path(collection_id: c.id), method: :delete,
+          <%= link_to 'Delete', admin_collection_path(c.id), method: :delete,
             confirm: "Are you sure you want to delete #{c.name}? This will remove all the photos of this collection PERMANENTLY!", class: 'delete_collection' %>
+          <%= link_to('Activate', activate_admin_collection_path(c.id), method: 'put') %>
         <% end %>
       </td>
     </tr>
@@ -39,10 +44,10 @@
 <div class="clearfix"></div>
 
 <div id='new_collection'>
-  <%= form_for :collection, url: create_collection_admin_path, class: 'form-inline' do |f| %>
-    <%= f.text_field :name, :placeholder => 'Name' %>
-    <%= f.text_field :description, :class => 'input-xlarge', :placeholder => 'Description (Optional)' %>
-    <%= submit_tag 'Create New', :class => 'btn btn-primary', :style => 'margin-bottom:10px;' %>
+  <%= form_for :collection, url: admin_collections_path, class: 'form-inline' do |f| %>
+    <%= f.text_field :name, placeholder: 'Name' %>
+    <%= f.text_field :description, class: 'input-xlarge', placeholder: 'Description (Optional)' %>
+    <%= submit_tag 'Create New', class: 'btn btn-primary', style: 'margin-bottom:10px;' %>
   <% end %>
 </div>
 
