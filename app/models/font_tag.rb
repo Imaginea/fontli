@@ -11,10 +11,11 @@ class FontTag
   belongs_to :user, :index => true
   belongs_to :font, :index => true, :counter_cache => true
 
-  validates :font_id, :coords_x, :coords_y, :presence => true
+  validates :font, :coords_x, :coords_y, :presence => true
 
   after_create :update_tagged_status
   after_destroy :reupdate_tagged_status
+  after_destroy :remove_photo_comments
 
   # val = 'x,y'
   def coords=(val)
@@ -56,11 +57,22 @@ private
 
   # update the expert_tagged status, if this is the only tag by an expert.
   def reupdate_tagged_status
-    fnt = self.font
     exp_usr_ids = User.all_expert_ids # includes flagged users too
-    exp_tagged  = fnt.tagged_user_ids.any? { |uid| exp_usr_ids.include? uid }
-    fnt.update_attribute(:expert_tagged, false) unless exp_tagged
+    exp_tagged  = font.tagged_user_ids.any? { |uid| exp_usr_ids.include? uid }
+    font.update_attribute(:expert_tagged, false) unless exp_tagged
     true
   end
 
+  def remove_photo_comments
+    comment = font.photo.comments.where(font_tag_ids: id).last
+    return true unless comment
+
+    comment.font_tag_ids.delete(id)
+
+    if comment.font_tag_ids.empty?
+      comment.destroy
+    else
+      comment.save
+    end
+  end
 end

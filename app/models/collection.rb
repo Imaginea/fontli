@@ -11,9 +11,9 @@ class Collection
   belongs_to :user
   has_and_belongs_to_many :photos, :dependent => :destroy
 
-  validates :name, 
-    :presence   => true, 
-    :uniqueness => true, 
+  validates :name,
+    :presence   => true,
+    :uniqueness => true,
     :length     => { :maximum => 100, :allow_blank => true }
   validates :description,
     :length     => { :maximum => 500, :allow_blank => true }
@@ -21,6 +21,7 @@ class Collection
   scope :active, where(:active => true)
 
   after_create :auto_follow
+  after_create :send_notification, unless: :active
 
   class << self
     def [](id)
@@ -74,5 +75,9 @@ class Collection
 
   def auto_follow
     self.user.follow_collection(self) if custom?
+  end
+
+  def send_notification
+    AppMailer.inactive_collection_creation_mail(id).deliver
   end
 end

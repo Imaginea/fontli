@@ -1,0 +1,3 @@
+Hello,
+
+A new collection <%= @collection.name %> has been created by <%= @collection.user.try(:username) || 'a user' %>. Please go to this url: <%= collections_admin_url %> to activate the collection.

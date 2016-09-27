@@ -16,7 +16,7 @@ describe FontTag do
   it { must have_index_for(:user_id) }
   it { must have_index_for(:font_id) }
 
-  it { must validate_presence_of(:font_id) }
+  it { must validate_presence_of(:font) }
   it { must validate_presence_of(:coords_x) }
   it { must validate_presence_of(:coords_y) }
 
@@ -38,6 +38,8 @@ describe FontTag do
     end
 
     describe 'after_destroy' do
+      let(:font_tag1) { create(:font_tag, user: user) }
+
       it 'should update font expert_tagged if it is an expert_tag?' do
         tag = create(:font_tag, user: expert_user, font: font)
         font.expert_tagged.must_equal true
@@ -50,6 +52,21 @@ describe FontTag do
         font.expert_tagged.must_equal false
         tag.destroy
         font.expert_tagged.must_equal false
+      end
+
+      it 'should remove photo comments' do
+        create(:comment, photo: photo, user: user, font_tag_ids: [font_tag.id])
+        Comment.count.must_equal 1
+        font_tag.destroy
+        Comment.count.must_equal 0
+      end
+
+      it 'should update a photo comment if the comment has multiple font_tag_ids' do
+        comment = create(:comment, photo: photo, user: user, font_tag_ids: [font_tag.id, font_tag1.id])
+        Comment.count.must_equal 1
+        font_tag.destroy
+        Comment.count.must_equal 1
+        comment.reload.font_tag_ids.must_equal [font_tag1.id]
       end
     end
   end

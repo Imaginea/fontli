@@ -1072,6 +1072,13 @@ describe ApiActionsController do
         parsed_result['status'].must_equal 'Success'
       end
     end
+
+    it 'should return blank' do
+      post :update_photo_collections, photo_id: photo.id, collection_names: []
+      parsed_result = JSON.parse(response.body)
+      parsed_result['response'].must_be_empty
+      parsed_result['status'].must_equal 'Success'
+    end
   end
 
   context 'without current_user' do

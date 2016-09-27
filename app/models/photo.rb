@@ -138,6 +138,7 @@ class Photo
         opts[:sos_requested_at] = Time.now.utc
         opts[:sos_requested_by] = usr_id.to_s
       end
+      foto.collections = [] if opts[:collection_names]
       resp = foto.update_attributes(opts)
       resp ? foto : [nil, foto.errors.full_messages]
     end
@@ -331,19 +332,16 @@ class Photo
   # we don't create duplicates on validation failures.
   # fnts - Array of font hashes
   def font_tags=(fnts)
-    return true if fnts.blank?
-    fnts = fnts.group_by { |f| f[:family_unique_id] + f[:family_id] + f[:subfont_id].to_s }
-    cur_user_id = current_user.id
-    fnt_tag_ids = []
-    fnts.each do |_key, fonts|
-      f = fonts.first
-      coords = fonts.collect { |hsh| hsh[:coords] }
-      f[:user_id] = cur_user_id
-      _fnt, tag_ids = Photo.build_font_tags(f, self, coords)
-      fnt_tag_ids << tag_ids
+    if fnts.blank?
+      fonts.destroy_all
+    else
+      fnt_ids, fnt_tag_ids = build_fonts(fnts)
+      fonts.where(:id.nin => fnt_ids).destroy_all
+      save
+      # all font tags are also a comment
+      fnt_tag_ids = FontTag.where(:id.in => fnt_tag_ids).pluck(:id)
+      comments.find_or_initialize_by(user_id: current_user.id, font_tag_ids: fnt_tag_ids) if fnt_tag_ids.present?
     end
-    # all font tags are also a comment
-    comments.build(user_id: cur_user_id, font_tag_ids: fnt_tag_ids.flatten)
   end
 
   # hshs - Array of HashTag hashes
@@ -358,12 +356,11 @@ class Photo
   # New collections can also be created here.
   def collection_names=(c_names)
     return true if c_names.blank?
-    c_names.each do |c_name|
-      next if c_name.strip.blank?
-      opts = { name: c_name, user: current_user, active: true }
-      c = Collection.where(name: c_name).first || Collection.create(opts)
-      collections.concat([c])
-    end
+
+    c_names = c_names.compact.collect(&:strip).reject(&:empty?)
+    existing_collections = Collection.where(:name.in => c_names)
+    collections.concat(existing_collections)
+    create_new_collections(c_names - existing_collections.pluck(:name))
   end
 
   def collection_names
@@ -371,8 +368,8 @@ class Photo
   end
 
   def add_to_collections(c_names)
-    collctns = Collection.where(:name.in => c_names).to_a
-    collections.concat(collctns)
+    self.collection_names = c_names
+    collections
   end
 
   def username
@@ -450,10 +447,6 @@ class Photo
       tg.id
     end
     [fnt, tag_ids]
-  end
-
-  def update_collections(c_names)
-    self.collections = Collection.where(:name.in => c_names).to_a if c_names.is_a?(Array)
   end
 
   def following_user?
@@ -571,5 +564,24 @@ class Photo
     fpath.sub!(/:style/, style.to_s)
     fpath.sub!(/:extension/, extension)
     fpath
+  end
+
+  def create_new_collections(c_names)
+    c_names.each do |c_name|
+      opts = { name: c_name, active: false }
+      collections.concat([current_user.collections.create(opts)])
+    end
+  end
+
+  def build_fonts(fnts)
+    fnts = fnts.group_by { |f| f[:family_unique_id] + f[:family_id] + f[:subfont_id].to_s }
+    fnt_ids = []
+    fnt_tag_ids = []
+    fnts.each do |_key, fonts|
+      fnt, tag_ids = Photo.build_font_tags(fonts.first.merge(user_id: current_user.id), self, fonts.collect { |hsh| hsh[:coords] })
+      fnt_ids << fnt.id
+      fnt_tag_ids << tag_ids
+    end
+    [fnt_ids, fnt_tag_ids.flatten.compact]
   end
 end

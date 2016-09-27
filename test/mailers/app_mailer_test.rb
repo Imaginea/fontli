@@ -66,7 +66,24 @@ describe 'AppMailer' do
     end
 
     it 'should send email to provided email address' do
-      mail.to.must_equal SECURE_TREE['sos_notification_receivers']
+      mail.to.must_equal SECURE_TREE['admin_mail_receivers']
+    end
+  end
+
+  describe '#inactive_collection_creation_mail' do
+    let(:collection) { create(:collection) }
+    let(:mail)       { AppMailer.inactive_collection_creation_mail(collection.id) }
+
+    it 'should have the provided subject' do
+      mail.subject.must_equal 'Fontli: New Collection'
+    end
+
+    it 'should send email with from address' do
+      mail.from.must_equal %w(noreply@fontli.com)
+    end
+
+    it 'should send email to provided email address' do
+      mail.to.must_equal SECURE_TREE['admin_mail_receivers']
     end
   end
 end

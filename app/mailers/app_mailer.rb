@@ -22,11 +22,17 @@ class AppMailer < ActionMailer::Base
     mail(:to => 'info@fontli.com',
          :subject => "Feedback API - #{Rails.env}: #{feedbk.sugg_type}")
   end
-  
+
   def sos_requested_mail(sos_id)
     sos = Photo.find(sos_id)
     @user = sos.user
-    to_users =  SECURE_TREE['sos_notification_receivers']
+    to_users =  SECURE_TREE['admin_mail_receivers']
     mail(:to => to_users, :subject => "Fontli: New SoS requested")
+  end
+
+  def inactive_collection_creation_mail(collection_id)
+    @collection = Collection.find(collection_id)
+    to_users =  SECURE_TREE['admin_mail_receivers']
+    mail(:to => to_users, :subject => "Fontli: New Collection")
   end
 end
