@@ -1,0 +1,22 @@
+<div id='edit_collection'>
+  <%= form_for @collection, url: admin_collection_path, class: 'form-inline', :html => {:multipart => true} do |f| %>
+    <dl>
+      <dt>Name:</dt>
+      <dd> <%= f.text_field :name %></dd>
+
+      <dt>Description:</dt>
+      <dd><%= f.text_field :description, :class => 'input-xlarge' %></dd>
+
+      <dt>Cover photo url:</dt>
+      <dd>
+        <% if f.object.cover_photo_url %>
+          <%= image_tag f.object.cover_photo_url %>
+        <% else %>
+          <%= file_field_tag 'cover_photo' %>
+        <% end %>
+      </dd>
+    </dl>
+    <%= f.submit 'Save', :class => 'btn btn-primary', :style => 'margin-bottom:10px;' %>
+    <%= link_to 'Cancel', admin_collections_path, :class => 'btn btn-default' %>
+  <% end %>
+</div>

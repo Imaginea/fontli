@@ -13,6 +13,20 @@ body {
   padding: 5px 10px;
 }
 
-a.delete_collection {
-  margin-left: 15px;
+.collection_actions > a {
+  margin-right: 15px;
+}
+
+#edit_collection dd img {
+  width: 280px;
+  height: 200px;
+}
+
+#edit_collection input[type='submit'] {
+  margin-bottom: 0 !important;
+}
+
+.collection_cover_photo img {
+  height: 40px;
+  width: 50px;
 }

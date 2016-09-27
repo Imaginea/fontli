@@ -1,2 +1,2 @@
 Hello,<br />
-<p>A new collection <%= @collection.name %> has been created by <%= @collection.user.try(:username) || 'a user' %>. Please <%= link_to 'click on this link', collections_admin_url %> to activate the collection.</p>
+<p>A new collection <%= @collection.name %> has been created by <%= @collection.user.try(:username) || 'a user' %>. Please <%= link_to 'click on this link', admin_collections_url %> to activate the collection.</p>
