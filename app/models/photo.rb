@@ -456,6 +456,10 @@ class Photo
     self.collections = Collection.where(:name.in => c_names).to_a if c_names.is_a?(Array)
   end
 
+  def following_user?
+    current_user.following?(user)
+  end
+
   private
 
   def populate_mentions
