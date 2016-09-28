@@ -284,6 +284,12 @@ describe Photo do
       Photo.publish(opts)
       published_photo.reload.collections.must_be_empty
     end
+
+    it 'should assign photo created_at' do
+      opts = { photo_id: unpublished_photo.id, caption: Faker::Lorem.characters(5) }
+      Photo.publish(opts)
+      unpublished_photo.reload.created_at.wont_be_nil
+    end
   end
 
   describe '.add_like_for' do
