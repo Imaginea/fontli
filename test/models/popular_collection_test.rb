@@ -4,6 +4,16 @@ describe PopularCollection do
   let(:photo)              { create(:photo) }
   let(:popular_collection) { create(:popular_collection) }
 
+  describe 'callback' do
+    describe 'after_save' do
+      it 'should delete popular_photos cache' do
+        popular_collection.photo_ids = [photo.id]
+        popular_collection.save
+        Rails.cache.fetch('popular_photos').must_be_nil
+      end
+    end
+  end
+
   describe '#fotos' do
     before do
       create(:like, photo: photo)

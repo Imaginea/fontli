@@ -1,4 +1,5 @@
 class PopularCollection < Collection
+  after_save :clear_popular_photos_cache
 
   # memoized version of photos to be used in collection_detail api
   def fotos
@@ -19,5 +20,9 @@ class PopularCollection < Collection
   # cant follow dynamic collections
   def can_follow?
     false
+  end
+
+  def clear_popular_photos_cache
+    Rails.cache.delete 'popular_photos' if photo_ids_changed?
   end
 end
