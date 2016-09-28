@@ -17,9 +17,14 @@ body {
   margin-right: 15px;
 }
 
+#edit_collection dd {
+  padding-top: 10px;
+}
+
 #edit_collection dd img {
   width: 280px;
   height: 200px;
+  padding-bottom: 10px;
 }
 
 #edit_collection input[type='submit'] {
