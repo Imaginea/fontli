@@ -87,8 +87,11 @@ class ApiActionsController < ApiBaseController
 
   def collection_detail
     collection = Collection.where(:_id => @collection_id).first
+    offst = ([@page.to_i, 1].max - 1) * 20
     populate_likes_comments_info(collection.fotos)
-    render_response(collection, !collection.nil?, :collection_not_found)
+    resp = formatted_response(collection, !collection.nil?, :collection_not_found)
+    resp[:response][:fotos] = resp[:response][:fotos].drop(offst).first(20)
+    render json: resp.as_json
   end
 
   def add_photo_to_collections

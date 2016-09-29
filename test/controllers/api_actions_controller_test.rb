@@ -117,22 +117,47 @@ describe ApiActionsController do
     end
 
     describe '#collection_detail' do
-      before do
-        collection.photos << photo
-        font_tag
-        get :collection_detail, collection_id: collection.id
+      context 'without page params' do
+        before do
+          collection.photos << photo
+          font_tag
+          get :collection_detail, collection_id: collection.id
+        end
+
+        it 'should return JSON data' do
+          parsed_result = JSON.parse(response.body)
+          parsed_result['response'].wont_be_empty
+          parsed_result['response']['fotos'].wont_be_empty
+          parsed_result['status'].must_equal 'Success'
+        end
+
+        it 'should return coordinates' do
+          parsed_result = JSON.parse(response.body)
+          parsed_result['response']['fotos'].first['fonts_ord'].first['coordinates'].wont_be_empty
+        end
       end
 
-      it 'should return JSON data' do
-        parsed_result = JSON.parse(response.body)
-        parsed_result['response'].wont_be_empty
-        parsed_result['response']['fotos'].wont_be_empty
-        parsed_result['status'].must_equal 'Success'
-      end
+      context 'with page params' do
+        before do
+          22.times do
+            collection.photos << create(:photo, created_at: Time.now.utc)
+          end
+          collection.reload
+        end
 
-      it 'should return coordinates' do
-        parsed_result = JSON.parse(response.body)
-        parsed_result['response']['fotos'].first['fonts_ord'].first['coordinates'].wont_be_empty
+        it 'should return photos for first page' do
+          get :collection_detail, collection_id: collection.id, page: 1
+          parsed_result = JSON.parse(response.body)
+          parsed_result['response'].wont_be_empty
+          parsed_result['response']['fotos'].count.must_equal 20
+        end
+
+        it 'should return photos for first page' do
+          get :collection_detail, collection_id: collection.id, page: 2
+          parsed_result = JSON.parse(response.body)
+          parsed_result['response'].wont_be_empty
+          parsed_result['response']['fotos'].count.must_equal 2
+        end
       end
     end
 

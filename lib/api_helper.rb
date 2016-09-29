@@ -43,7 +43,7 @@ module ApiHelper
 
     unfollow_collection: { accepts: [:collection_id],
                            returns: true },
-    collection_detail:   { accepts: [:collection_id],
+    collection_detail:   { accepts: [:collection_id, [:page]],
                            returns: [:id, :name, :description, :photos_count, :follows_count, :can_follow?, :fotos],
                            fotos:   PHOTOS_COMMON_RESPONSE_ATTRS + [:collections],
                            collections: COLLECTION_COMMON_RESPONSE_ATTRS,
