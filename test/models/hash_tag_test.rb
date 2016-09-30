@@ -65,4 +65,18 @@ describe HashTag do
       hash_tag.photo.must_equal photo
     end
   end
+
+  describe '.fetch_photos' do
+    let(:hash_tag)  { create(:hash_tag, name: 'logo.') }
+    let(:hash_tag1) { create(:hash_tag, name: 'logos') }
+
+    it 'should return blank' do
+      HashTag.fetch_photos('').must_be_empty
+    end
+
+    it 'should return the photos having hash_tags with the provided tag_name' do
+      HashTag.fetch_photos(hash_tag.name).must_include hash_tag.photo
+      HashTag.fetch_photos(hash_tag.name).wont_include hash_tag1.photo
+    end
+  end
 end

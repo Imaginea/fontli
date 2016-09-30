@@ -214,8 +214,7 @@ class ApiActionsController < ApiBaseController
   end
 
   def hash_tag_photos
-    photos = Photo.all_by_hash_tag(@name, @page || 1)
-    photos = photos.desc(:created_at).only(:id, :data_filename).to_a
+    photos = HashTag.fetch_photos(@name, @page || 1).desc(:created_at).only(:id, :data_filename).to_a
     render_response(photos)
   end
 
