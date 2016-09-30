@@ -183,6 +183,20 @@ namespace :photos do
     end
   end
 
+  desc "Reset fonts_count of all photos"
+  task :reset_fonts_count => :environment do
+    progressbar = ProgressBar.create format: "%a %e %P% Processed: %c from %C"
+    progressbar.total = Photo.count
+
+    Photo.in_batches(100) do |photos|
+      photos.each do |p|
+        next if p.fonts_count == p.fonts.count
+        Photo.reset_counters(p.id, :fonts)
+        progressbar.increment
+      end    
+    end
+  end
+  
   desc "Set font help of requested SoS"
   task :fix_requested_sos => :environment do
     Photo.where(:font_help => false, :sos_requested_at.ne => nil).update_all(:font_help => true)
