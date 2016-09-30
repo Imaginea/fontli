@@ -7,7 +7,7 @@
       <dt>Cover photo url:</dt>
       <dd>
         <% if f.object.cover_photo_url %>
-          <%= image_tag f.object.cover_photo_url %><br/>
+          <%= image_tag f.object.cover_photo_url %>
         <% end %>
         <%= file_field_tag 'cover_photo' %>
       </dd>

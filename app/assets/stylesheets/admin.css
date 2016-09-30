@@ -25,6 +25,7 @@ body {
   width: 280px;
   height: 200px;
   padding-bottom: 10px;
+  display: block;
 }
 
 #edit_collection input[type='submit'] {

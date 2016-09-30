@@ -109,12 +109,13 @@ describe CollectionsController do
   end
 
   describe '#update' do
-    let(:name)             { Faker::App.name }
-    let(:description)      { Faker::Lorem.word }
+    let(:name)        { Faker::App.name }
+    let(:description) { Faker::Lorem.word }
+    let(:photo)       { create(:photo) }
     let(:cover_photo_data) do
-      ActionDispatch::Http::UploadedFile.new(filename: 'everlast.jpg',
+      ActionDispatch::Http::UploadedFile.new(filename: 'image.jpg',
                                              type: 'image/jpeg',
-                                             tempfile: File.new(Rails.root + 'test/factories/files/everlast.jpg'))
+                                             tempfile: File.new(Rails.root + 'test/factories/files/image.jpg'))
     end
 
     it 'should update collection name' do
@@ -135,6 +136,13 @@ describe CollectionsController do
     it 'should render edit page' do
       put :update, id: collection.id, collection: { name: nil }
       assert_template :edit
+    end
+
+    it 'should update the photo data of collection cover photo' do
+      collection.update_attributes(cover_photo_id: photo.id)
+      photo.data_filename.must_equal 'everlast.jpg'
+      put :update, id: collection.id, cover_photo: cover_photo_data
+      photo.reload.data_filename.must_equal 'image.jpg'
     end
   end
 end

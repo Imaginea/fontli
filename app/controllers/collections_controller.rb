@@ -27,7 +27,8 @@ class CollectionsController < ApplicationController
     @collection = Collection.find(params[:id])
 
     if params[:cover_photo].present?
-      photo = Photo.new(data: params.delete(:cover_photo))
+      photo = Photo.where(id: @collection.cover_photo_id).first || Photo.new
+      photo.data = params.delete(:cover_photo)
       @collection.cover_photo_id = photo.id if photo.save
     end
 
