@@ -24,6 +24,12 @@ class HashTag
       end
     end
 
+    def fetch_photos(name, pge = 1, lmt = 20)
+      foto_ids = HashTag.where(name: /^#{name}$/i).only(:hashable_id, :hashable_type, :name).select{|h| h.name == name }.collect(&:hashable_id)
+      offst = (pge.to_i - 1) * lmt
+      Photo.where(:_id.in => foto_ids).skip(offst).limit(lmt)
+    end
+
     def photo_ids(hsh_tags)
       hsh_tags.collect{ |ht| ht.photo_ids}.flatten.uniq
     end
