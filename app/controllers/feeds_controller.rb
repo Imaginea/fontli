@@ -19,7 +19,8 @@ class FeedsController < ApplicationController
     preload_photo_associations
     @meta_title = 'Photo Detail'
     render 'show', :layout => 'plain'
-  rescue
+  rescue Exception => e
+    Rails.logger.error { "#{e.message} #{e.backtrace.join("\n")}" }
     render :file => 'public/404', :status => '404', :layout => false, :format => 'html'
   end
 
@@ -58,7 +59,7 @@ class FeedsController < ApplicationController
     @user = User.by_id(params[:user_id]) || current_user
     page = params[:page] || 1
     offst = (page.to_i - 1) * 18
-    
+
     case params[:type]
     when 'like'
       @photos = @user.fav_photos(page, 18)
@@ -78,7 +79,7 @@ class FeedsController < ApplicationController
       preload_photos_my_likes_comments
     end
   end
-  
+
   def popular
     case params[:type]
     when 'post'
@@ -110,7 +111,7 @@ class FeedsController < ApplicationController
     redirect_to feeds_url, :notice => "Posted to feed, successfully."
     end
   end
-  
+
   def socialize_feed
     @photo = Photo.find(params[:id])
     meth_name = "#{whitelisted_feed}_feed".to_sym
@@ -198,9 +199,9 @@ class FeedsController < ApplicationController
   # loads all likes and comments with associated users for a foto.
   def preload_photo_associations(foto = nil)
     foto ||= @photo
-    @likes = foto.likes.desc(:created_at).to_a
+    @likes = foto.likes.includes(:user).desc(:created_at).to_a
     lkd_usr_ids = @likes.collect(&:user_id)
-    @comments = foto.comments.desc(:created_at).to_a
+    @comments = foto.comments.includes(:user).desc(:created_at).to_a
     cmt_usr_ids = @comments.collect(&:user_id)
 
     unless (lkd_usr_ids + cmt_usr_ids).empty?
@@ -211,14 +212,14 @@ class FeedsController < ApplicationController
 
   def preload_photos_my_likes_comments(opts={})
     f_ids, user = @photos.collect(&:id), @user
-    
+
     if f_ids.any?
       @users_map = User.where(:_id.in => @photos.collect(&:user_id)).group_by(&:id)
       @my_lks = @my_cmts = {}
       return true
     end
   end
-  
+
   def whitelisted_feed
     return params[:modal] if %w(like unlike comment share flag unflag remove).include? params[:modal]
 
