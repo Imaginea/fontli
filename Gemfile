@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 ruby '1.9.3'
 
 gem 'rake', '10.0.3'
-gem 'rails', '3.2.22.2'
+gem 'rails', '3.2.22.5'
 gem 'therubyracer', '0.9.9'
 gem 'mongoid', '3.1.6'
 gem 'bson_ext' #Version should be same as 'mongo' gem
