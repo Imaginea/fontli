@@ -94,6 +94,7 @@ class User
 
   default_scope where(:active => true, :user_flags_count.lt => ALLOWED_FLAGS_COUNT)
   scope :non_admins, where(admin: false)
+  scope :admin, where(admin: true)
   scope :experts, where(expert: true)
   scope :leaders, non_admins.desc(:points).limit(LEADERBOARD_LIMIT)
   scope :following_collection, ->(c_id) { where(:followed_collection_ids.in => [c_id]) }
@@ -608,6 +609,10 @@ class User
 
   def self.rand_s(length = 8)
     rand(36**length).to_s(36)
+  end
+
+  def is_editable?
+    User.admin.where(id: id).exists? || User.fontli.id == id
   end
 
   private

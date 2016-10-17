@@ -170,6 +170,16 @@ describe User do
       end
     end
 
+    describe '.admin' do
+      it 'should not return non admin user' do
+        User.admin.wont_include user
+      end
+
+      it 'should return admin user' do
+        User.admin.must_include admin_user
+      end
+    end
+
     describe '.experts' do
       it 'should return expert users' do
         User.experts.must_include expert_user
@@ -1054,6 +1064,16 @@ describe User do
   describe '#recent_photos' do
     it 'should return its recent photos' do
       photo.user.send(:recent_photos).must_include photo
+    end
+  end
+
+  describe '#recent_photos' do
+    it 'should return false' do
+      user.is_editable?.must_equal false
+    end
+
+    it 'should return true' do
+      User.fontli.is_editable?.must_equal true
     end
   end
 end

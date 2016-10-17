@@ -1,6 +1,6 @@
 class CollectionsController < ApplicationController
   skip_before_filter :login_required
-  before_filter :admin_required
+  before_filter :admin_required, except: :fetch_names
 
   layout 'admin'
 
@@ -53,5 +53,9 @@ class CollectionsController < ApplicationController
       flash[:alert] = 'Activation failed'
     end
     redirect_to admin_collections_path
+  end
+
+  def fetch_names
+    render json: Collection.pluck(:name)
   end
 end

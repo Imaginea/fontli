@@ -68,8 +68,18 @@ Fontli::Application.routes.draw do
       delete :delete_user, :delete_photo
     end
     resources :collections, only: [:index, :create, :edit, :update, :destroy] do
+      collection do
+        get :fetch_names
+      end
       member do
         put :activate
+      end
+    end
+
+    resources :users, only: [:show] do
+      member do
+        get :add_photo
+        post :create_photo
       end
     end
   end
