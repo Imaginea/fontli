@@ -153,7 +153,7 @@ module ApiHelper
                      tagged_users: [:id, :url_thumb, :username, :full_name, :friendship_state] },
 
     user_search:   { accepts: [:name],
-                     returns: [:id, :username, :full_name, :url_thumb, :photos_count, :fonts_count, :points, :friendship_state] },
+                     returns: [:id, :username, :full_name, :url_thumb, :photos_count, :fonts_count, :points, :friendship_state, :followers_count] },
     user_profile:  { accepts: [[:user_id, :username]],
                      returns: [:id, :username, :email, :full_name, :description, :website, :url, :url_large, :url_thumb,
                                :created_dt, :likes_count, :follows_count, :followers_count, :photos_count, :fonts_count,
