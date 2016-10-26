@@ -552,6 +552,13 @@ describe ApiActionsController do
         parsed_result['response'].must_be_empty
         parsed_result['status'].must_equal 'Success'
       end
+
+      it 'should return followers count' do
+        create(:follow, follower: user)
+        get :user_search, name: user.username
+        parsed_result = JSON.parse(response.body)
+        parsed_result['response'].first['followers_count'].must_equal 1
+      end
     end
 
     describe '#user_profile' do
