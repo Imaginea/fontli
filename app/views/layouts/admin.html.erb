@@ -50,7 +50,6 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="/bootstrap-assets/js/jquery.js"></script>
-    <%= javascript_include_tag 'admin' %>
     <script src="/bootstrap-assets/js/bootstrap-transition.js"></script>
     <script src="/bootstrap-assets/js/bootstrap-alert.js"></script>
     <script src="/bootstrap-assets/js/bootstrap-modal.js"></script>
@@ -63,6 +62,7 @@
     <script src="/bootstrap-assets/js/bootstrap-collapse.js"></script>
     <script src="/bootstrap-assets/js/bootstrap-carousel.js"></script>
     <script src="/bootstrap-assets/js/bootstrap-typeahead.js"></script>
+    <%= javascript_include_tag 'admin' %>
 
     <%= javascript_tag :defer => 'defer' do %>
       $('li.disabled').each(function() {
@@ -71,7 +71,7 @@
         elem.attr('onclick', 'return false;');
       });
 
-      $('a').live('ajax:before', function() {
+      $('a').not('.btn-default').live('ajax:before', function() {
         $(this).replaceWith('<strong>Loading..</strong>');
       });
     <% end %>

@@ -1,3 +1,48 @@
+var Fontli;
+
+if (typeof Fontli == 'undefined') {
+  Fontli = {};
+};
+
+if (typeof Fontli.Users == 'undefined') {
+  Fontli.Users = {
+    extractor: function(query) {
+      var result = /([^,]+)$/.exec(query);
+      if(result && result[1])
+        return result[1].trim();
+      return '';
+    },
+
+    getCollectionNames: function() {
+      var names;
+      $.ajax({
+        url: '/admin/collections/fetch_names',
+        async: false
+      }).done(function(data){
+        names = data;
+      });
+      return names;
+    },
+
+    tagAutocomplete: function() {
+      $.fn.typeahead.Constructor.prototype.select = function() {
+        var val = this.$menu.find('.active').attr('data-value');
+        this.$element.val(this.$element.val().replace(/[^,]*$/,' ') + val);
+        this.$element.change();
+        return this.hide();
+      },
+
+      $('#photo_collection_names').typeahead({
+        source: Fontli.Users.getCollectionNames(),
+        matcher: function (item) {
+          var tquery = Fontli.Users.extractor(this.query);
+          if(!tquery) return false;
+          return ~item.toLowerCase().indexOf(tquery.toLowerCase());
+        },
+      });
+    }
+  }
+}
 $(document).ready(function() {
   // Create the chart
   if($('#users_statistics').length) {

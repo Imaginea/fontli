@@ -29,7 +29,7 @@
       <td class='collection_cover_photo'>
         <%= image_tag(c.cover_photo_url) if c.cover_photo_url %>
       </td>
-      <td class='collection_actions'>
+      <td class='actions_link'>
         <%= link_to 'Edit', edit_admin_collection_path(c.id) %>
         <% unless c.active? %>
           <%= link_to 'Delete', admin_collection_path(c.id), method: :delete,

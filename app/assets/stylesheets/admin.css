@@ -13,7 +13,7 @@ body {
   padding: 5px 10px;
 }
 
-.collection_actions > a {
+.actions_link > a {
   margin-right: 15px;
 }
 
@@ -35,4 +35,42 @@ body {
 .collection_cover_photo img {
   height: 40px;
   width: 50px;
+}
+
+#show_user dl {
+  width: 500px;
+}
+
+#show_user #user_photos {
+  clear: both;
+  padding-top: 20px;
+}
+
+#show_user .dl-horizontal dt {
+  width: 70px;
+}
+
+#show_user .dl-horizontal dd {
+  margin-left: 80px;
+}
+
+#user_photos h3 {
+  padding-bottom: 20px;
+}
+
+#user_photos h3 a {
+  margin-left: 15px;
+}
+
+#photo_modal {
+  width: 600px;
+}
+
+span.inline-text {
+  color: #808080;
+  display: inline-block;
+}
+
+ul.typeahead.dropdown-menu {
+  min-width: 275px;
 }

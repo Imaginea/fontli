@@ -25,7 +25,7 @@
     </tr>
   </thead>
   <tbody>
-    <% count = ((params[:page] || 1).to_i - 1) * 10 %>
+    <% count = ((params[:page] || 1).to_i - 1) * 25 %>
     <% @users.each_with_index do |u, i| %>
     <% fotos_cnt = u.photos_count %>
     <tr id='usr_<%= u.id.to_s %>'>
@@ -44,7 +44,8 @@
       <td><%= u.user_flags_count %></td>
       <td><%= u.points %></td>
       <td><%= u.created_dt %></td>
-      <td>
+      <td class='actions_link'>
+        <%= link_to 'Show', admin_user_path(u) %>
         <% if @suspend_user %>
           <%= link_to('Suspend', suspend_user_admin_path(id: u.id), method: 'put') %>
         <% end %>

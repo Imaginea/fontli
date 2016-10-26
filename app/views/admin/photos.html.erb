@@ -11,57 +11,5 @@
 </form>
 
 <%= render 'shared/flash_notices' %>
-
-<table class='table table-striped table-condensed'>
-  <thead>
-    <tr>
-      <th>&nbsp;</th>
-      <th>Image</th>
-      <th><%=sortable("caption")%></th>
-      <th><%=sortable("likes_count","Likes")%></th>
-      <th><%=sortable("comments_count","Comments")%></th>
-      <th><%=sortable("fonts_count","Fonts")%></th>
-      <th><%=sortable("flags_count","Flags")%></th>
-      <th>Username</th>
-      <th><%=sortable("created_at","Created")%></th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% count = ((params[:page] || 1).to_i - 1) * 10 %>
-    <% @fotos.each_with_index do |f, i| %>
-    <tr id='foto_<%= f.id.to_s %>'>
-      <td><%= count += 1 %></td>
-      <td>
-        <a href='/<%= f.perma %>' target='_new'>
-          <img src='<%= f.url_medium %>' />
-        </a>
-      </td>
-      <td><%= f.caption %></td>
-      <td><%= f.likes_count %></td>
-      <td><%= f.comments_count %></td>
-      <td><%= f.fonts_count %></td>
-      <td><%= f.flags_count %></td>
-      <td><%= f.user.username rescue 'User Flagged' %></td>
-      <td><%= f.created_dt %></td>
-      <td>
-        <% if params[:req] == 'true' %>
-          <%= link_to('Approve SoS', approve_sos_admin_path(photo_id: f.id), remote: true, method: :put) %>
-        <% end %>
-        <% if @unflag_photo %>
-          <%= link_to('Unflag', unflag_photo_admin_path(id: f.id), remote: true, method: :put, confirm: 'Are you sure you want to unflag this photo?') %>
-        <% end %>
-        <%= link_to('Delete', delete_photo_admin_path(id: f.id), remote: true, method: :delete, confirm: 'Are you sure you want to delete this photo? This cannot be undone!') %>
-        <% if @select_photo && !f.show_in_homepage? %>
-          <%= link_to('Select', select_photo_admin_path(id: f.id), remote: true, method: :put, title: 'Select for homepage') %>
-        <% end %>
-        <% if @unselect_photo && f.show_in_homepage? %>
-          <%= link_to('Unselect', select_photo_admin_path(id: f.id, select: false), remote: true, method: :put) %>
-        <% end %>
-      </td>
-    </tr>
-    <% end %>
-  </tbody>
-</table>
-
+<%= render 'photos', photos: @fotos %>
 <%= paginate @fotos %>

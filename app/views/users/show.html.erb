@@ -1,0 +1,21 @@
+<%= render 'shared/flash_notices' %>
+<div id='show_user'>
+  <%= image_tag @user.url_thumb, class: 'pull-right' %>
+  <dl class="dl-horizontal">
+    <dt>Username:</dt>
+    <dd><%= @user.username %></dd>
+    <dt>Full Name:</dt>
+    <dd><%= @user.full_name %></dd>
+    <dt>Email:</dt>
+    <dd><%= @user.email %></dd>
+  </dl>
+  <div id='user_photos'>
+    <h3>Photos
+      <%= link_to 'Add Photo', add_photo_admin_user_path(@user), class: 'btn btn-default', remote: true if @user.is_editable? %>
+    </h3>
+    <%= render 'admin/photos', photos: @photos %>
+    <div class="modal fade" id="photo_modal" role="dialog" data-backdrop="static" data-keyboard="false"></div>
+    <%= paginate @photos %>
+  </div>
+</div>
+
